@@ -6,6 +6,12 @@ export async function updateSession(request: NextRequest) {
     request,
   })
 
+  // تخطي استدعاء الشبكة فوراً إذا كانت بيانات سوبابيز تجريبية لمنع الـ Timeout والبطء
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+  if (!url || url.includes('placeholder')) {
+    return supabaseResponse
+  }
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -27,9 +33,6 @@ export async function updateSession(request: NextRequest) {
     }
   )
 
-  // IMPORTANT: Avoid writing logic between createServerClient and
-  // supabase.auth.getUser(). A simple mistake could make it very hard to debug
-  // issues with users being randomly logged out.
   await supabase.auth.getUser()
 
   return supabaseResponse

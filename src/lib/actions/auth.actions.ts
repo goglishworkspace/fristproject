@@ -8,29 +8,6 @@ export interface AuthState {
   error?: string;
 }
 
-// تسجيل الدخول التجريبي أثناء التطوير لتسهيل المعاينة
-export async function devLoginAction(role: 'student' | 'admin'): Promise<void> {
-  const cookieStore = await cookies();
-  
-  // وضع كوكي تجريبي للمعاينة المحلية
-  cookieStore.set('dev_demo_user', JSON.stringify({
-    id: role === 'admin' ? 'admin-demo-id' : 'student-demo-id',
-    student_id: role === 'admin' ? 'admin' : '2026101',
-    full_name: role === 'admin' ? 'د. المشرف العام' : 'أحمد محمد علي (طالب تجريبي)',
-    role: role,
-  }), {
-    path: '/',
-    maxAge: 60 * 60 * 24, // يوم واحد
-    httpOnly: false,
-  });
-
-  if (role === 'admin') {
-    redirect('/admin/dashboard');
-  } else {
-    redirect('/');
-  }
-}
-
 export async function loginAction(
   prevState: AuthState | null,
   formData: FormData
@@ -42,17 +19,36 @@ export async function loginAction(
     return { error: 'يرجى إدخال اسم المستخدم / كود الطالب وكلمة المرور' };
   }
 
-  // دعم فوري لأكواد الاختبار الشائعة
+  // 1. فحص الحسابات التجريبية فوراً بـ 0ms (بدون انتظار شبكة)
   if (identifier.toLowerCase() === 'admin' && password === 'admin123') {
-    await devLoginAction('admin');
-    return {};
-  } else if ((identifier === 'student' || identifier === '2026101') && password === '123456') {
-    await devLoginAction('student');
-    return {};
+    const cookieStore = await cookies();
+    cookieStore.set('dev_demo_user', JSON.stringify({
+      id: 'admin-demo-id',
+      student_id: 'admin',
+      full_name: 'د. المشرف العام',
+      role: 'admin',
+    }), { path: '/', maxAge: 86400 });
+    redirect('/admin/dashboard');
   }
 
-  const supabase = await createClient();
+  if ((identifier === 'student' || identifier === '2026101') && password === '123456') {
+    const cookieStore = await cookies();
+    cookieStore.set('dev_demo_user', JSON.stringify({
+      id: 'student-demo-id',
+      student_id: '2026101',
+      full_name: 'أحمد محمد علي',
+      role: 'student',
+    }), { path: '/', maxAge: 86400 });
+    redirect('/');
+  }
 
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+  if (!supabaseUrl || supabaseUrl.includes('placeholder')) {
+    return { error: 'بيانات الدخول غير صحيحة، جرب كود الطالب: 2026101 وباسوورد: 123456' };
+  }
+
+  // 2. التحقق الفعلي من Supabase الحقيقي
+  const supabase = await createClient();
   const email = identifier.includes('@')
     ? identifier
     : `${identifier.toLowerCase()}@faculty.local`;
@@ -83,7 +79,11 @@ export async function logoutAction(): Promise<void> {
   const cookieStore = await cookies();
   cookieStore.delete('dev_demo_user');
 
-  const supabase = await createClient();
-  await supabase.auth.signOut();
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+  if (supabaseUrl && !supabaseUrl.includes('placeholder')) {
+    const supabase = await createClient();
+    await supabase.auth.signOut();
+  }
+  
   redirect('/login');
 }
