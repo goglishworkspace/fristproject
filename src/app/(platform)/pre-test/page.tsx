@@ -1,30 +1,49 @@
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
 import { ExamRunner } from '@/components/exam/exam-runner';
 import type { Question } from '@/lib/types/database';
 
 export default async function PreTestPage() {
+  const cookieStore = await cookies();
+  const devDemoCookie = cookieStore.get('dev_demo_user');
+  let currentUserId: string | null = null;
+
+  if (devDemoCookie?.value) {
+    try {
+      const parsed = JSON.parse(devDemoCookie.value);
+      currentUserId = parsed.id;
+    } catch {
+      // ignore
+    }
+  }
+
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) {
+  if (user) {
+    currentUserId = user.id;
+  }
+
+  // حماية صارمة: إذا كان زائر غير مسجل، يتم تحويله فوراً لصفحة تسجيل الدخول
+  if (!currentUserId) {
     redirect('/login');
   }
 
-  // التحقق أولاً: إذا كان قد أتم الاختبار القبلي بالفعل، نوجهه للموديولات مباشرة لمنع الإعادة
+  // التحقق: إذا كان قد أتم الاختبار القبلي بالفعل، يُحول للموديولات لمنع الإعادة
   const { data: progress } = await supabase
     .from('student_progress')
     .select('pre_test_completed')
-    .eq('student_id', user.id)
+    .eq('student_id', currentUserId)
     .single();
 
   if (progress?.pre_test_completed) {
     redirect('/modules');
   }
 
-  // جلب الأسئلة بدون حقل الإجابة الصحيحة correct_option_index لضمان عدم تسريبها
+  // جلب الأسئلة الآمنة بدون إجابات صحيحة
   const { data: questions } = await supabase
     .from('questions')
     .select('id, exam_type, question_text, options, order_index')

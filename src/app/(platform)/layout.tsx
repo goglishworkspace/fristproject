@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
-import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
 import { Navbar } from '@/components/layout/navbar';
 import type { UserProfile } from '@/lib/types/database';
 
@@ -8,29 +8,43 @@ export default async function PlatformLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = await createClient();
-  const {
-    data: { user: authUser },
-  } = await supabase.auth.getUser();
+  const cookieStore = await cookies();
+  const devDemoCookie = cookieStore.get('dev_demo_user');
 
-  if (!authUser) {
-    redirect('/login');
+  let userProfile: UserProfile | null = null;
+
+  if (devDemoCookie?.value) {
+    try {
+      userProfile = JSON.parse(devDemoCookie.value);
+    } catch {
+      // ignore
+    }
   }
 
-  // جلب الملف التعريفي والتحقق من وجوده
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', authUser.id)
-    .single();
+  // إذا لم يكن مستخدم تجريبي، نفحص مستخدم سوبابيز الحقيقي
+  if (!userProfile) {
+    const supabase = await createClient();
+    const {
+      data: { user: authUser },
+    } = await supabase.auth.getUser();
 
-  const userProfile: UserProfile = profile || {
-    id: authUser.id,
-    student_id: authUser.email?.split('@')[0] || 'طالب',
-    full_name: 'طالب المنصة',
-    role: 'student',
-  };
+    if (authUser) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', authUser.id)
+        .single();
 
+      userProfile = profile || {
+        id: authUser.id,
+        student_id: authUser.email?.split('@')[0] || 'طالب',
+        full_name: 'طالب المنصة',
+        role: 'student',
+      };
+    }
+  }
+
+  // متاح للزائر تماماً تصفح الموقع والنبذة دون أي إجبار على تسجيل الدخول
   return (
     <div className="min-h-screen flex flex-col bg-slate-50/50">
       <Navbar user={userProfile} />
