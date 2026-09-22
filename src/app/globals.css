@@ -1,9 +1,71 @@
 @import "tailwindcss";
 
+/*
+  =============================================================================
+  🎨 دليل الهوية البصرية الرسمية - جامعة عين شمس (Ain Shams University Color Tokens)
+  =============================================================================
+  تم استخراج وتوثيق هذه الألوان بدقة من شعار الجامعة الأصلي المعتمد:
+  
+  1. الكحلي الملكي (ASU Navy):
+     - الأساس: #1B2A6B (لون صقرا حورس والمسلة الفرعونية والإطار الهندسي)
+     - الداكن: #101A44 (للخلفيات العميقة، الفوتر، ونصوص العناوين الرئيسية)
+     - الفاتح: #283D8F (لحالات التفاعل Hover والتدرجات العصرية)
+     - استخدامات: الأزرار الرئيسية، الهيدر، البطاقات البارزة، تدرجات Hero.
+
+  2. الذهبي التراثي (ASU Gold):
+     - الأساس: #C59B27 (لون الخط العربي "جامعة عين شمس" والنقوش الفرعونية)
+     - الفاتح: #DFB135 (لحالات Hover والأوسمة النشطة)
+     - الهادئ: #FBF5E6 (لخلفيات البطاقات والأوسمة والحدود الخفيفة)
+     - استخدامات: الأوسمة، حواف البطاقات المميزة، أزرار الدعوة للعمل (CTA).
+
+  3. الأخضر الأكاديمي (ASU Green):
+     - الأساس: #0D7A3E (لون عبارة "AIN SHAMS UNIVERSITY" بالإنجليزية)
+     - الفاتح: #129C50 (لمؤشرات النجاح والإنجاز)
+     - استخدامات: حالات إكمال الاختبارات، شارات النجاح، التقدم الإيجابي.
+
+  4. الأحمر التراثي (ASU Red):
+     - الأساس: #BA2525 (رمز قرص الشمس والختم الهيروغليفي داخل المسلة)
+     - استخدامات: شارات التنبيه، الأخطاء، انتهاء الوقت.
+  =============================================================================
+*/
+
+@theme {
+  --color-asu-navy: #1B2A6B;
+  --color-asu-navy-dark: #101A44;
+  --color-asu-navy-light: #283D8F;
+  --color-asu-navy-50: #EEF2FF;
+  --color-asu-navy-100: #E0E7FF;
+
+  --color-asu-gold: #C59B27;
+  --color-asu-gold-light: #DFB135;
+  --color-asu-gold-dark: #9A7513;
+  --color-asu-gold-50: #FDF9EE;
+  --color-asu-gold-100: #FBF2D5;
+
+  --color-asu-green: #0D7A3E;
+  --color-asu-green-light: #129C50;
+  --color-asu-green-50: #EDF7F1;
+
+  --color-asu-red: #BA2525;
+  --color-asu-red-50: #FDF2F2;
+}
+
 @theme inline {
   --font-sans: var(--font-cairo), system-ui, -apple-system, sans-serif;
 }
 
 body {
   font-family: var(--font-cairo), system-ui, -apple-system, sans-serif;
+  background-color: #F8FAFC;
+  color: #0F172A;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* إخفاء شريط التمرير الأفقي مع الحفاظ على التمرير باللمس على الهواتف */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

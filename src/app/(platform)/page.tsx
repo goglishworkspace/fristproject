@@ -1,23 +1,26 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
+import { isLiveSupabaseConfigured } from '@/lib/supabase/config';
 import { cookies } from 'next/headers';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
-  BookOpen,
-  CheckCircle2,
-  Clock,
   ArrowLeft,
   Sparkles,
-  Info,
-  Lock,
   LogIn,
-  GraduationCap,
-  Layers,
-  Award,
+  BookMarked,
+  HelpCircle,
+  ImageIcon,
+  Leaf,
+  Info,
 } from 'lucide-react';
 import type { StudentProgress } from '@/lib/types/database';
+
+// ============================================================================
+// 🖼️ رابط صورة "تنمية الوعي بقضايا البيئة"
+// ضع الرابط أو المسار هنا بمجرد أن يرسله المستخدم (مثال: "https://..." أو "/images/...")
+// ============================================================================
+export const ENVIRONMENTAL_AWARENESS_IMAGE_SRC = '';
 
 export default async function PlatformHomePage() {
   const cookieStore = await cookies();
@@ -33,220 +36,202 @@ export default async function PlatformHomePage() {
     }
   }
 
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  let user: any = null;
+  let progress: StudentProgress | null = null;
+
+  if (!studentId && isLiveSupabaseConfigured()) {
+    try {
+      const supabase = await createClient();
+      const { data } = await supabase.auth.getUser();
+      user = data?.user;
+    } catch {
+      // ignore
+    }
+  }
 
   const currentUserId = studentId || user?.id;
 
-  // جلب مسار وتقدم الطالب إذا كان مسجل دخوله
-  let progress: StudentProgress | null = null;
-  if (currentUserId) {
-    const { data } = await supabase
-      .from('student_progress')
-      .select('*')
-      .eq('student_id', currentUserId)
-      .single();
-    progress = data;
+  if (currentUserId && isLiveSupabaseConfigured()) {
+    try {
+      const supabase = await createClient();
+      const { data } = await supabase
+        .from('student_progress')
+        .select('*')
+        .eq('student_id', currentUserId)
+        .single();
+      progress = data;
+    } catch {
+      // ignore
+    }
   }
 
   const isLoggedIn = !!currentUserId;
   const preCompleted = !!progress?.pre_test_completed;
-  const postCompleted = !!progress?.post_test_completed;
 
   return (
-    <div className="space-y-10">
-      {/* 1. قسم البانر التعريفي والنبذة العامة للمنصة (Hero Section للزوار والطلاب) */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-800 via-teal-700 to-emerald-900 text-white p-8 md:p-12 shadow-xl">
-        <div className="relative z-10 max-w-3xl space-y-5 text-right">
-          <Badge className="bg-emerald-500/20 text-emerald-100 border-emerald-400/30 text-xs px-3 py-1">
-            <Sparkles className="w-3.5 h-3.5 ml-1.5 inline text-emerald-300" />
-            البيئة التعليمية الرقمية المعتمدة
-          </Badge>
-          
-          <h1 className="text-3xl md:text-5xl font-black tracking-tight leading-tight">
-            منصة بيئتي التعليمية التفاعلية
-          </h1>
-          
-          <p className="text-emerald-100/90 text-sm md:text-lg leading-relaxed font-normal">
-            منصة تعليمية وبحثية متكاملة تقدم موديولات وأنشطة تفاعلية مدعومة بنظام تقييم قبلي وبعدي
-            دقيق لقياس الأثر التعليمي وتطور المستوى المعرفي لدى الطلاب.
-          </p>
+    <div className="space-y-8 md:space-y-10 pb-6">
+      {/* 1. قسم البانر التعريفي الرئيسي (Hero Section) لمنصة بيئتي التعليمية التفاعلية */}
+      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-asu-navy-dark via-asu-navy to-[#1c2c6d] text-white p-5 sm:p-8 md:p-12 shadow-2xl border border-asu-gold/20">
+        {/* خلفيات ضوئية جمالية مستوحاة من ألوان الشعار */}
+        <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/3 w-80 h-80 sm:w-96 sm:h-96 bg-asu-gold/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-0 translate-y-1/3 -translate-x-1/4 w-80 h-80 sm:w-[420px] sm:h-[420px] bg-asu-navy-light/40 rounded-full blur-3xl pointer-events-none" />
 
-          {!isLoggedIn && (
-            <div className="pt-2 flex flex-wrap items-center gap-3">
-              <Link href="/login">
-                <Button size="lg" className="bg-white text-emerald-800 hover:bg-emerald-50 gap-2 font-bold shadow-lg">
-                  <LogIn className="w-4 h-4 ml-1" />
-                  <span>تسجيل دخول الطالب لبدء الاختبارات</span>
-                </Button>
-              </Link>
+        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+          {/* المحتوى النصي للبانر */}
+          <div className="lg:col-span-8 space-y-4 md:space-y-6 text-right">
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge className="bg-asu-gold/20 text-asu-gold-light border border-asu-gold/40 text-[11px] sm:text-xs px-3 py-1 font-bold">
+                <Sparkles className="w-3.5 h-3.5 ml-1.5 inline text-asu-gold-light" />
+                جامعة عين شمس • كلية التربية
+              </Badge>
+              <span className="text-[11px] text-slate-300 font-medium hidden sm:inline-block">
+                قسم المناهج وطرق التدريس
+              </span>
+            </div>
+
+            <h1 className="text-2xl sm:text-3xl md:text-5xl font-black tracking-tight leading-tight sm:leading-tight text-white">
+              منصة <span className="text-asu-gold-light">بيئتي</span> التعليمية التفاعلية
+            </h1>
+
+            <p className="text-slate-200 text-xs sm:text-sm md:text-base leading-relaxed max-w-2xl font-normal">
+              بيئة تعلم رقمية تفاعلية قائمة على المعايير التربوية الحديثة، تقدم وحدات تعليمية
+              مدعومة بنظام تقييم قبلي وبعدي ذكي لقياس الأثر التعليمي وتطوير الكفايات المعرفية.
+            </p>
+
+            {/* أزرار الإجراءات المتجاوبة مع الهواتف */}
+            <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+              {!isLoggedIn ? (
+                <>
+                  <Link href="/login" className="w-full sm:w-auto">
+                    <Button
+                      variant="gold"
+                      size="lg"
+                      className="w-full sm:w-auto gap-2 shadow-lg shadow-asu-gold/20 font-extrabold"
+                    >
+                      <LogIn className="w-4 h-4 ml-1" />
+                      <span>تسجيل دخول الطالب لبدء الاختبار</span>
+                    </Button>
+                  </Link>
+                  <Link href="/instructions" className="w-full sm:w-auto">
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      className="w-full sm:w-auto border-white/30 text-white hover:bg-white/10 hover:text-white bg-transparent font-bold"
+                    >
+                      <HelpCircle className="w-4 h-4 ml-1.5" />
+                      <span>دليل وتعليمات الاستخدام</span>
+                    </Button>
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link href={preCompleted ? "/modules" : "/pre-test"} className="w-full sm:w-auto">
+                    <Button
+                      variant="gold"
+                      size="lg"
+                      className="w-full sm:w-auto gap-2 shadow-lg shadow-asu-gold/20 font-extrabold"
+                    >
+                      <span>{preCompleted ? "متابعة دراسة الموديولات" : "بدء الاختبار القبلي الآن"}</span>
+                      <ArrowLeft className="w-4 h-4 mr-1" />
+                    </Button>
+                  </Link>
+                  <Link href="/library" className="w-full sm:w-auto">
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      className="w-full sm:w-auto border-white/30 text-white hover:bg-white/10 hover:text-white bg-transparent font-bold"
+                    >
+                      <BookMarked className="w-4 h-4 ml-1.5" />
+                      <span>المكتبة الإثرائية</span>
+                    </Button>
+                  </Link>
+                </>
+              )}
+            </div>
+          </div>
+
+          {/* لوجو الجامعة والدرع الأكاديمي في الهيرو */}
+          <div className="lg:col-span-4 flex justify-center lg:justify-end">
+            <div className="relative group p-4 sm:p-6 rounded-3xl bg-white/10 backdrop-blur-md border border-white/20 shadow-2xl flex flex-col items-center text-center max-w-[240px] sm:max-w-[260px]">
+              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-white p-3 shadow-inner flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/asu-logo.png"
+                  alt="شعار جامعة عين شمس"
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <p className="font-extrabold text-xs sm:text-sm text-white">جامعة عين شمس</p>
+              <p className="text-[10px] text-asu-gold-light mt-0.5 font-semibold">تأسست عام 1950</p>
+              <div className="mt-2.5 pt-2.5 border-t border-white/15 w-full">
+                <span className="text-[10px] text-slate-300">كلية التربية • بحث أكاديمي محكم</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 2. قسم صورة "تنمية الوعي بقضايا البيئة" المخصص والمجهز بالكامل */}
+      <section className="space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-right border-b border-slate-200/80 pb-3">
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl bg-asu-green-50 text-asu-green flex items-center justify-center border border-asu-green/20">
+              <Leaf className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="text-lg sm:text-xl font-black text-asu-navy">
+                تنمية الوعي بقضايا البيئة
+              </h2>
+              <p className="text-xs text-slate-500">
+                المحتوى البصري والتوعوي المعتمد للبرنامج التدريبي
+              </p>
+            </div>
+          </div>
+          <Badge variant="gold" className="self-start sm:self-auto text-xs px-3 py-1">
+            جامعة عين شمس
+          </Badge>
+        </div>
+
+        {/* إطار عرض الصورة المتجاوب بدقة عالية للهواتف والشاشات الكبيرة */}
+        <div className="w-full rounded-3xl overflow-hidden bg-white border border-slate-200/90 shadow-lg transition-all hover:shadow-xl">
+          {ENVIRONMENTAL_AWARENESS_IMAGE_SRC ? (
+            <div className="relative w-full overflow-hidden flex items-center justify-center bg-slate-50">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={ENVIRONMENTAL_AWARENESS_IMAGE_SRC}
+                alt="تنمية الوعي بقضايا البيئة"
+                className="w-full h-auto max-h-[720px] object-contain rounded-2xl transition-transform duration-300 hover:scale-[1.01]"
+              />
+            </div>
+          ) : (
+            /* مكان مجهز ومهيأ في انتظار رابط الصورة من المستخدم */
+            <div className="p-8 sm:p-14 md:p-20 flex flex-col items-center justify-center text-center space-y-4 bg-gradient-to-b from-slate-50/60 to-white min-h-[360px] sm:min-h-[460px] border-2 border-dashed border-asu-navy/20 rounded-3xl m-2 sm:m-3">
+              <div className="relative">
+                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-asu-navy-50 text-asu-navy flex items-center justify-center border border-asu-navy/15 shadow-sm">
+                  <ImageIcon className="w-10 h-10 sm:w-12 sm:h-12 text-asu-navy" />
+                </div>
+                <div className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-asu-gold text-slate-900 flex items-center justify-center font-bold text-xs shadow-md border-2 border-white">
+                  <Leaf className="w-4 h-4" />
+                </div>
+              </div>
+
+              <div className="space-y-2 max-w-md">
+                <h3 className="text-lg sm:text-2xl font-black text-asu-navy">
+                  تنمية الوعي بقضايا البيئة
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
+                  هذا المكان مجهز ومخصص لعرض الصورة الرسمية الخاصة بتنمية الوعي بقضايا البيئة.
+                </p>
+              </div>
+
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-asu-gold-50 border border-asu-gold/30 text-asu-gold-dark text-xs font-bold shadow-2xs">
+                <Info className="w-4 h-4 text-asu-gold-dark shrink-0" />
+                <span>المكان جاهز تماماً وبانتظار تزويدي برابط الصورة لإدراجها فوراً</span>
+              </div>
             </div>
           )}
         </div>
-
-        {/* خلفيات جمالية خفيفة */}
-        <div className="absolute left-0 bottom-0 translate-y-1/3 -translate-x-1/4 w-[450px] h-[450px] bg-emerald-400/15 rounded-full blur-3xl pointer-events-none" />
-      </div>
-
-      {/* 2. نبذة عامة عن أهداف ومكونات المنصة (متاحة لكل زائر) */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-sm text-right space-y-2">
-          <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3">
-            <GraduationCap className="w-6 h-6" />
-          </div>
-          <h3 className="font-bold text-slate-800 text-base">تقييم قبلي تشخيصي</h3>
-          <p className="text-xs text-slate-500 leading-relaxed">
-            اختبار قبلي موضوعي لقياس الحصيلة المعرفية المبدئية قبل الخوض في المادة العلمية.
-          </p>
-        </div>
-
-        <div className="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-sm text-right space-y-2">
-          <div className="w-12 h-12 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center mb-3">
-            <Layers className="w-6 h-6" />
-          </div>
-          <h3 className="font-bold text-slate-800 text-base">موديولات تعليمية تفاعلية</h3>
-          <p className="text-xs text-slate-500 leading-relaxed">
-            وحدات تعليمية ممنهجة مدعومة بالوسائط والأنشطة التطبيقية لترسيخ المفاهيم.
-          </p>
-        </div>
-
-        <div className="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-sm text-right space-y-2">
-          <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mb-3">
-            <Award className="w-6 h-6" />
-          </div>
-          <h3 className="font-bold text-slate-800 text-base">تقييم بعدي وقياس الأثر</h3>
-          <p className="text-xs text-slate-500 leading-relaxed">
-            اختبار بعدي نهائي لقياس معدل التطور والتحسن العلمي للطالب بدقة.
-          </p>
-        </div>
-      </div>
-
-      {/* 3. خريطة مسار الطالب */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold text-slate-900">مسار التعلم المعتمد</h2>
-          {!isLoggedIn && (
-            <span className="text-xs text-slate-500">سجل الدخول لبدء مسارك الشخصي</span>
-          )}
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* 1. الاختبار القبلي */}
-          <Card className={`relative transition-all ${preCompleted ? 'border-emerald-200 bg-emerald-50/30' : 'border-slate-200 bg-white shadow-md'}`}>
-            <CardHeader>
-              <div className="flex items-center justify-between pb-2">
-                <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold">
-                  1
-                </div>
-                {preCompleted ? (
-                  <Badge variant="success" className="gap-1">
-                    <CheckCircle2 className="w-3.5 h-3.5" /> مكتمل
-                  </Badge>
-                ) : (
-                  <Badge variant="warning" className="gap-1">
-                    <Clock className="w-3.5 h-3.5" /> الخطوة الأولى
-                  </Badge>
-                )}
-              </div>
-              <CardTitle>الاختبار القبلي (Pre-Test)</CardTitle>
-              <CardDescription>
-                تحديد المستوى المعرفي المبدئي قبل البدء في المنهج
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {preCompleted ? (
-                <p className="text-xs text-emerald-700 font-medium">
-                  تم تسليم الاختبار القبلي بنجاح.
-                </p>
-              ) : (
-                <Link href={isLoggedIn ? "/pre-test" : "/login"} className="block mt-2">
-                  <Button className="w-full gap-2">
-                    <span>{isLoggedIn ? "بدء الاختبار القبلي" : "دخول لأداء الاختبار"}</span>
-                    <ArrowLeft className="w-4 h-4" />
-                  </Button>
-                </Link>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* 2. الموديولات التعليمية */}
-          <Card className={`relative transition-all ${!preCompleted ? 'opacity-75 bg-slate-50' : 'bg-white shadow-md border-slate-200'}`}>
-            <CardHeader>
-              <div className="flex items-center justify-between pb-2">
-                <div className="w-10 h-10 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center font-bold">
-                  2
-                </div>
-                {!preCompleted ? (
-                  <Badge variant="default" className="gap-1 bg-slate-200 text-slate-600">
-                    <Lock className="w-3.5 h-3.5" /> مغلق
-                  </Badge>
-                ) : (
-                  <Badge variant="success" className="gap-1">
-                    <BookOpen className="w-3.5 h-3.5" /> متاح الآن
-                  </Badge>
-                )}
-              </div>
-              <CardTitle>الوحدات والموديولات</CardTitle>
-              <CardDescription>
-                المحتوى التفاعلي والأنشطة المقررة لكل وحدة
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {!preCompleted ? (
-                <p className="text-xs text-slate-500 font-medium flex items-center gap-1.5">
-                  <Lock className="w-3.5 h-3.5 text-slate-400" />
-                  يُفتح تلقائياً بعد إنهاء الاختبار القبلي
-                </p>
-              ) : (
-                <Link href="/modules" className="block mt-2">
-                  <Button variant="secondary" className="w-full gap-2">
-                    <span>تصفح الموديولات</span>
-                    <ArrowLeft className="w-4 h-4" />
-                  </Button>
-                </Link>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* 3. الاختبار البعدي */}
-          <Card className={`relative transition-all ${!preCompleted || !postCompleted ? 'opacity-75 bg-slate-50' : 'bg-white shadow-md border-slate-200'}`}>
-            <CardHeader>
-              <div className="flex items-center justify-between pb-2">
-                <div className="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold">
-                  3
-                </div>
-                {postCompleted ? (
-                  <Badge variant="success" className="gap-1">
-                    <CheckCircle2 className="w-3.5 h-3.5" /> مكتمل
-                  </Badge>
-                ) : (
-                  <Badge variant="default" className="gap-1 bg-slate-200 text-slate-600">
-                    <Lock className="w-3.5 h-3.5" /> مغلق
-                  </Badge>
-                )}
-              </div>
-              <CardTitle>الاختبار البعدي (Post-Test)</CardTitle>
-              <CardDescription>
-                التقييم الختامي لقياس مدى الاستفادة وتطور المستوى
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {postCompleted ? (
-                <p className="text-xs text-emerald-700 font-medium">
-                  تم الانتهاء من كامل متطلبات المنصة بنجاح!
-                </p>
-              ) : (
-                <p className="text-xs text-slate-500 font-medium flex items-center gap-1.5">
-                  <Lock className="w-3.5 h-3.5 text-slate-400" />
-                  يُتاح بعد الانتهاء من دراسة الموديولات
-                </p>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+      </section>
     </div>
   );
 }

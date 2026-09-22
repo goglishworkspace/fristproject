@@ -8,7 +8,7 @@ export async function updateSession(request: NextRequest) {
 
   // تخطي استدعاء الشبكة فوراً إذا كانت بيانات سوبابيز تجريبية لمنع الـ Timeout والبطء
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
-  if (!url || url.includes('placeholder')) {
+  if (!url || url.includes('placeholder') || url.includes('dummy') || url.includes('your-project-id')) {
     return supabaseResponse
   }
 

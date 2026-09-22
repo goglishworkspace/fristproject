@@ -1,5 +1,6 @@
 import { notFound, redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { isLiveSupabaseConfigured } from '@/lib/supabase/config';
 import { cookies } from 'next/headers';
 import Link from 'next/link';
 import { MODULES_DATA } from '@/data/modules';
@@ -44,28 +45,47 @@ export default async function SingleModulePage({ params }: ModulePageProps) {
     }
   }
 
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const isLive = isLiveSupabaseConfigured();
 
-  if (user) {
-    currentUserId = user.id;
+  if (isLive) {
+    try {
+      const supabase = await createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (user) {
+        currentUserId = user.id;
+      }
+    } catch {
+      // ignore
+    }
   }
 
   if (!currentUserId) {
     redirect('/login');
   }
 
-  // التحقق من تقدم الطالب لمنع فتح موديول متقدم قبل وقته
-  const { data: progress } = await supabase
-    .from('student_progress')
-    .select('*')
-    .eq('student_id', currentUserId)
-    .single();
-
   const moduleIndex = MODULES_DATA.findIndex((m) => m.id === moduleId);
-  const currentAllowedIndex = progress?.current_module_index ?? (devDemoCookie ? moduleIndex : 0);
+  let currentAllowedIndex = devDemoCookie ? moduleIndex : 0;
+
+  if (isLive) {
+    try {
+      const supabase = await createClient();
+      // التحقق من تقدم الطالب لمنع فتح موديول متقدم قبل وقته
+      const { data: progress } = await supabase
+        .from('student_progress')
+        .select('*')
+        .eq('student_id', currentUserId)
+        .single();
+
+      if (progress?.current_module_index !== undefined) {
+        currentAllowedIndex = progress.current_module_index;
+      }
+    } catch {
+      // ignore
+    }
+  }
 
   if (moduleIndex > currentAllowedIndex) {
     redirect('/modules');

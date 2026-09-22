@@ -1,68 +1,65 @@
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Library, BookOpen, ExternalLink, Download, FileText } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { getLibraryVideos } from '@/lib/actions/library.actions';
+import { VideoGallery } from '@/components/library/video-gallery';
+import { Video, Film, Sparkles, BookOpen, Play } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
-export default function EnrichmentLibraryPage() {
-  const resources = [
-    {
-      title: 'دليل المفاهيم البيئية والتنوع الحيوي',
-      type: 'كتاب إرشادي (PDF)',
-      description: 'مرجع شامل يحتوي على تفصيل المصطلحات البيئية الأساسية والتصنيفات الحيوية.',
-      size: '3.4 MB',
-    },
-    {
-      title: 'أطلس النظم البيئية والمحميات الطبيعية',
-      type: 'كتيب إثرائي مصور',
-      description: 'صور وخرائط توضيحية لأهم النظم البيئية وتوزعها الجغرافي ودورات الطاقة فيها.',
-      size: '5.1 MB',
-    },
-    {
-      title: 'تقرير التنمية المستدامة والاقتصاد الدائري',
-      type: 'دراسة مرجعية',
-      description: 'مؤشرات التنمية المستدامة واستراتيجيات تدوير الموارد وتقليل الانبعاثات الكربونية.',
-      size: '2.8 MB',
-    },
-  ];
+function YoutubeIcon({ className = "w-4 h-4" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+    </svg>
+  );
+}
+
+export const dynamic = 'force-dynamic';
+
+export default async function EnrichmentLibraryPage() {
+  const videos = await getLibraryVideos();
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 text-right">
-      <div className="border-b border-slate-200 pb-4">
-        <h1 className="text-2xl md:text-3xl font-black text-slate-900 flex items-center gap-3">
-          <Library className="w-8 h-8 text-emerald-600" />
-          <span>المكتبة الإثرائية والمراجع</span>
-        </h1>
-        <p className="text-sm text-slate-500 mt-1">
-          موارد إضافية ومراجع علمية لتعميق الفهم وتوسيع المدارك المعرفية حول موضوعات البرنامج
-        </p>
-      </div>
+    <div className="space-y-8 text-right max-w-6xl mx-auto">
+      {/* البانر الملكي للمكتبة المرئية الإثرائية */}
+      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-asu-navy-dark via-asu-navy to-[#1a285d] text-white p-6 sm:p-8 md:p-10 shadow-xl border border-asu-gold/20">
+        <div className="absolute top-0 left-0 w-72 h-72 bg-asu-gold/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 right-0 w-80 h-80 bg-red-600/10 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {resources.map((item, index) => (
-          <Card key={index} className="border-slate-200 bg-white shadow-xs flex flex-col justify-between">
-            <CardHeader className="pb-3">
-              <div className="w-10 h-10 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center mb-2">
-                <FileText className="w-5 h-5" />
-              </div>
-              <span className="text-[11px] font-bold text-teal-600">{item.type}</span>
-              <CardTitle className="text-base font-bold text-slate-900 leading-snug">
-                {item.title}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-xs text-slate-600 leading-relaxed">
-                {item.description}
-              </p>
-              <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
-                <span className="text-[10px] text-slate-400 font-mono">{item.size}</span>
-                <Button variant="outline" size="sm" className="gap-1.5 text-xs py-1 h-7">
-                  <Download className="w-3.5 h-3.5" />
-                  <span>تحميل المرجع</span>
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div className="space-y-3 max-w-2xl">
+            <div className="flex items-center gap-2">
+              <Badge className="bg-asu-gold/20 text-asu-gold-light border border-asu-gold/40 text-xs px-3 py-1 font-bold">
+                <Sparkles className="w-3.5 h-3.5 ml-1.5 inline" />
+                المكتبة الرقمية الإثرائية
+              </Badge>
+              <Badge className="bg-red-600/20 text-red-200 border border-red-500/30 text-xs px-2.5 py-0.5">
+                <YoutubeIcon className="w-3.5 h-3.5 ml-1 inline text-red-400" />
+                فيديوهات يوتيوب تفاعلية
+              </Badge>
+            </div>
+
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-white leading-tight">
+              المكتبة المرئية لتنمية <span className="text-asu-gold-light">الوعي بقضايا البيئة</span>
+            </h1>
+
+            <p className="text-slate-200 text-xs sm:text-sm md:text-base leading-relaxed font-normal">
+              مجموعة منتقاة بعناية من أفضل الفيديوهات والمحاضرات العلمية الموثوقة حول النظم البيئية،
+              التغير المناخي، الاستدامة، وحماية الموارد الطبيعية لجامعة عين شمس.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3 bg-white/10 backdrop-blur-md px-5 py-4 rounded-2xl border border-white/20 shrink-0 self-stretch sm:self-auto justify-center">
+            <div className="w-12 h-12 rounded-xl bg-asu-gold text-slate-900 flex items-center justify-center font-black text-lg shadow-md">
+              {videos.length}
+            </div>
+            <div className="text-right">
+              <span className="block text-xs font-bold text-white">فيديو تعليمي معتمد</span>
+              <span className="block text-[11px] text-slate-300">متاح للمشاهدة المباشرة</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* معرض الفيديوهات التفاعلي */}
+      <VideoGallery videos={videos} />
     </div>
   );
 }

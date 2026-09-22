@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
+import { isLiveSupabaseConfigured } from '@/lib/supabase/config';
 import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 import Link from 'next/link';
@@ -23,26 +24,36 @@ export default async function ModulesListPage() {
     }
   }
 
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  let progress: any = null;
 
-  if (user) {
-    currentUserId = user.id;
+  if (isLiveSupabaseConfigured()) {
+    try {
+      const supabase = await createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (user) {
+        currentUserId = user.id;
+      }
+
+      if (currentUserId) {
+        const { data } = await supabase
+          .from('student_progress')
+          .select('*')
+          .eq('student_id', currentUserId)
+          .single();
+        progress = data;
+      }
+    } catch {
+      // ignore
+    }
   }
 
   // 1. حماية الدخول: للمستخدمين المسجلين فقط
   if (!currentUserId) {
     redirect('/login');
   }
-
-  // 2. التحقق الصارم: هل أتم الطالب الاختبار القبلي؟
-  const { data: progress } = await supabase
-    .from('student_progress')
-    .select('*')
-    .eq('student_id', currentUserId)
-    .single();
 
   // في وضع المعاينة السريعة (Demo) إذا لم يكن هناك سجل نسمح بالمرور
   const isPreCompleted = progress?.pre_test_completed ?? (devDemoCookie ? true : false);

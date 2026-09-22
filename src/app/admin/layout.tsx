@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
+import { isLiveSupabaseConfigured } from '@/lib/supabase/config';
 import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 import type { UserProfile } from '@/lib/types/database';
@@ -20,27 +21,33 @@ export default async function AdminLayout({
     }
   }
 
-  if (!userProfile) {
-    const supabase = await createClient();
-    const {
-      data: { user: authUser },
-    } = await supabase.auth.getUser();
+  if (!userProfile && isLiveSupabaseConfigured()) {
+    try {
+      const supabase = await createClient();
+      const {
+        data: { user: authUser },
+      } = await supabase.auth.getUser();
 
-    if (!authUser) {
-      redirect('/login');
+      if (authUser) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', authUser.id)
+          .single();
+
+        userProfile = profile;
+      }
+    } catch {
+      // ignore
     }
+  }
 
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', authUser.id)
-      .single();
-
-    userProfile = profile;
+  if (!userProfile) {
+    redirect('/login');
   }
 
   // جدار حماية صارم: خاص فقط بحسابات المسؤول (Admin Guard)
-  if (!userProfile || userProfile.role !== 'admin') {
+  if (userProfile.role !== 'admin') {
     redirect('/');
   }
 

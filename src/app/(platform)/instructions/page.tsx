@@ -30,8 +30,8 @@ export default function InstructionsPage() {
   return (
     <div className="max-w-4xl mx-auto space-y-8 text-right">
       <div className="border-b border-slate-200 pb-4">
-        <h1 className="text-2xl md:text-3xl font-black text-slate-900 flex items-center gap-3">
-          <FileText className="w-8 h-8 text-emerald-600" />
+        <h1 className="text-2xl md:text-3xl font-black text-asu-navy flex items-center gap-3">
+          <FileText className="w-8 h-8 text-asu-navy" />
           <span>تعليمات وإرشادات الاستخدام</span>
         </h1>
         <p className="text-sm text-slate-500 mt-1">
@@ -41,9 +41,9 @@ export default function InstructionsPage() {
 
       <div className="space-y-4">
         {instructions.map((item) => (
-          <Card key={item.step} className="border-slate-200 bg-white shadow-xs">
-            <CardContent className="p-5 flex items-start gap-4">
-              <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white font-bold flex items-center justify-center shrink-0 text-base shadow-sm">
+          <Card key={item.step} className="border-slate-200/80 bg-white shadow-xs hover:border-asu-navy/30 transition-colors">
+            <CardContent className="p-4 sm:p-5 flex items-start gap-4">
+              <div className="w-10 h-10 rounded-xl bg-asu-navy text-white font-bold flex items-center justify-center shrink-0 text-base shadow-sm">
                 0{item.step}
               </div>
               <div className="space-y-1">

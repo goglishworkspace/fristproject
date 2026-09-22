@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
+import { isLiveSupabaseConfigured } from '@/lib/supabase/config';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -11,7 +12,10 @@ import {
   ArrowRight,
   Download,
   GraduationCap,
+  Film,
 } from 'lucide-react';
+import { getLibraryVideos } from '@/lib/actions/library.actions';
+import { LibraryManager } from '@/components/admin/library-manager';
 
 interface MockStudentRow {
   id: string;
@@ -24,17 +28,27 @@ interface MockStudentRow {
 }
 
 export default async function AdminDashboardPage() {
-  const supabase = await createClient();
+  let realProfiles: any[] | null = null;
+  let submissions: any[] | null = null;
 
-  // جلب الطلاب ونتائجهم الحقيقية من قاعدة البيانات
-  const { data: realProfiles } = await supabase
-    .from('profiles')
-    .select('id, full_name, student_id, role')
-    .eq('role', 'student');
+  // جلب الطلاب ونتائجهم الحقيقية من قاعدة البيانات فقط إذا كان Supabase متصلاً
+  if (isLiveSupabaseConfigured()) {
+    try {
+      const supabase = await createClient();
+      const { data: p } = await supabase
+        .from('profiles')
+        .select('id, full_name, student_id, role')
+        .eq('role', 'student');
+      realProfiles = p;
 
-  const { data: submissions } = await supabase
-    .from('exam_submissions')
-    .select('student_id, exam_type, score, total_questions');
+      const { data: s } = await supabase
+        .from('exam_submissions')
+        .select('student_id, exam_type, score, total_questions');
+      submissions = s;
+    } catch {
+      // ignore
+    }
+  }
 
   // بيانات توضيحية أثناء التطوير لعرض الداشبورد والتحليلات فوراً
   const studentRows: MockStudentRow[] = (realProfiles && realProfiles.length > 0)
@@ -93,6 +107,8 @@ export default async function AdminDashboardPage() {
   const totalStudents = studentRows.length;
   const completedCount = studentRows.filter((s) => s.status === 'completed').length;
   const inProgressCount = studentRows.filter((s) => s.status === 'in_progress').length;
+
+  const videos = await getLibraryVideos();
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl space-y-8 text-right">
@@ -263,6 +279,24 @@ export default async function AdminDashboardPage() {
           </table>
         </div>
       </Card>
+
+      {/* قسم إدارة المكتبة الإثرائية وفيديوهات يوتيوب */}
+      <div className="pt-6 border-t border-slate-200/80 space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div className="flex items-center gap-2 text-asu-navy">
+            <Film className="w-6 h-6 text-asu-gold-dark" />
+            <h2 className="text-xl font-black">إدارة المكتبة المرئية الإثرائية (YouTube)</h2>
+          </div>
+          <Link href="/library" target="_blank">
+            <Button variant="outline" size="sm" className="gap-1.5 text-xs">
+              <span>معاينة صفحة المكتبة كما يراها الطالب</span>
+              <ArrowRight className="w-3.5 h-3.5 rotate-180" />
+            </Button>
+          </Link>
+        </div>
+
+        <LibraryManager initialVideos={videos} />
+      </div>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 'use server';
 
 import { createClient } from '@/lib/supabase/server';
+import { isLiveSupabaseConfigured } from '@/lib/supabase/config';
 import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 
@@ -20,31 +21,57 @@ export async function loginAction(
   }
 
   // 1. فحص الحسابات التجريبية فوراً بـ 0ms (بدون انتظار شبكة)
-  if (identifier.toLowerCase() === 'admin' && password === 'admin123') {
+  // حساب المشرف والأدمن
+  if (
+    (identifier.toLowerCase() === 'admin' || identifier.toLowerCase() === 'admin@asu.edu.eg') &&
+    password === 'admin123'
+  ) {
     const cookieStore = await cookies();
-    cookieStore.set('dev_demo_user', JSON.stringify({
-      id: 'admin-demo-id',
-      student_id: 'admin',
-      full_name: 'د. المشرف العام',
-      role: 'admin',
-    }), { path: '/', maxAge: 86400 });
+    cookieStore.set(
+      'dev_demo_user',
+      JSON.stringify({
+        id: 'admin-demo-id',
+        student_id: 'admin',
+        full_name: 'د. المشرف الأكاديمي (جامعة عين شمس)',
+        role: 'admin',
+      }),
+      { path: '/', maxAge: 86400 }
+    );
     redirect('/admin/dashboard');
   }
 
-  if ((identifier === 'student' || identifier === '2026101') && password === '123456') {
+  // حسابات الطلاب التجريبية للاختبار والمعاينة
+  const demoStudents: Record<string, { id: string; student_id: string; full_name: string }> = {
+    '2026101': { id: 's1', student_id: '2026101', full_name: 'أحمد محمود علي (طالب 1)' },
+    'student1': { id: 's1', student_id: '2026101', full_name: 'أحمد محمود علي (طالب 1)' },
+    'student': { id: 's1', student_id: '2026101', full_name: 'أحمد محمود علي (طالب 1)' },
+    '2026102': { id: 's2', student_id: '2026102', full_name: 'سارة عبد الرحمن يوسف (طالبة 2)' },
+    'student2': { id: 's2', student_id: '2026102', full_name: 'سارة عبد الرحمن يوسف (طالبة 2)' },
+    '2026103': { id: 's3', student_id: '2026103', full_name: 'خالد عمر الشريف (طالب 3)' },
+    'student3': { id: 's3', student_id: '2026103', full_name: 'خالد عمر الشريف (طالب 3)' },
+    '2026104': { id: 's4', student_id: '2026104', full_name: 'نور الدين مصطفى (طالب 4)' },
+    'student4': { id: 's4', student_id: '2026104', full_name: 'نور الدين مصطفى (طالب 4)' },
+  };
+
+  const matchedStudent = demoStudents[identifier.toLowerCase()];
+  if (matchedStudent && password === '123456') {
     const cookieStore = await cookies();
-    cookieStore.set('dev_demo_user', JSON.stringify({
-      id: 'student-demo-id',
-      student_id: '2026101',
-      full_name: 'أحمد محمد علي',
-      role: 'student',
-    }), { path: '/', maxAge: 86400 });
+    cookieStore.set(
+      'dev_demo_user',
+      JSON.stringify({
+        ...matchedStudent,
+        role: 'student',
+      }),
+      { path: '/', maxAge: 86400 }
+    );
     redirect('/');
   }
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-  if (!supabaseUrl || supabaseUrl.includes('placeholder')) {
-    return { error: 'بيانات الدخول غير صحيحة، جرب كود الطالب: 2026101 وباسوورد: 123456' };
+  if (!isLiveSupabaseConfigured()) {
+    return {
+      error:
+        'بيانات الدخول غير صحيحة. للإدارة: admin / admin123 | للطلاب: 2026101 أو student1 / 123456',
+    };
   }
 
   // 2. التحقق الفعلي من Supabase الحقيقي
@@ -79,10 +106,13 @@ export async function logoutAction(): Promise<void> {
   const cookieStore = await cookies();
   cookieStore.delete('dev_demo_user');
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-  if (supabaseUrl && !supabaseUrl.includes('placeholder')) {
-    const supabase = await createClient();
-    await supabase.auth.signOut();
+  if (isLiveSupabaseConfigured()) {
+    try {
+      const supabase = await createClient();
+      await supabase.auth.signOut();
+    } catch {
+      // ignore
+    }
   }
   
   redirect('/login');

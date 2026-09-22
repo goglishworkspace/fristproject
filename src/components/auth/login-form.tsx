@@ -11,16 +11,24 @@ export function LoginForm() {
   const [state, formAction, isPending] = useActionState(loginAction, null);
 
   return (
-    <Card className="w-full max-w-md shadow-xl border-slate-200/80 bg-white">
+    <Card className="w-full max-w-md shadow-2xl border-slate-200/80 bg-white">
       <CardHeader className="text-center space-y-2 pb-6">
-        <div className="mx-auto w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-1 shadow-inner">
-          <GraduationCap className="w-8 h-8" />
+        <div className="mx-auto w-16 h-16 rounded-2xl bg-white border border-asu-gold/30 p-2 flex items-center justify-center mb-1 shadow-md">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/asu-logo.png"
+            alt="شعار جامعة عين شمس"
+            className="w-full h-full object-contain"
+          />
         </div>
-        <CardTitle className="text-2xl font-bold text-slate-800">
-          تسجيل الدخول للمنصة
-        </CardTitle>
-        <CardDescription className="text-slate-500 text-sm">
-          أدخل اسم المستخدم / كود الطالب وكلمة المرور
+        <div className="space-y-0.5">
+          <p className="text-xs font-bold text-asu-gold-dark">جامعة عين شمس • كلية التربية</p>
+          <CardTitle className="text-2xl font-black text-asu-navy">
+            تسجيل الدخول للمنصة
+          </CardTitle>
+        </div>
+        <CardDescription className="text-slate-500 text-xs sm:text-sm">
+          أدخل اسم المستخدم / كود الطالب وكلمة المرور للمتابعة
         </CardDescription>
       </CardHeader>
 
@@ -75,7 +83,7 @@ export function LoginForm() {
           </Button>
 
           <div className="pt-4 border-t border-slate-100 flex items-center justify-center gap-1.5 text-xs text-slate-400">
-            <ShieldCheck className="w-4 h-4 text-emerald-600" />
+            <ShieldCheck className="w-4 h-4 text-asu-navy" />
             <span>تسجيل دخول آمن ومحمي لمنسوبي الكلية والطلاب</span>
           </div>
         </form>
