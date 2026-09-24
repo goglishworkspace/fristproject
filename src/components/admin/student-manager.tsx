@@ -293,10 +293,12 @@ export function StudentManager({ initialStudents, allQuestions = [], modules = [
       'الاسم الكامل (Full Name)',
       'رقم الهاتف (Phone)',
       'حالة التسجيل (Profile Status)',
-      'الحالة (Account Status)',
-      'الامتحان القبلي',
-      'الامتحان البعدي',
-      'الموديولات',
+      'حالة الحساب (Account Status)',
+      'الاختبار القبلي (Pre-Test)',
+      ...modules.map((m) => `اختبار ${m.title}`),
+      'الاختبار البعدي (Post-Test)',
+      'تقدم الموديولات (Module Progress)',
+      'تاريخ الإنشاء (Created At)',
     ];
 
     const rows = filteredStudents.map((s) => [
@@ -307,8 +309,13 @@ export function StudentManager({ initialStudents, allQuestions = [], modules = [
       `"${s.isProfileCompleted ? 'مكتمل' : 'في انتظار أول دخول'}"`,
       `"${s.isBanned ? 'محظور' : 'نشط'}"`,
       `"${s.preScore !== null ? s.preScore : '---'}"`,
+      ...modules.map((m) => {
+        const quiz = s.moduleQuizScores?.[m.id];
+        return `"${quiz ? `${quiz.score}/${quiz.total}` : '---'}"`;
+      }),
       `"${s.postScore !== null ? s.postScore : '---'}"`,
       `"${s.moduleProgress}"`,
+      `"${s.createdAt ? new Date(s.createdAt).toLocaleDateString('ar-EG') : '---'}"`,
     ]);
 
     const csvContent =
@@ -317,7 +324,7 @@ export function StudentManager({ initialStudents, allQuestions = [], modules = [
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', `كشف_حسابات_الطلاب_جامعة_عين_شمس_${new Date().toISOString().slice(0, 10)}.csv`);
+    link.setAttribute('download', `نتائج_وبحث_طلاب_جامعة_عين_شمس_${new Date().toISOString().slice(0, 10)}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

@@ -32,11 +32,44 @@ export function ModuleActivityBox({
 }: ModuleActivityBoxProps) {
   const [answerText, setAnswerText] = useState(existingSubmission?.answerText || '');
   const [fileUrl, setFileUrl] = useState(existingSubmission?.fileUrl || '');
+  const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [statusMessage, setStatusMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(
     null
   );
   const [isEditing, setIsEditing] = useState(!existingSubmission);
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    setStatusMessage(null);
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success && data.fileUrl) {
+        setFileUrl(data.fileUrl);
+        setUploadedFileName(data.fileName || file.name);
+        setStatusMessage({ type: 'success', text: `تم رفع الملف (${file.name}) بنجاح!` });
+      } else {
+        setStatusMessage({ type: 'error', text: data.error || 'فشل رفع الملف، يرجى المحاولة مرة ثانية' });
+      }
+    } catch {
+      setStatusMessage({ type: 'error', text: 'حدث خطأ في الاتصال أثناء رفع الملف' });
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -142,22 +175,59 @@ export function ModuleActivityBox({
               />
             </div>
 
-            <div className="space-y-1.5">
-              <label className="block text-xs font-bold text-slate-700 flex items-center gap-1.5">
-                <LinkIcon className="w-3.5 h-3.5 text-asu-gold-dark" />
-                <span>رابط إرفاق صورة أو ملف العمل (اختياري)</span>
-              </label>
-              <input
-                type="url"
-                value={fileUrl}
-                onChange={(e) => setFileUrl(e.target.value)}
-                placeholder="مثال: رابط صورة من Cloudinary أو ملف من Google Drive أو موقع خارجي..."
-                disabled={isSubmitting}
-                className="w-full p-3 rounded-xl border border-slate-300 focus:border-asu-gold focus:ring-2 focus:ring-asu-gold/20 text-xs sm:text-sm text-slate-900 bg-white placeholder:text-slate-400 font-mono transition-all outline-hidden"
-              />
-              <span className="text-[10px] text-slate-400 block">
-                يمكنك رفع الصورة على Cloudinary أو Google Drive ووضع الرابط هنا لمشاركته مع المشرف الأكاديمي.
-              </span>
+            {/* خيارات إرفاق الملف: رفع مباشر من الجهاز أو وضع رابط */}
+            <div className="space-y-3 p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
+              <div className="space-y-1.5">
+                <label className="block text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                  <FileUp className="w-4 h-4 text-asu-navy" />
+                  <span>رفع صورة أو مستند مباشرة من جهازك (اختياري)</span>
+                </label>
+                <div className="flex items-center gap-3">
+                  <label className={`cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 border-dashed border-asu-navy/30 bg-white hover:bg-slate-100 text-xs font-bold text-asu-navy transition-all ${
+                    isUploading ? 'opacity-60 pointer-events-none' : ''
+                  }`}>
+                    <FileUp className="w-4 h-4 text-asu-gold-dark" />
+                    <span>{isUploading ? 'جاري رفع الملف...' : 'اختر ملف من الهاتف أو الكمبيوتر'}</span>
+                    <input
+                      type="file"
+                      accept=".png,.jpg,.jpeg,.webp,.pdf,.docx"
+                      onChange={handleFileUpload}
+                      disabled={isUploading || isSubmitting}
+                      className="hidden"
+                    />
+                  </label>
+                  {uploadedFileName && (
+                    <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-lg border border-emerald-200 flex items-center gap-1">
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      <span>{uploadedFileName}</span>
+                    </span>
+                  )}
+                </div>
+                <span className="text-[10px] text-slate-500 block">
+                  الأنواع المدعومة: صور (PNG, JPG, WEBP) ومستندات (PDF, Word) بحجم أقصى 10 ميجابايت.
+                </span>
+              </div>
+
+              <div className="relative flex py-1 items-center">
+                <div className="flex-grow border-t border-slate-200"></div>
+                <span className="flex-shrink mx-3 text-[11px] font-bold text-slate-400">أو يمكنك وضع رابط مباشر</span>
+                <div className="flex-grow border-t border-slate-200"></div>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="block text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                  <LinkIcon className="w-3.5 h-3.5 text-asu-gold-dark" />
+                  <span>رابط خارجي للملف (Google Drive أو موقع خارجي)</span>
+                </label>
+                <input
+                  type="url"
+                  value={fileUrl}
+                  onChange={(e) => setFileUrl(e.target.value)}
+                  placeholder="https://..."
+                  disabled={isSubmitting || isUploading}
+                  className="w-full p-2.5 rounded-xl border border-slate-300 focus:border-asu-gold focus:ring-2 focus:ring-asu-gold/20 text-xs sm:text-sm text-slate-900 bg-white placeholder:text-slate-400 font-mono transition-all outline-hidden"
+                />
+              </div>
             </div>
 
             <div className="pt-2 flex items-center justify-end gap-2.5">

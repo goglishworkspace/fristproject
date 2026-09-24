@@ -27,7 +27,9 @@ export async function loginAction(
     cleanId === 'admin.env@asu.edu.eg' ||
     cleanId === 'admin';
 
-  if (isAdminUser && password === 'Asu@Edu2026#Admin') {
+  const expectedAdminPassword = process.env.ADMIN_PASSWORD || 'Asu@Edu2026#Admin';
+
+  if (isAdminUser && password === expectedAdminPassword) {
     const cookieStore = await cookies();
     cookieStore.set(
       'dev_demo_user',
@@ -37,7 +39,13 @@ export async function loginAction(
         full_name: 'د. المشرف الأكاديمي (جامعة عين شمس)',
         role: 'admin',
       }),
-      { path: '/', maxAge: 86400 }
+      {
+        path: '/',
+        maxAge: 86400 * 7,
+        httpOnly: true,
+        sameSite: 'lax',
+        secure: process.env.NODE_ENV === 'production',
+      }
     );
     redirect('/admin/dashboard');
   }

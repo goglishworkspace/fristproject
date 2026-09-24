@@ -1,115 +1,77 @@
 -- ==============================================================================
 -- DATABASE SCHEMA FOR FACULTY EDUCATIONAL PLATFORM (SUPABASE / POSTGRESQL)
+-- كلية التربية • جامعة عين شمس • منصة بيئتي التعليمية التفاعلية
 -- ==============================================================================
 
--- 1. PROFILES & ROLES
--- Extending Supabase auth.users with custom roles and metadata
-create type user_role as enum ('admin', 'student');
-
-create table if not exists public.profiles (
-  id uuid references auth.users on delete cascade primary key,
-  student_id text unique, -- رقم الطالب / كود الدخول
-  full_name text not null,
-  role user_role default 'student' not null,
-  created_at timestamp with time zone default timezone('utc'::text, now()) not null
-);
-
--- Enable RLS
-alter table public.profiles enable row level security;
-
--- Policies for profiles
-create policy "Allow admins full access to profiles"
-  on public.profiles for all
-  using (
-    exists (
-      select 1 from public.profiles
-      where id = auth.uid() and role = 'admin'
-    )
-  );
-
-create policy "Users can view their own profile"
-  on public.profiles for select
-  using (auth.uid() = id);
-
--- 2. EXAM QUESTIONS (PRE & POST ASSESSMENTS)
-create type exam_type as enum ('pre_test', 'post_test');
-
-create table if not exists public.questions (
-  id uuid default gen_random_uuid() primary key,
-  exam_type exam_type not null,
-  question_text text not null,
-  options jsonb not null, -- Array of strings e.g. ["Option 1", "Option 2", "Option 3", "Option 4"]
-  correct_option_index smallint not null, -- Hidden from students in API queries
-  order_index int default 0 not null,
-  created_at timestamp with time zone default timezone('utc'::text, now()) not null
-);
-
-alter table public.questions enable row level security;
-
-create policy "Admins can manage all questions"
-  on public.questions for all
-  using (
-    exists (
-      select 1 from public.profiles
-      where id = auth.uid() and role = 'admin'
-    )
-  );
-
-create policy "Authenticated users can read question texts and options"
-  on public.questions for select
-  using (auth.role() = 'authenticated');
-
--- 3. EXAM SUBMISSIONS & SCORES
-create table if not exists public.exam_submissions (
-  id uuid default gen_random_uuid() primary key,
-  student_id uuid references public.profiles(id) on delete cascade not null,
-  exam_type exam_type not null,
-  score int not null,
-  total_questions int not null,
-  answers jsonb not null, -- Stores submitted answers: { question_id: selected_index }
-  completed_at timestamp with time zone default timezone('utc'::text, now()) not null,
-  unique (student_id, exam_type)
-);
-
-alter table public.exam_submissions enable row level security;
-
-create policy "Admins can view all exam submissions"
-  on public.exam_submissions for select
-  using (
-    exists (
-      select 1 from public.profiles
-      where id = auth.uid() and role = 'admin'
-    )
-  );
-
-create policy "Students can view their own submissions"
-  on public.exam_submissions for select
-  using (auth.uid() = student_id);
-
-create policy "Students can insert their own submission"
-  on public.exam_submissions for insert
-  with check (auth.uid() = student_id);
-
--- 4. STUDENT PROGRESS TRACKING (Pre-test -> Modules -> Post-test)
-create table if not exists public.student_progress (
-  student_id uuid references public.profiles(id) on delete cascade primary key,
-  pre_test_completed boolean default false not null,
-  current_module_index int default 0 not null,
-  post_test_completed boolean default false not null,
+-- 1. جدول حسابات الطلاب والإدارة (Accounts & Credentials)
+create table if not exists public.accounts (
+  id text primary key,
+  username text unique not null,
+  password text not null,
+  full_name text default '' not null,
+  phone text default '' not null,
+  role text default 'student' not null,
+  is_profile_completed boolean default false not null,
+  is_banned boolean default false not null,
+  pre_score int,
+  post_score int,
+  pre_test_answers jsonb default '{}'::jsonb,
+  post_test_answers jsonb default '{}'::jsonb,
+  module_quiz_scores jsonb default '{}'::jsonb,
+  activity_submissions jsonb default '{}'::jsonb,
+  module_progress text default '0/2' not null,
+  status text default 'not_started' not null,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
-alter table public.student_progress enable row level security;
+-- 2. جدول بنك الأسئلة (Question Bank)
+create table if not exists public.questions (
+  id text primary key,
+  exam_type text not null, -- pre_test, post_test, module_module-1, etc.
+  question_type text default 'multiple_choice' not null, -- multiple_choice, true_false
+  question_text text not null,
+  options jsonb not null, -- ["أ", "ب", "ج", "د"] أو ["صح", "خطأ"]
+  correct_option_index smallint not null,
+  order_index int default 1 not null,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
 
-create policy "Admins can view all student progress"
-  on public.student_progress for all
-  using (
-    exists (
-      select 1 from public.profiles
-      where id = auth.uid() and role = 'admin'
-    )
-  );
+-- 3. جدول الموديولات والوحدات التعليمية (Modules)
+create table if not exists public.modules (
+  id text primary key,
+  "order" int default 1 not null,
+  title text not null,
+  subtitle text default '' not null,
+  duration_minutes int default 30 not null,
+  images jsonb default '[]'::jsonb,
+  slides jsonb default '[]'::jsonb,
+  scaffolding jsonb,
+  sections jsonb default '[]'::jsonb,
+  activity jsonb,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  updated_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
 
-create policy "Students can view and update their own progress"
-  on public.student_progress for select
-  using (auth.uid() = student_id);
+-- 4. جدول المكتبة الإثرائية (Library Videos)
+create table if not exists public.library_videos (
+  id text primary key,
+  title text not null,
+  description text default '' not null,
+  youtube_url text not null,
+  youtube_id text not null,
+  category text default '' not null,
+  duration text default '' not null,
+  added_at text not null
+);
+
+-- تمكين الأمان RLS (Row Level Security)
+alter table public.accounts enable row level security;
+alter table public.questions enable row level security;
+alter table public.modules enable row level security;
+alter table public.library_videos enable row level security;
+
+-- السماح بالوصول الكامل عبر مفتاح الخدمة Service Role، والسماح بالقراءة للمستخدمين
+create policy "Allow public read access to modules" on public.modules for select using (true);
+create policy "Allow public read access to library" on public.library_videos for select using (true);
+create policy "Allow public read access to questions" on public.questions for select using (true);
