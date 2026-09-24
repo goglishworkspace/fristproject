@@ -182,10 +182,46 @@ export async function uploadActivityFileAction(
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
+    const safeFileName = `act-${Date.now()}-${Math.random().toString(36).substring(2, 8)}${ext}`;
+
+    // 1. إذا كان Supabase متصلاً وحقيقياً، نرفع مباشرة إلى Supabase Storage السحابي (دائم على Vercel)
+    if (isLiveSupabaseConfigured()) {
+      try {
+        const supabase = await createClient();
+        const bucketName = 'activity-files';
+
+        // محاولة رفع الملف للـ bucket
+        const { error: uploadError } = await supabase.storage
+          .from(bucketName)
+          .upload(safeFileName, buffer, {
+            contentType: 'application/pdf',
+            upsert: true,
+          });
+
+        if (!uploadError) {
+          const { data: publicUrlData } = supabase.storage
+            .from(bucketName)
+            .getPublicUrl(safeFileName);
+
+          if (publicUrlData?.publicUrl) {
+            return {
+              success: true,
+              fileUrl: publicUrlData.publicUrl,
+              fileName: originalName,
+            };
+          }
+        } else {
+          console.warn('Supabase storage upload error, falling back to local:', uploadError.message);
+        }
+      } catch (storageErr) {
+        console.warn('Supabase storage exception, falling back to local:', storageErr);
+      }
+    }
+
+    // 2. البديل المحلي (Local Fallback) في حالة التطوير أو عدم اتصال Storage بعد
     const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
     await fs.mkdir(uploadsDir, { recursive: true });
 
-    const safeFileName = `act-${Date.now()}-${Math.random().toString(36).substring(2, 8)}${ext}`;
     const filePath = path.join(uploadsDir, safeFileName);
     await fs.writeFile(filePath, buffer);
 

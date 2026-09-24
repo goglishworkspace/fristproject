@@ -75,3 +75,20 @@ alter table public.library_videos enable row level security;
 create policy "Allow public read access to modules" on public.modules for select using (true);
 create policy "Allow public read access to library" on public.library_videos for select using (true);
 create policy "Allow public read access to questions" on public.questions for select using (true);
+
+-- ==============================================================================
+-- 5. إعداد مستودع التخزين السحابي لملفات الأنشطة (Supabase Storage Bucket: activity-files)
+-- ==============================================================================
+insert into storage.buckets (id, name, public)
+values ('activity-files', 'activity-files', true)
+on conflict (id) do nothing;
+
+-- سياسات الأمان لـ Storage
+create policy "Allow public read on activity files"
+on storage.objects for select
+using (bucket_id = 'activity-files');
+
+create policy "Allow authenticated & anon uploads to activity files"
+on storage.objects for insert
+with check (bucket_id = 'activity-files');
+
