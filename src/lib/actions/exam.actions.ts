@@ -75,8 +75,14 @@ export async function createExamQuestionAction(data: {
 
     const questionType: QuestionType = data.question_type || (cleanOptions.length === 2 ? 'true_false' : 'multiple_choice');
 
+    const prefix = data.exam_type.startsWith('module_')
+      ? data.exam_type.replace('module_', 'mod-')
+      : data.exam_type === 'pre_test'
+      ? 'pre'
+      : 'post';
+
     const newQuestion: QuestionWithAnswer = {
-      id: `q-${data.exam_type === 'pre_test' ? 'pre' : 'post'}-${Date.now()}`,
+      id: `q-${prefix}-${Date.now()}`,
       exam_type: data.exam_type,
       question_type: questionType,
       question_text: cleanText,
@@ -91,6 +97,7 @@ export async function createExamQuestionAction(data: {
 
     revalidatePath('/pre-test');
     revalidatePath('/post-test');
+    revalidatePath('/modules');
     revalidatePath('/admin/dashboard');
 
     return { success: true, question: newQuestion };

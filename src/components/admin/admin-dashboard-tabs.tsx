@@ -135,7 +135,7 @@ export function AdminDashboardTabs({
         )}
 
         {activeTab === 'questions' && (
-          <QuestionBankManager initialQuestions={questions} />
+          <QuestionBankManager initialQuestions={questions} modules={modules} />
         )}
 
         {activeTab === 'library' && (

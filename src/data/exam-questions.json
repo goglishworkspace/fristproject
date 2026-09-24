@@ -152,5 +152,33 @@
     ],
     "correct_option_index": 1,
     "order_index": 6
+  },
+  {
+    "id": "q-mod-module-1-1",
+    "exam_type": "module_module-1",
+    "question_type": "multiple_choice",
+    "question_text": "ما هو المفهوم العلمي الدقيق للنظام البيئي المتوازن؟",
+    "options": [
+      "منطقة خالية تماماً من الكائنات الحية والتدخل البشري",
+      "مجتمع متكامل من الكائنات الحية يتفاعل بتوازن مع العناصر غير الحية في بيئته",
+      "تراكم مستمر للنفايات الصناعية في البحار والمحيطات",
+      "استهلاك الموارد الطبيعية دون تجديدها"
+    ],
+    "correct_option_index": 1,
+    "order_index": 1,
+    "created_at": "2026-09-24T12:00:00.000Z"
+  },
+  {
+    "id": "q-mod-module-1-2",
+    "exam_type": "module_module-1",
+    "question_type": "true_false",
+    "question_text": "يعتمد الإنسان اعتماداً كلياً على البيئة في توفير الغذاء والماء النقي والهواء الضروري للحياة واستمرارها.",
+    "options": [
+      "صح",
+      "خطأ"
+    ],
+    "correct_option_index": 0,
+    "order_index": 2,
+    "created_at": "2026-09-24T12:01:00.000Z"
   }
 ]

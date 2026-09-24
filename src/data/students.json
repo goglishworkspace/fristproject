@@ -22,12 +22,35 @@
     "phone": "0100000000",
     "isProfileCompleted": true,
     "isBanned": false,
-    "preScore": null,
-    "postScore": null,
-    "moduleProgress": "0/2",
-    "status": "not_started",
+    "preScore": 1,
+    "postScore": 2,
+    "moduleProgress": "1/1",
+    "status": "completed",
     "createdAt": "2026-09-22T15:20:50.381Z",
-    "updatedAt": "2026-09-24T11:33:33.493Z"
+    "updatedAt": "2026-09-24T12:10:55.641Z",
+    "preTestAnswers": {
+      "q-pre-1": 2,
+      "q-pre-2": 2,
+      "q-pre-3": 1,
+      "q-pre-4": 2,
+      "q-pre-5": 2,
+      "q-pre-6": 1
+    },
+    "activitySubmissions": {
+      "module-1": {
+        "answerText": "يسشيشيشيش",
+        "fileUrl": "http://localhost:3000/modules/module-1",
+        "submittedAt": "2026-09-24T12:08:15.783Z"
+      }
+    },
+    "postTestAnswers": {
+      "q-post-1": 0,
+      "q-post-2": 3,
+      "q-post-3": 2,
+      "q-post-4": 1,
+      "q-post-5": 3,
+      "q-post-6": 1
+    }
   },
   {
     "id": "std-1003",

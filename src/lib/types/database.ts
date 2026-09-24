@@ -1,6 +1,6 @@
 export type UserRole = 'admin' | 'student';
 
-export type ExamType = 'pre_test' | 'post_test';
+export type ExamType = 'pre_test' | 'post_test' | `module_${string}`;
 
 export interface UserProfile {
   id: string;
@@ -19,6 +19,13 @@ export interface StudentActivitySubmission {
   submittedAt: string;
 }
 
+export interface ModuleQuizResult {
+  score: number;
+  total: number;
+  completedAt: string;
+  answers: Record<string, number>;
+}
+
 export interface StudentAccount {
   id: string;
   username: string; // e.g. user1001
@@ -31,6 +38,7 @@ export interface StudentAccount {
   postScore: number | null;
   preTestAnswers?: Record<string, number>;
   postTestAnswers?: Record<string, number>;
+  moduleQuizScores?: Record<string, ModuleQuizResult>; // e.g. { "module-1": { score: 5, total: 5, completedAt: "..." } }
   activitySubmissions?: Record<string, StudentActivitySubmission>;
   moduleProgress: string; // '0/2', '1/2', etc.
   status: 'completed' | 'in_progress' | 'not_started';

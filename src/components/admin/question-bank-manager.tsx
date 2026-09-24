@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import type { QuestionWithAnswer, ExamType, QuestionType } from '@/lib/types/database';
+import type { QuestionWithAnswer, ExamType, QuestionType, ModuleData } from '@/lib/types/database';
 import {
   createExamQuestionAction,
   updateExamQuestionAction,
@@ -23,15 +23,17 @@ import {
   HelpCircle,
   ListOrdered,
   ToggleLeft,
+  BookOpen,
 } from 'lucide-react';
 
 interface QuestionBankManagerProps {
   initialQuestions: QuestionWithAnswer[];
+  modules?: ModuleData[];
 }
 
-export function QuestionBankManager({ initialQuestions }: QuestionBankManagerProps) {
+export function QuestionBankManager({ initialQuestions, modules = [] }: QuestionBankManagerProps) {
   const [questions, setQuestions] = useState<QuestionWithAnswer[]>(initialQuestions);
-  const [activeTab, setActiveTab] = useState<ExamType>('pre_test');
+  const [activeTab, setActiveTab] = useState<string>('pre_test');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState<QuestionWithAnswer | null>(null);
   const [deletingQuestion, setDeletingQuestion] = useState<QuestionWithAnswer | null>(null);
@@ -59,14 +61,16 @@ export function QuestionBankManager({ initialQuestions }: QuestionBankManagerPro
     .filter((q) => q.exam_type === 'post_test')
     .sort((a, b) => a.order_index - b.order_index);
 
-  const currentList = activeTab === 'pre_test' ? preQuestions : postQuestions;
+  const currentList = questions
+    .filter((q) => q.exam_type === activeTab)
+    .sort((a, b) => a.order_index - b.order_index);
 
   // فتح نافذة الإضافة
   const openAddModal = () => {
-    const list = activeTab === 'pre_test' ? preQuestions : postQuestions;
+    const list = currentList;
     const nextOrder = list.length > 0 ? Math.max(...list.map((q) => q.order_index)) + 1 : 1;
     setEditingQuestion(null);
-    setFormExamType(activeTab);
+    setFormExamType(activeTab as ExamType);
     setFormQuestionType('multiple_choice');
     setFormOrderIndex(nextOrder);
     setFormQuestionText('');
@@ -244,43 +248,72 @@ export function QuestionBankManager({ initialQuestions }: QuestionBankManagerPro
         </Button>
       </div>
 
-      {/* التبويبات الفاخرة بين القبلي والبعدي */}
-      <div className="flex border-b border-slate-200 bg-white rounded-2xl p-1.5 shadow-2xs gap-2">
+      {/* التبويبات الفاخرة بين القبلي والبعدي واختبارات الموديولات */}
+      <div className="flex flex-wrap border-b border-slate-200 bg-white rounded-2xl p-1.5 shadow-2xs gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar">
         <button
           type="button"
           onClick={() => setActiveTab('pre_test')}
-          className={`flex-1 py-2.5 px-4 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 cursor-pointer ${
+          className={`py-2.5 px-3 sm:px-4 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 cursor-pointer ${
             activeTab === 'pre_test'
               ? 'bg-asu-navy text-white shadow-xs'
               : 'text-slate-600 hover:bg-slate-100'
           }`}
         >
-          <ListOrdered className="w-4 h-4" />
-          <span>أسئلة الاختبار القبلي</span>
+          <ListOrdered className="w-4 h-4 shrink-0" />
+          <span>الاختبار القبلي</span>
           <Badge
             variant={activeTab === 'pre_test' ? 'gold' : 'outline'}
-            className="text-xs font-mono font-black px-2 py-0.5"
+            className="text-[11px] font-mono font-black px-2 py-0.5"
           >
-            {preQuestions.length} سؤالاً
+            {preQuestions.length}
           </Badge>
         </button>
+
+        {/* تابات اختبار كل موديول ديناميكياً */}
+        {modules.map((m) => {
+          const modExamType = `module_${m.id}`;
+          const modQCount = questions.filter((q) => q.exam_type === modExamType).length;
+          const isCurrentTab = activeTab === modExamType;
+
+          return (
+            <button
+              key={m.id}
+              type="button"
+              onClick={() => setActiveTab(modExamType)}
+              className={`py-2.5 px-3 sm:px-4 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                isCurrentTab
+                  ? 'bg-asu-navy text-white shadow-xs'
+                  : 'text-slate-600 hover:bg-slate-100'
+              }`}
+            >
+              <BookOpen className="w-4 h-4 shrink-0 text-asu-gold-light" />
+              <span>اختبار {m.title.length > 20 ? `الوحدة ${m.order}` : m.title}</span>
+              <Badge
+                variant={isCurrentTab ? 'gold' : 'outline'}
+                className="text-[11px] font-mono font-black px-2 py-0.5"
+              >
+                {modQCount}
+              </Badge>
+            </button>
+          );
+        })}
 
         <button
           type="button"
           onClick={() => setActiveTab('post_test')}
-          className={`flex-1 py-2.5 px-4 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 cursor-pointer ${
+          className={`py-2.5 px-3 sm:px-4 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 cursor-pointer ${
             activeTab === 'post_test'
               ? 'bg-asu-navy text-white shadow-xs'
               : 'text-slate-600 hover:bg-slate-100'
           }`}
         >
-          <Sparkles className="w-4 h-4 text-asu-gold-light" />
-          <span>أسئلة الاختبار البعدي</span>
+          <Sparkles className="w-4 h-4 shrink-0 text-asu-gold-light" />
+          <span>الاختبار البعدي</span>
           <Badge
             variant={activeTab === 'post_test' ? 'gold' : 'outline'}
-            className="text-xs font-mono font-black px-2 py-0.5"
+            className="text-[11px] font-mono font-black px-2 py-0.5"
           >
-            {postQuestions.length} سؤالاً
+            {postQuestions.length}
           </Badge>
         </button>
       </div>
@@ -445,14 +478,19 @@ export function QuestionBankManager({ initialQuestions }: QuestionBankManagerPro
             <form onSubmit={handleSaveQuestion} className="p-5 sm:p-6 overflow-y-auto space-y-4 flex-1">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="block text-xs font-bold text-slate-700">نوع الاختبار</label>
+                  <label className="block text-xs font-bold text-slate-700">نوع الاختبار المخصص له السؤال</label>
                   <select
                     value={formExamType}
                     onChange={(e) => setFormExamType(e.target.value as ExamType)}
                     className="w-full p-2.5 rounded-xl border border-slate-300 text-xs font-bold text-slate-900 bg-white"
                   >
                     <option value="pre_test">الاختبار القبلي (Pre-Test)</option>
-                    <option value="post_test">الاختبار البعدي (Post-Test)</option>
+                    {modules.map((m) => (
+                      <option key={m.id} value={`module_${m.id}`}>
+                        اختبار نهاية {m.title.length > 30 ? `الوحدة ${m.order}` : m.title}
+                      </option>
+                    ))}
+                    <option value="post_test">الاختبار البعدي النهائي (Post-Test)</option>
                   </select>
                 </div>
 

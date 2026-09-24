@@ -23,11 +23,19 @@ interface ExamRunnerProps {
   examType: ExamType;
   examTitle: string;
   questions: Question[];
+  onCompleteRedirectUrl?: string;
+  passingScorePercent?: number;
 }
 
 const OPTION_LETTERS = ['أ', 'ب', 'ج', 'د', 'هـ', 'و'];
 
-export function ExamRunner({ examType, examTitle, questions }: ExamRunnerProps) {
+export function ExamRunner({
+  examType,
+  examTitle,
+  questions,
+  onCompleteRedirectUrl,
+  passingScorePercent = 50,
+}: ExamRunnerProps) {
   const router = useRouter();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, number>>({});
@@ -105,37 +113,55 @@ export function ExamRunner({ examType, examTitle, questions }: ExamRunnerProps) 
 
   // شاشة ظهور النتيجة بعد التسليم
   if (result) {
-    const isPassing = (result.score / result.total) >= 0.5;
+    const isPassing = (result.score / (result.total || 1)) >= (passingScorePercent / 100);
+    const isModuleExam = examType.startsWith('module_');
+
+    const defaultNextUrl = onCompleteRedirectUrl || (examType === 'pre_test' ? '/modules' : '/');
+
     return (
       <Card className="max-w-xl mx-auto text-center p-6 sm:p-8 shadow-2xl border border-asu-gold/40 bg-white">
-        <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-3xl bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-4 shadow-inner">
-          <CheckCircle2 className="w-10 h-10 sm:w-12 sm:h-12" />
+        <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-inner ${
+          isPassing ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-700'
+        }`}>
+          {isPassing ? (
+            <CheckCircle2 className="w-10 h-10 sm:w-12 sm:h-12" />
+          ) : (
+            <AlertCircle className="w-10 h-10 sm:w-12 sm:h-12" />
+          )}
         </div>
         <Badge variant={isPassing ? 'success' : 'warning'} className="mb-2 text-xs px-3 py-1">
           {isPassing ? 'تم اجتياز الاختبار بنجاح' : 'تم تسليم الاختبار'}
         </Badge>
         <CardTitle className="text-xl sm:text-2xl font-black text-asu-navy">
-          شكراً لك، تم رصد نتيجتك بنجاح!
+          {isPassing ? 'شكراً لك، تم رصد نتيجتك بنجاح!' : 'تم رصد درجتك في سجل الاختبارات'}
         </CardTitle>
         <div className="my-6 p-6 rounded-2xl bg-slate-50 border border-slate-100 shadow-2xs">
           <span className="text-xs sm:text-sm text-slate-500 block mb-1 font-bold">الدرجة المحصلة</span>
-          <span className="text-4xl sm:text-5xl font-black text-emerald-600 font-mono">
+          <span className={`text-4xl sm:text-5xl font-black font-mono ${isPassing ? 'text-emerald-600' : 'text-amber-600'}`}>
             {result.score} <span className="text-xl sm:text-2xl text-slate-400 font-normal">/ {result.total}</span>
           </span>
         </div>
         <p className="text-xs sm:text-sm text-slate-600 mb-6 leading-relaxed">
-          {examType === 'pre_test'
+          {isModuleExam
+            ? 'تم حفظ نتيجة اختبار الوحدة في سجلك الأكاديمي، يمكنك الآن المتابعة والانتقال للمرحلة التالية.'
+            : examType === 'pre_test'
             ? 'تم فتح الوحدات والموديولات التعليمية الآن، يمكنك البدء في دراسة المحتوى والأنشطة.'
             : 'لقد أتممت متطلبات البرنامج التدريبي بالكامل، يمكنك العودة للصفحة الرئيسية ومراجعة مسارك.'}
         </p>
         <Button
           onClick={() => {
-            window.location.href = examType === 'pre_test' ? '/modules' : '/';
+            window.location.href = defaultNextUrl;
           }}
           className="w-full h-12 text-sm sm:text-base font-black bg-gradient-to-r from-asu-navy to-asu-navy-light gap-2 shadow-lg cursor-pointer"
           size="lg"
         >
-          {examType === 'pre_test' ? 'الانتقال للموديولات الدراسية' : 'العودة للرئيسية'}
+          <span>
+            {isModuleExam
+              ? 'المتابعة والانتقال للخطوة التالية'
+              : examType === 'pre_test'
+              ? 'الانتقال للموديولات الدراسية'
+              : 'العودة للرئيسية'}
+          </span>
           <ArrowLeft className="w-4 h-4 mr-1" />
         </Button>
       </Card>

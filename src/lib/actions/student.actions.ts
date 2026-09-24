@@ -426,6 +426,20 @@ export async function recordExamResultAction(
         students[studentIdx].postTestAnswers = answers;
       }
       students[studentIdx].status = 'completed';
+    } else if (examType.startsWith('module_')) {
+      const modId = examType.replace('module_', '');
+      if (!students[studentIdx].moduleQuizScores) {
+        students[studentIdx].moduleQuizScores = {};
+      }
+      students[studentIdx].moduleQuizScores![modId] = {
+        score,
+        total,
+        completedAt: new Date().toISOString(),
+        answers: answers || {},
+      };
+      if (students[studentIdx].status === 'not_started') {
+        students[studentIdx].status = 'in_progress';
+      }
     }
 
     students[studentIdx].updatedAt = new Date().toISOString();

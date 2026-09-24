@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ModuleImageSlider } from '@/components/modules/module-image-slider';
 import { ModuleActivityBox } from '@/components/modules/module-activity-box';
+import { ModuleQuizBox } from '@/components/modules/module-quiz-box';
+import { getExamQuestionsAction } from '@/lib/actions/exam.actions';
 import { ASU_LOGO_URL } from '@/lib/constants/branding';
 import {
   BookOpen,
@@ -70,8 +72,12 @@ export default async function SingleModulePage({ params }: ModulePageProps) {
       s.username.toLowerCase() === progress.username?.toLowerCase()
   );
   const existingSubmission = currentStudent?.activitySubmissions?.[moduleId] || null;
-
   const handleComplete = completeModuleAction.bind(null, moduleData.id);
+
+  // جلب أسئلة اختبار هذه الوحدة إن وُجدت من بنك الأسئلة
+  const allModuleQuestions = await getExamQuestionsAction(`module_${moduleId}`);
+  const quizResult = currentStudent?.moduleQuizScores?.[moduleId] || null;
+  const nextTargetUrl = isLastModule ? '/post-test' : nextModule ? `/modules/${nextModule.id}` : '/modules';
 
   return (
     <div className="w-full max-w-6xl mx-auto space-y-8 pb-16 text-right">
@@ -204,6 +210,22 @@ export default async function SingleModulePage({ params }: ModulePageProps) {
             activityTitle={moduleData.activity.title}
             activityDescription={moduleData.activity.description}
             existingSubmission={existingSubmission}
+          />
+        </section>
+      )}
+
+      {/* 6. قسم اختبار نهاية الموديول (التقويم البنائي) إن وُجدت أسئلة */}
+      {allModuleQuestions.length > 0 && (
+        <section className="pt-2">
+          <ModuleQuizBox
+            moduleId={moduleData.id}
+            moduleOrder={moduleData.order}
+            moduleTitle={moduleData.title}
+            questions={allModuleQuestions}
+            existingScore={quizResult?.score}
+            totalQuestions={quizResult?.total || allModuleQuestions.length}
+            isCompleted={isCompleted}
+            nextModuleUrl={nextTargetUrl}
           />
         </section>
       )}

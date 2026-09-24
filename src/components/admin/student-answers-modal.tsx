@@ -16,6 +16,7 @@ import {
   TrendingUp,
   User,
   Clock,
+  BookOpen,
 } from 'lucide-react';
 
 interface StudentAnswersModalProps {
@@ -113,6 +114,22 @@ export function StudentAnswersModal({
               }`}
             >
               {student.postScore !== null ? `${student.postScore} / ${postQuestions.length}` : 'لم يؤدَ'}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab('module_quizzes' as any)}
+            className={`px-4 py-2.5 rounded-t-2xl font-bold text-xs sm:text-sm transition-all flex items-center gap-2 cursor-pointer ${
+              (activeTab as string) === 'module_quizzes'
+                ? 'bg-white text-asu-navy border-t-2 border-x border-asu-gold shadow-xs'
+                : 'text-slate-500 hover:text-slate-800'
+            }`}
+          >
+            <BookOpen className="w-3.5 h-3.5 text-asu-gold-dark" />
+            <span>اختبارات الموديولات</span>
+            <span className="px-2 py-0.5 rounded-full text-xs font-mono font-bold bg-asu-navy/10 text-asu-navy">
+              {Object.keys(student.moduleQuizScores || {}).length}
             </span>
           </button>
 
@@ -375,7 +392,135 @@ export function StudentAnswersModal({
             </div>
           )}
 
-          {/* 3. تبويب حلول الأنشطة التطبيقية */}
+          {/* 3. تبويب اختبارات الموديولات */}
+          {(activeTab as string) === 'module_quizzes' && (
+            <div className="space-y-6">
+              {modules.length === 0 ? (
+                <div className="text-center py-12 text-slate-400">
+                  <p className="text-sm font-bold">لا توجد موديولات تعليمية مضافة بعد.</p>
+                </div>
+              ) : (
+                modules.map((m) => {
+                  const modExamType = `module_${m.id}`;
+                  const modQuestions = allQuestions.filter((q) => q.exam_type === modExamType);
+                  const quizResult = student.moduleQuizScores?.[m.id];
+                  const answers = quizResult?.answers || {};
+
+                  return (
+                    <div
+                      key={m.id}
+                      className="border border-slate-200/90 rounded-2xl p-4 sm:p-5 bg-slate-50/50 space-y-3"
+                    >
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200/60 pb-3">
+                        <div className="flex items-center gap-2">
+                          <BookOpen className="w-5 h-5 text-asu-navy" />
+                          <h4 className="font-black text-sm sm:text-base text-asu-navy">
+                            {m.title}
+                          </h4>
+                        </div>
+                        {quizResult ? (
+                          <div className="flex items-center gap-2">
+                            <Badge variant="success" className="text-xs">
+                              الدرجة: {quizResult.score} / {quizResult.total}
+                            </Badge>
+                            <span className="text-[11px] text-slate-400">
+                              تاريخ الأداء: {new Date(quizResult.completedAt).toLocaleDateString('ar-EG')}
+                            </span>
+                          </div>
+                        ) : (
+                          <Badge variant="outline" className="text-xs text-slate-400">
+                            لم يختبر الطالب هذه الوحدة بعد
+                          </Badge>
+                        )}
+                      </div>
+
+                      {modQuestions.length === 0 ? (
+                        <p className="text-xs text-slate-400 italic">
+                          لم يتم وضع أسئلة اختبار لهذه الوحدة من بنك الأسئلة بعد.
+                        </p>
+                      ) : (
+                        <div className="space-y-2.5 pt-1">
+                          {modQuestions.map((q, qIdx) => {
+                            const selectedIdx = answers[q.id];
+                            const hasAnswered = selectedIdx !== undefined;
+                            const isCorrect = hasAnswered && selectedIdx === q.correct_option_index;
+
+                            return (
+                              <div
+                                key={q.id}
+                                className={`p-3.5 rounded-xl border text-xs space-y-2 ${
+                                  isCorrect
+                                    ? 'bg-emerald-50/40 border-emerald-200'
+                                    : hasAnswered
+                                    ? 'bg-rose-50/40 border-rose-200'
+                                    : 'bg-white border-slate-200'
+                                }`}
+                              >
+                                <div className="flex items-center justify-between gap-2">
+                                  <span className="font-bold text-slate-900">
+                                    س{qIdx + 1}: {q.question_text}
+                                  </span>
+                                  {hasAnswered ? (
+                                    isCorrect ? (
+                                      <Badge variant="success" className="text-[10px]">
+                                        صحيحة (+1)
+                                      </Badge>
+                                    ) : (
+                                      <Badge variant="danger" className="text-[10px]">
+                                        خاطئة
+                                      </Badge>
+                                    )
+                                  ) : (
+                                    <span className="text-[10px] text-slate-400">لم يُجب</span>
+                                  )}
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 pt-1">
+                                  {q.options.map((opt, optIdx) => {
+                                    const isStudentChoice = selectedIdx === optIdx;
+                                    const isTheCorrectChoice = q.correct_option_index === optIdx;
+
+                                    let optStyle = 'bg-white border-slate-200 text-slate-700';
+                                    if (isTheCorrectChoice) {
+                                      optStyle = 'bg-emerald-100/70 border-emerald-300 text-emerald-950 font-bold';
+                                    }
+                                    if (isStudentChoice && !isTheCorrectChoice) {
+                                      optStyle = 'bg-rose-100/70 border-rose-300 text-rose-950 line-through';
+                                    }
+
+                                    return (
+                                      <div
+                                        key={optIdx}
+                                        className={`p-2 rounded-lg border text-[11px] flex items-center justify-between gap-2 ${optStyle}`}
+                                      >
+                                        <span>{opt}</span>
+                                        {isStudentChoice && (
+                                          <span className="text-[9px] font-bold px-1 py-0.5 rounded bg-black/10 shrink-0">
+                                            خيار الطالب
+                                          </span>
+                                        )}
+                                        {isTheCorrectChoice && !isStudentChoice && (
+                                          <span className="text-[9px] font-bold text-emerald-700 shrink-0">
+                                            ✓ الصحيحة
+                                          </span>
+                                        )}
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          )}
+
+          {/* 4. تبويب حلول الأنشطة التطبيقية */}
           {activeTab === 'activities' && (
             <div className="space-y-4">
               {modules.length === 0 ? (
