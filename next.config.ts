@@ -32,6 +32,13 @@ const nextConfig: NextConfig = {
   output: "standalone",
   // ضغط تلقائي للاستجابات (Gzip / Brotli) لتسريع تحميل الصفحات
   compress: true,
+  // السماح بالوصول من الشبكة المحلية (الموبايل) في وضع التطوير دون حظر HMR/dev resources
+  allowedDevOrigins: [
+    'localhost:3000',
+    '127.0.0.1:3000',
+    '192.168.100.41:3000',
+    '192.168.100.41',
+  ],
   // إخفاء هوية السيرفر (عدم إرسال X-Powered-By: Next.js) لتعزيز الأمان
   poweredByHeader: false,
   // السماح بتحميل الصور من Cloudinary واليوتيوب بأمان
