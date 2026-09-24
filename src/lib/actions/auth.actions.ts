@@ -20,18 +20,20 @@ export async function loginAction(
     return { error: 'يرجى إدخال اسم المستخدم / كود الطالب وكلمة المرور' };
   }
 
-  // 1. فحص الحسابات التجريبية فوراً بـ 0ms (بدون انتظار شبكة)
-  // حساب المشرف والأدمن
-  if (
-    (identifier.toLowerCase() === 'admin' || identifier.toLowerCase() === 'admin@asu.edu.eg') &&
-    password === 'admin123'
-  ) {
+  // 1. فحص حساب المشرف العام والإدارة فوراً بـ 0ms (بدون انتظار شبكة)
+  const cleanId = identifier.toLowerCase();
+  const isAdminUser =
+    cleanId === 'admin@asu.edu.eg' ||
+    cleanId === 'admin.env@asu.edu.eg' ||
+    cleanId === 'admin';
+
+  if (isAdminUser && password === 'Asu@Edu2026#Admin') {
     const cookieStore = await cookies();
     cookieStore.set(
       'dev_demo_user',
       JSON.stringify({
         id: 'admin-demo-id',
-        student_id: 'admin',
+        student_id: 'admin@asu.edu.eg',
         full_name: 'د. المشرف الأكاديمي (جامعة عين شمس)',
         role: 'admin',
       }),
@@ -40,37 +42,51 @@ export async function loginAction(
     redirect('/admin/dashboard');
   }
 
-  // حسابات الطلاب التجريبية للاختبار والمعاينة
-  const demoStudents: Record<string, { id: string; student_id: string; full_name: string }> = {
-    '2026101': { id: 's1', student_id: '2026101', full_name: 'أحمد محمود علي (طالب 1)' },
-    'student1': { id: 's1', student_id: '2026101', full_name: 'أحمد محمود علي (طالب 1)' },
-    'student': { id: 's1', student_id: '2026101', full_name: 'أحمد محمود علي (طالب 1)' },
-    '2026102': { id: 's2', student_id: '2026102', full_name: 'سارة عبد الرحمن يوسف (طالبة 2)' },
-    'student2': { id: 's2', student_id: '2026102', full_name: 'سارة عبد الرحمن يوسف (طالبة 2)' },
-    '2026103': { id: 's3', student_id: '2026103', full_name: 'خالد عمر الشريف (طالب 3)' },
-    'student3': { id: 's3', student_id: '2026103', full_name: 'خالد عمر الشريف (طالب 3)' },
-    '2026104': { id: 's4', student_id: '2026104', full_name: 'نور الدين مصطفى (طالب 4)' },
-    'student4': { id: 's4', student_id: '2026104', full_name: 'نور الدين مصطفى (طالب 4)' },
-  };
+  // فحص حسابات الطلاب من سجل الطلاب المعتمد (students.json)
+  const { getStudentsListAction } = await import('@/lib/actions/student.actions');
+  const allStudents = await getStudentsListAction();
 
-  const matchedStudent = demoStudents[identifier.toLowerCase()];
-  if (matchedStudent && password === '123456') {
+  // فحص باليوزر نيم (مثل user1001) أو بأكواد بديلة (مثل 2026101)
+  const matchedStudent = allStudents.find(
+    (s) => s.username.toLowerCase() === cleanId || (cleanId === 'student1' && s.username === 'user1001')
+  );
+
+  if (matchedStudent) {
+    if (matchedStudent.password !== password) {
+      return { error: 'كلمة المرور غير صحيحة، يرجى التأكد من كلمة المرور المسلمة لك' };
+    }
+
+    // التحقق من حالة الحظر
+    if (matchedStudent.isBanned) {
+      return { error: 'عذراً، تم إيقاف هذا الحساب من قِبل إدارة المنصة، يرجى مراجعة المشرف الأكاديمي' };
+    }
+
     const cookieStore = await cookies();
     cookieStore.set(
       'dev_demo_user',
       JSON.stringify({
-        ...matchedStudent,
+        id: matchedStudent.id,
+        student_id: matchedStudent.username,
+        full_name: matchedStudent.fullName || `طالب (${matchedStudent.username})`,
+        phone: matchedStudent.phone || '',
         role: 'student',
+        is_banned: false,
+        is_profile_completed: matchedStudent.isProfileCompleted,
       }),
-      { path: '/', maxAge: 86400 }
+      { path: '/', maxAge: 86400 * 7 }
     );
+
+    // إذا لم يكمل الطالب بياناته بعد (أول دخول)، نوجهه إجبارياً لشاشة استكمال البيانات
+    if (!matchedStudent.isProfileCompleted) {
+      redirect('/complete-profile');
+    }
+
     redirect('/');
   }
 
   if (!isLiveSupabaseConfigured()) {
     return {
-      error:
-        'بيانات الدخول غير صحيحة. للإدارة: admin / admin123 | للطلاب: 2026101 أو student1 / 123456',
+      error: 'بيانات الدخول غير صحيحة، يرجى التأكد من اسم المستخدم أو البريد الإلكتروني وكلمة المرور',
     };
   }
 

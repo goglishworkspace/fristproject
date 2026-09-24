@@ -1,87 +1,10 @@
 import type { Question } from '@/lib/types/database';
+import allQuestions from '@/data/exam-questions.json';
 
-export const DEFAULT_PRE_TEST_QUESTIONS: (Question & { correct_option_index: number })[] = [
-  {
-    id: 'q-pre-1',
-    exam_type: 'pre_test',
-    question_text: 'أي مما يلي يُعد من المكونات الحية (Biotic factors) الأساسية للنظام البيئي؟',
-    options: ['ضوء الشمس والطاقة الحرارية', 'الكائنات المنتجة والمستهلكة والمحللة', 'نوع التربة والمعادن', 'الضغط الجوي والرطوبة'],
-    correct_option_index: 1,
-    order_index: 1,
-  },
-  {
-    id: 'q-pre-2',
-    exam_type: 'pre_test',
-    question_text: 'ما هو السبب العلمي المباشر لظاهرة الاحتباس الحراري وتغير المناخ؟',
-    options: ['انخفاض نسبة غاز الأكسجين في الغلاف الجوي', 'تراكم الغازات الدفيئة مثل ثاني أكسيد الكربون والميثان', 'زيادة مساحة الغابات الاستوائية', 'برودة مياه المحيطات الاستوائية'],
-    correct_option_index: 1,
-    order_index: 2,
-  },
-  {
-    id: 'q-pre-3',
-    exam_type: 'pre_test',
-    question_text: 'يُعرّف الاقتصاد الدائري (Circular Economy) بأنه نموذج يسعى إلى:',
-    options: ['استنزاف الموارد الطبيعية إلى أقصى حد ممكن', 'تقليل الهدر وإعادة الاستخدام والتدوير المستمر للموارد', 'الاعتماد الكلي على حرق النفايات', 'زيادة الاستهلاك غير الضروري للطاقة'],
-    correct_option_index: 1,
-    order_index: 3,
-  },
-  {
-    id: 'q-pre-4',
-    exam_type: 'pre_test',
-    question_text: 'ما الفائدة البيئية الكبرى للمحميات الطبيعية؟',
-    options: ['تشجيع الصيد الجائر', 'حماية التنوع البيولوجي والأنواع المهددة بالانقراض', 'تحويل الأراضي لمناطق سكنية', 'تفريغ المياه الجوفية'],
-    correct_option_index: 1,
-    order_index: 4,
-  },
-  {
-    id: 'q-pre-5',
-    exam_type: 'pre_test',
-    question_text: 'أي من الممارسات التالية تسهم في الحد من تلوث البيئة بالبلاستيك؟',
-    options: ['استخدام المنتجات البلاستيكية أحادية الاستخدام', 'استبدال الأكياس البلاستيكية بأكياس قماشية قابلة للغسل', 'حرق النفايات البلاستيكية في الهواء الطلق', 'إلقاء المخلفات في المسطحات المائية'],
-    correct_option_index: 1,
-    order_index: 5,
-  },
-];
+export type ExamQuestionItem = Question & { correct_option_index: number };
 
-export const DEFAULT_POST_TEST_QUESTIONS: (Question & { correct_option_index: number })[] = [
-  {
-    id: 'q-post-1',
-    exam_type: 'post_test',
-    question_text: 'في السلسلة الغذائية داخل النظام البيئي، تعتبر النباتات الخضراء:',
-    options: ['كائنات محللة للمواد العضوية', 'كائنات منتجة تعتمد على البناء الضوئي', 'مستهلكاً أولياً للغذاء', 'مستهلكاً ثانوياً'],
-    correct_option_index: 1,
-    order_index: 1,
-  },
-  {
-    id: 'q-post-2',
-    exam_type: 'post_test',
-    question_text: 'ما هي النتيجة البيئية لارتفاع درجة حرارة الكوكب على المسطحات المائية؟',
-    options: ['تراجع منسوب مياه البحار', 'ذوبان الجليد القطبي وارتفاع مستوى سطح البحر وحموضة المحيطات', 'اختفاء الأعاصير البحرية', 'انخفاض رطوبة الغلاف الجوي'],
-    correct_option_index: 1,
-    order_index: 2,
-  },
-  {
-    id: 'q-post-3',
-    exam_type: 'post_test',
-    question_text: 'أي من المبادئ التالية يمثل ركيزة استراتيجية في إدارة النفايات المستدامة؟',
-    options: ['مبدأ التقليل ثم إعادة الاستخدام ثم التدوير (3Rs)', 'مبدأ الجمع والدفن العشوائي', 'مبدأ تصدير النفايات للبحار', 'مبدأ استهلاك المورد لمرة واحدة'],
-    correct_option_index: 0,
-    order_index: 3,
-  },
-  {
-    id: 'q-post-4',
-    exam_type: 'post_test',
-    question_text: 'تتكامل التنمية المستدامة من خلال تحقيق التوازن بين ثلاثة أبعاد رئيسية هي:',
-    options: ['البعد العسكري والسياسي والتجاري', 'البعد البيئي والاقتصادي والاجتماعي', 'البعد الترفيهي والإعلامي والرياضي', 'البعد الصناعي والتعديني والنفطي فقط'],
-    correct_option_index: 1,
-    order_index: 4,
-  },
-  {
-    id: 'q-post-5',
-    exam_type: 'post_test',
-    question_text: 'كيف يسهم الوعي البيئي الفردي في تحقيق الاستدامة المجتمعية؟',
-    options: ['من خلال ترشيد استهلاك الطاقة والمياه وفرز المخلفات ونشر الوعي', 'بالانتظار حتى تصدر عقوبات رسمية فقط', 'بزيادة شراء المنتجات غير القابلة للتدوير', 'بعدم الاهتمام بقضايا البيئة المحلية'],
-    correct_option_index: 0,
-    order_index: 5,
-  },
-];
+export const DEFAULT_PRE_TEST_QUESTIONS: ExamQuestionItem[] =
+  (allQuestions as ExamQuestionItem[]).filter((q) => q.exam_type === 'pre_test');
+
+export const DEFAULT_POST_TEST_QUESTIONS: ExamQuestionItem[] =
+  (allQuestions as ExamQuestionItem[]).filter((q) => q.exam_type === 'post_test');

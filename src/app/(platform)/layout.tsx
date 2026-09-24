@@ -1,7 +1,9 @@
 import { createClient } from '@/lib/supabase/server';
 import { isLiveSupabaseConfigured } from '@/lib/supabase/config';
 import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 import { Navbar } from '@/components/layout/navbar';
+import { ASU_LOGO_URL } from '@/lib/constants/branding';
 import type { UserProfile } from '@/lib/types/database';
 
 export default async function PlatformLayout({
@@ -20,6 +22,11 @@ export default async function PlatformLayout({
     } catch {
       // ignore
     }
+  }
+
+  // تحويل إجباري للطالب غير مكتمل البيانات إلى صفحة إكمال البيانات
+  if (userProfile?.role === 'student' && userProfile?.is_profile_completed === false) {
+    redirect('/complete-profile');
   }
 
   // إذا لم يكن مستخدم تجريبي، نفحص مستخدم سوبابيز الحقيقي فقط إذا كان الربط مفعلاً
@@ -62,7 +69,7 @@ export default async function PlatformLayout({
           <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white border border-asu-gold/40 p-1.5 flex items-center justify-center shadow-sm">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/asu-logo.png"
+              src={ASU_LOGO_URL}
               alt="شعار جامعة عين شمس"
               className="w-full h-full object-contain"
             />

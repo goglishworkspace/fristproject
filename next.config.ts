@@ -34,6 +34,19 @@ const nextConfig: NextConfig = {
   compress: true,
   // إخفاء هوية السيرفر (عدم إرسال X-Powered-By: Next.js) لتعزيز الأمان
   poweredByHeader: false,
+  // السماح بتحميل الصور من Cloudinary واليوتيوب بأمان
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+      },
+      {
+        protocol: "https",
+        hostname: "img.youtube.com",
+      },
+    ],
+  },
   // إضافة ترويسات الأمان الأمنية لجميع المسارات
   async headers() {
     return [

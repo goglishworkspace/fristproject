@@ -11,9 +11,50 @@ export async function middleware(request: NextRequest) {
   // 1. فحص الجلسة أولاً
   const sessionResponse = await updateSession(request);
 
-  // 2. التحقق من المستخدم الحالي سواء من الكوكيز أو سوبابيز
+  // 2. التحقق من المستخدم الحالي وحالته الأكاديمية
   const demoCookie = request.cookies.get('dev_demo_user');
   const hasDemoAuth = !!demoCookie?.value;
+
+  if (hasDemoAuth) {
+    try {
+      const parsed = JSON.parse(demoCookie.value);
+
+      // حظر الدخول إذا كان الحساب محظوراً
+      if (parsed.is_banned) {
+        const response = NextResponse.redirect(new URL('/login', request.url));
+        response.cookies.delete('dev_demo_user');
+        return response;
+      }
+
+      // توجيه الأدمن بعيداً عن شاشة استكمال بيانات الطلاب
+      if (parsed.role === 'admin' && pathname === '/complete-profile') {
+        return NextResponse.redirect(new URL('/admin/dashboard', request.url));
+      }
+
+      // إلزام الطالب بإكمال الملف الشخصي إذا لم يكن مكتملاً
+      if (parsed.role === 'student' && parsed.is_profile_completed === false) {
+        if (pathname !== '/complete-profile' && pathname !== '/login') {
+          return NextResponse.redirect(new URL('/complete-profile', request.url));
+        }
+      }
+
+      // منع الدخول لصفحة إكمال الملف إذا كان مكتمل بالفعل
+      if (parsed.role === 'student' && parsed.is_profile_completed === true) {
+        if (pathname === '/complete-profile') {
+          return NextResponse.redirect(new URL('/', request.url));
+        }
+      }
+    } catch {
+      // ignore
+    }
+  } else {
+    // إذا لم يكن مسجل دخول وحاول فتح صفحة استكمال البيانات
+    if (pathname === '/complete-profile') {
+      const loginUrl = new URL('/login', request.url);
+      loginUrl.searchParams.set('redirect', pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+  }
 
   // فحص حماية مسار الأدمن /admin
   if (pathname.startsWith(ADMIN_PREFIX)) {

@@ -1,21 +1,23 @@
 import { notFound, redirect } from 'next/navigation';
-import { createClient } from '@/lib/supabase/server';
-import { isLiveSupabaseConfigured } from '@/lib/supabase/config';
-import { cookies } from 'next/headers';
 import Link from 'next/link';
-import { MODULES_DATA } from '@/data/modules';
-import { completeModuleAction } from '@/lib/actions/module.actions';
+import { getModulesListAction, completeModuleAction } from '@/lib/actions/module.actions';
+import { getStudentProgressAction, getStudentsListAction } from '@/lib/actions/student.actions';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { ModuleImageSlider } from '@/components/modules/module-image-slider';
+import { ModuleActivityBox } from '@/components/modules/module-activity-box';
+import { ASU_LOGO_URL } from '@/lib/constants/branding';
 import {
   BookOpen,
   CheckCircle2,
   Clock,
   ArrowRight,
+  ArrowLeft,
   Sparkles,
   Layers,
   Award,
+  ChevronRight,
 } from 'lucide-react';
 
 interface ModulePageProps {
@@ -26,196 +28,224 @@ interface ModulePageProps {
 
 export default async function SingleModulePage({ params }: ModulePageProps) {
   const { moduleId } = await params;
-  const moduleData = MODULES_DATA.find((m) => m.id === moduleId);
+  const modules = await getModulesListAction();
+  const moduleData = modules.find((m) => m.id === moduleId);
 
   if (!moduleData) {
     notFound();
   }
 
-  const cookieStore = await cookies();
-  const devDemoCookie = cookieStore.get('dev_demo_user');
-  let currentUserId: string | null = null;
+  const progress = await getStudentProgressAction();
 
-  if (devDemoCookie?.value) {
-    try {
-      const parsed = JSON.parse(devDemoCookie.value);
-      currentUserId = parsed.id;
-    } catch {
-      // ignore
-    }
-  }
-
-  const isLive = isLiveSupabaseConfigured();
-
-  if (isLive) {
-    try {
-      const supabase = await createClient();
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (user) {
-        currentUserId = user.id;
-      }
-    } catch {
-      // ignore
-    }
-  }
-
-  if (!currentUserId) {
+  if (!progress.isLoggedIn) {
     redirect('/login');
   }
 
-  const moduleIndex = MODULES_DATA.findIndex((m) => m.id === moduleId);
-  let currentAllowedIndex = devDemoCookie ? moduleIndex : 0;
-
-  if (isLive) {
-    try {
-      const supabase = await createClient();
-      // التحقق من تقدم الطالب لمنع فتح موديول متقدم قبل وقته
-      const { data: progress } = await supabase
-        .from('student_progress')
-        .select('*')
-        .eq('student_id', currentUserId)
-        .single();
-
-      if (progress?.current_module_index !== undefined) {
-        currentAllowedIndex = progress.current_module_index;
-      }
-    } catch {
-      // ignore
-    }
+  if (!progress.isProfileCompleted && progress.role !== 'admin') {
+    redirect('/complete-profile');
   }
+
+  if (!progress.preTestCompleted && progress.role !== 'admin') {
+    redirect('/pre-test');
+  }
+
+  const moduleIndex = modules.findIndex((m) => m.id === moduleId);
+  const currentAllowedIndex =
+    progress.role === 'admin' ? modules.length : progress.currentModuleIndex;
 
   if (moduleIndex > currentAllowedIndex) {
     redirect('/modules');
   }
 
   const isCompleted = currentAllowedIndex > moduleIndex;
-  const isLastModule = moduleIndex === MODULES_DATA.length - 1;
+  const isLastModule = moduleIndex === modules.length - 1;
+  const prevModule = moduleIndex > 0 ? modules[moduleIndex - 1] : null;
+  const nextModule = !isLastModule ? modules[moduleIndex + 1] : null;
+
+  // جلب تسليم الطالب لهذا النشاط إن وُجد
+  const students = await getStudentsListAction();
+  const currentStudent = students.find(
+    (s) =>
+      s.id.toLowerCase() === progress.studentId?.toLowerCase() ||
+      s.username.toLowerCase() === progress.username?.toLowerCase()
+  );
+  const existingSubmission = currentStudent?.activitySubmissions?.[moduleId] || null;
 
   const handleComplete = completeModuleAction.bind(null, moduleData.id);
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 pb-12">
-      {/* زر العودة وشارة الترتيب */}
-      <div className="flex items-center justify-between">
-        <Link href="/modules" className="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-800">
-          <ArrowRight className="w-4 h-4" />
-          <span>العودة لقائمة الوحدات</span>
-        </Link>
+    <div className="w-full max-w-6xl mx-auto space-y-8 pb-16 text-right">
+      {/* 1. شريط التنقل والمسار (Breadcrumbs & Navigation Bar) */}
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200/80 shadow-2xs">
+        <div className="flex items-center gap-2 text-xs font-bold text-slate-500">
+          <Link href="/" className="hover:text-asu-navy transition-colors">
+            الرئيسية
+          </Link>
+          <ChevronRight className="w-3.5 h-3.5 rotate-180 text-slate-300" />
+          <Link href="/modules" className="hover:text-asu-navy transition-colors">
+            الوحدات التعليمية
+          </Link>
+          <ChevronRight className="w-3.5 h-3.5 rotate-180 text-slate-300" />
+          <span className="text-asu-navy font-black">{moduleData.title}</span>
+        </div>
+
         <div className="flex items-center gap-2">
-          <Badge variant="outline" className="gap-1">
+          <Badge variant="outline" className="gap-1 border-asu-gold/40 text-asu-gold-dark bg-asu-gold/5 font-bold">
             <Clock className="w-3.5 h-3.5" />
-            {moduleData.durationMinutes} دقيقة مقدرة
+            <span>{moduleData.durationMinutes} دقيقة مقدرة</span>
           </Badge>
+
           {isCompleted && (
-            <Badge variant="success" className="gap-1">
-              <CheckCircle2 className="w-3.5 h-3.5" /> تم إنجاز الوحدة
+            <Badge variant="success" className="gap-1 font-bold">
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              <span>تم إنجاز الوحدة</span>
             </Badge>
           )}
         </div>
       </div>
 
-      {/* ترويسة الوحدة */}
-      <div className="space-y-3 border-b border-slate-200 pb-6 text-right">
-        <span className="text-xs font-bold text-emerald-600 tracking-wide uppercase">
-          الوحدة التعليمية رقم 0{moduleData.order}
-        </span>
-        <h1 className="text-2xl md:text-3xl font-black text-slate-900 leading-tight">
-          {moduleData.title}
-        </h1>
-        <p className="text-sm md:text-base text-slate-600">
-          {moduleData.subtitle}
-        </p>
-      </div>
+      {/* 2. الترويسة الملكية للوحدة التعليمية (Royal Hero Banner) */}
+      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-asu-navy-dark via-asu-navy to-[#182660] text-white p-6 sm:p-10 shadow-2xl border-2 border-asu-gold/30">
+        <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/3 w-80 h-80 bg-asu-gold/10 rounded-full blur-3xl pointer-events-none" />
 
-      {/* نواتج التعلم والأهداف */}
-      <Card className="bg-emerald-50/40 border-emerald-200/80">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base text-emerald-900 flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-emerald-600" />
-            <span>الأهداف التعليمية المستهدفة من هذه الوحدة</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-2">
-          {moduleData.objectives.map((obj, i) => (
-            <div key={i} className="flex items-start gap-2.5 text-xs md:text-sm text-emerald-950">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-              <span>{obj}</span>
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="space-y-3 max-w-3xl">
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge className="bg-asu-gold/25 text-asu-gold-light border border-asu-gold/50 text-xs px-3 py-1 font-extrabold">
+                <Sparkles className="w-3.5 h-3.5 ml-1.5 inline" />
+                الوحدة التعليمية رقم 0{moduleData.order}
+              </Badge>
+              <span className="text-xs text-slate-300 font-medium">
+                منصة بيئتي • جامعة عين شمس
+              </span>
             </div>
-          ))}
-        </CardContent>
-      </Card>
 
-      {/* محتوى وأقسام المادة العلمية */}
-      <div className="space-y-6">
-        {moduleData.sections.map((sec, i) => (
-          <Card key={i} className="bg-white border-slate-200/80 shadow-sm">
-            <CardHeader className="border-b border-slate-100 pb-3">
-              <CardTitle className="text-lg text-slate-800 flex items-center gap-2">
-                <Layers className="w-4 h-4 text-teal-600" />
-                <span>{sec.title}</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-4 space-y-4 text-sm text-slate-700 leading-relaxed text-right">
-              <p>{sec.content}</p>
-              {sec.points && (
-                <ul className="space-y-2 pr-4 border-r-2 border-emerald-300 mr-1">
-                  {sec.points.map((pt, pIdx) => (
-                    <li key={pIdx} className="text-xs md:text-sm text-slate-600">
-                      • {pt}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-white leading-tight">
+              {moduleData.title}
+            </h1>
 
-      {/* النشاط التطبيقي للوحدة */}
-      <Card className="border-amber-200 bg-amber-50/40 shadow-sm">
-        <CardHeader className="border-b border-amber-200/60 pb-3">
-          <Badge variant="warning" className="w-fit mb-1">
-            نشاط تفاعلي
-          </Badge>
-          <CardTitle className="text-base text-amber-950">
-            {moduleData.activity.title}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="pt-4 text-right space-y-3">
-          <p className="text-xs md:text-sm text-amber-900 font-medium">
-            {moduleData.activity.prompt}
-          </p>
-          <textarea
-            rows={3}
-            placeholder="اكتب ملاحظاتك وإجابتك حول النشاط هنا (تطبيق ذاتي)..."
-            className="w-full p-3 rounded-xl border border-amber-200 bg-white text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
+            {moduleData.subtitle && (
+              <p className="text-slate-200 text-xs sm:text-sm md:text-base leading-relaxed font-normal">
+                {moduleData.subtitle}
+              </p>
+            )}
+          </div>
+
+          <div className="shrink-0 flex md:flex-col items-center gap-2 bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/20 text-center">
+            <div className="w-12 h-12 rounded-xl bg-white p-1.5 shadow-sm flex items-center justify-center">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={ASU_LOGO_URL} alt="شعار الجامعة" className="w-full h-full object-contain" />
+            </div>
+            <span className="text-[11px] text-asu-gold-light font-bold">كلية التربية</span>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. سلايدر الصور التفاعلي للوحدة والدعامات التعليمية (Slide Player & Scaffolding) */}
+      {((moduleData.images && moduleData.images.length > 0) || (moduleData.slides && moduleData.slides.length > 0)) && (
+        <section className="space-y-2">
+          <ModuleImageSlider
+            images={moduleData.images}
+            slides={moduleData.slides}
+            defaultScaffolding={moduleData.scaffolding}
+            moduleTitle={moduleData.title}
           />
-        </CardContent>
-      </Card>
+        </section>
+      )}
 
-      {/* قسم إنهاء الوحدة والانتقال لما بعدها */}
-      <div className="pt-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <Link href="/modules">
-          <Button variant="outline" size="md" className="gap-2">
-            <ArrowRight className="w-4 h-4" />
-            <span>العودة لقائمة الوحدات</span>
-          </Button>
-        </Link>
+      {/* 4. فقرات وموضوعات الوحدة العلمية (Content Sections) */}
+      {moduleData.sections && moduleData.sections.length > 0 && (
+        <section className="space-y-6">
+          <div className="flex items-center gap-2 border-b border-slate-200/80 pb-3">
+            <Layers className="w-5 h-5 text-asu-gold-dark" />
+            <h2 className="text-xl font-black text-asu-navy">المحتوى العلمي والمعرفي</h2>
+          </div>
+
+          <div className="space-y-5">
+            {moduleData.sections.map((section, idx) => (
+              <Card
+                key={section.id || idx}
+                className="bg-white border border-slate-200/90 shadow-sm rounded-3xl overflow-hidden hover:border-asu-gold/40 transition-all"
+              >
+                <CardHeader className="bg-slate-50/70 border-b border-slate-100 p-5 sm:p-6">
+                  <CardTitle className="text-lg sm:text-xl font-bold text-asu-navy flex items-center gap-2">
+                    <span className="w-7 h-7 rounded-lg bg-asu-navy/10 text-asu-navy text-xs font-black flex items-center justify-center font-mono">
+                      {idx + 1}
+                    </span>
+                    <span>{section.title}</span>
+                  </CardTitle>
+                </CardHeader>
+
+                <CardContent className="p-5 sm:p-7 space-y-4 text-slate-700 leading-relaxed text-sm sm:text-base whitespace-pre-wrap font-normal">
+                  <p>{section.content}</p>
+
+                  {section.points && section.points.length > 0 && (
+                    <div className="mt-4 p-4 rounded-2xl bg-slate-50 border border-slate-200/70 space-y-2">
+                      {section.points.map((pt, pIdx) => (
+                        <div key={pIdx} className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-700">
+                          <span className="w-1.5 h-1.5 rounded-full bg-asu-gold shrink-0 mt-2" />
+                          <span>{pt}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* 5. قسم النشاط التطبيقي العملي مع إمكانية التسليم والرفع */}
+      {moduleData.activity && (
+        <section className="pt-2">
+          <ModuleActivityBox
+            moduleId={moduleData.id}
+            activityTitle={moduleData.activity.title}
+            activityDescription={moduleData.activity.description}
+            existingSubmission={existingSubmission}
+          />
+        </section>
+      )}
+
+      {/* 6. شريط الإجراءات السفلي والانتقال وإتمام الوحدة */}
+      <div className="pt-6 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-5 rounded-3xl shadow-sm border">
+        <div>
+          {prevModule ? (
+            <Link href={`/modules/${prevModule.id}`}>
+              <Button variant="outline" size="md" className="gap-2 text-xs font-bold text-slate-600">
+                <ArrowRight className="w-4 h-4" />
+                <span>الوحدة السابقة: {prevModule.title}</span>
+              </Button>
+            </Link>
+          ) : (
+            <Link href="/modules">
+              <Button variant="outline" size="md" className="gap-2 text-xs font-bold text-slate-600">
+                <ArrowRight className="w-4 h-4" />
+                <span>العودة لقائمة الوحدات</span>
+              </Button>
+            </Link>
+          )}
+        </div>
 
         <form action={handleComplete}>
-          <Button type="submit" size="lg" className="bg-emerald-600 hover:bg-emerald-700 gap-2 shadow-md">
+          <Button
+            type="submit"
+            variant="gold"
+            size="lg"
+            className="w-full sm:w-auto gap-2 shadow-lg shadow-asu-gold/20 font-black text-sm"
+          >
             {isLastModule ? (
               <>
-                <Award className="w-5 h-5" />
-                <span>إتمام جميع الوحدات والانتقال للاختبار البعدي</span>
+                <Award className="w-5 h-5 ml-1 text-asu-navy" />
+                <span>إتمام البرنامج والانتقال للاختبار البعدي النهائي</span>
+                <ArrowLeft className="w-4 h-4 mr-1" />
               </>
             ) : (
               <>
-                <CheckCircle2 className="w-5 h-5" />
+                <CheckCircle2 className="w-5 h-5 ml-1 text-asu-navy" />
                 <span>إتمام هذه الوحدة والانتقال للوحدة التالية</span>
+                <ArrowLeft className="w-4 h-4 mr-1" />
               </>
             )}
           </Button>

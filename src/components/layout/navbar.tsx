@@ -16,8 +16,10 @@ import {
   Library,
   Mail,
   LayoutDashboard,
+  BookOpen,
 } from 'lucide-react';
 import type { UserProfile } from '@/lib/types/database';
+import { ASU_LOGO_URL } from '@/lib/constants/branding';
 
 interface NavbarProps {
   user: UserProfile | null;
@@ -51,7 +53,7 @@ export function Navbar({ user }: NavbarProps) {
           <div className="relative w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-white border border-asu-gold/30 p-1 flex items-center justify-center shadow-xs group-hover:scale-105 group-hover:border-asu-gold transition-all">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/asu-logo.png"
+              src={ASU_LOGO_URL}
               alt="شعار جامعة عين شمس"
               className="w-full h-full object-contain"
             />
@@ -120,6 +122,20 @@ export function Navbar({ user }: NavbarProps) {
                   </p>
                 </div>
               </div>
+
+              {/* زر الوحدات التعليمية للطالب */}
+              {user.role === 'student' && (
+                <Link href="/modules">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="hidden sm:inline-flex text-xs py-1 px-2.5 h-8 border-asu-navy/20 text-asu-navy hover:bg-asu-navy/5 gap-1 font-bold"
+                  >
+                    <BookOpen className="w-3.5 h-3.5 text-asu-gold-dark" />
+                    <span>الموديولات</span>
+                  </Button>
+                </Link>
+              )}
 
               {/* زر لوحة التحكم للمشرف */}
               {user.role === 'admin' && (

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { isLiveSupabaseConfigured } from '@/lib/supabase/config';
 import { cookies } from 'next/headers';
+import { getStudentProgressAction } from '@/lib/actions/student.actions';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -13,8 +14,13 @@ import {
   ImageIcon,
   Leaf,
   Info,
+  CheckCircle2,
+  Award,
+  User,
+  LayoutDashboard,
+  BookOpen,
 } from 'lucide-react';
-import type { StudentProgress } from '@/lib/types/database';
+import { ASU_LOGO_URL } from '@/lib/constants/branding';
 
 // ============================================================================
 // 🖼️ رابط صورة "تنمية الوعي بقضايا البيئة"
@@ -23,50 +29,9 @@ import type { StudentProgress } from '@/lib/types/database';
 export const ENVIRONMENTAL_AWARENESS_IMAGE_SRC = '';
 
 export default async function PlatformHomePage() {
-  const cookieStore = await cookies();
-  const devDemoCookie = cookieStore.get('dev_demo_user');
-
-  let studentId: string | null = null;
-  if (devDemoCookie?.value) {
-    try {
-      const parsed = JSON.parse(devDemoCookie.value);
-      studentId = parsed.id;
-    } catch {
-      // ignore
-    }
-  }
-
-  let user: any = null;
-  let progress: StudentProgress | null = null;
-
-  if (!studentId && isLiveSupabaseConfigured()) {
-    try {
-      const supabase = await createClient();
-      const { data } = await supabase.auth.getUser();
-      user = data?.user;
-    } catch {
-      // ignore
-    }
-  }
-
-  const currentUserId = studentId || user?.id;
-
-  if (currentUserId && isLiveSupabaseConfigured()) {
-    try {
-      const supabase = await createClient();
-      const { data } = await supabase
-        .from('student_progress')
-        .select('*')
-        .eq('student_id', currentUserId)
-        .single();
-      progress = data;
-    } catch {
-      // ignore
-    }
-  }
-
-  const isLoggedIn = !!currentUserId;
-  const preCompleted = !!progress?.pre_test_completed;
+  const progress = await getStudentProgressAction();
+  const isLoggedIn = progress.isLoggedIn;
+  const isAdmin = progress.role === 'admin';
 
   return (
     <div className="space-y-8 md:space-y-10 pb-6">
@@ -89,6 +54,15 @@ export default async function PlatformHomePage() {
               </span>
             </div>
 
+            {/* بطاقة ترحيب شخصية بالطالب المسجل */}
+            {isLoggedIn && !isAdmin && progress.fullName && (
+              <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-3.5 py-1.5 rounded-2xl border border-asu-gold/30 text-xs font-bold text-asu-gold-light">
+                <User className="w-3.5 h-3.5 text-asu-gold" />
+                <span>مرحباً بك: {progress.fullName}</span>
+                <span className="text-slate-300 font-normal">({progress.username})</span>
+              </div>
+            )}
+
             <h1 className="text-2xl sm:text-3xl md:text-5xl font-black tracking-tight leading-tight sm:leading-tight text-white">
               منصة <span className="text-asu-gold-light">بيئتي</span> التعليمية التفاعلية
             </h1>
@@ -98,7 +72,41 @@ export default async function PlatformHomePage() {
               مدعومة بنظام تقييم قبلي وبعدي ذكي لقياس الأثر التعليمي وتطوير الكفايات المعرفية.
             </p>
 
-            {/* أزرار الإجراءات المتجاوبة مع الهواتف */}
+            {/* بطاقة حالة التقدم الحالية للطالب إن كان مسجلاً */}
+            {isLoggedIn && !isAdmin && (
+              <div className="p-3 sm:p-4 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 max-w-xl">
+                <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
+                  <div className="flex items-center gap-2 font-bold text-slate-100">
+                    {progress.isFullyCompleted ? (
+                      <>
+                        <Award className="w-4 h-4 text-asu-gold-light" />
+                        <span className="text-asu-gold-light font-black">تهانينا! أتممت البرنامج التعليمي بنجاح</span>
+                      </>
+                    ) : progress.isAllModulesCompleted ? (
+                      <>
+                        <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                        <span>أنهيت دراسة جميع الموديولات، جاهز للاختبار البعدي</span>
+                      </>
+                    ) : progress.preTestCompleted ? (
+                      <>
+                        <BookOpen className="w-4 h-4 text-emerald-400" />
+                        <span>اجتزت الاختبار القبلي ({progress.preScore ?? '-'} / 10) • جارٍ دراسة الموديولات</span>
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-4 h-4 text-asu-gold-light" />
+                        <span>المرحلة الأولى: أداء الاختبار القبلي لتحديد المستوى</span>
+                      </>
+                    )}
+                  </div>
+                  <span className="text-[11px] text-slate-300 font-mono bg-white/10 px-2.5 py-0.5 rounded-full">
+                    الموديولات: {progress.moduleProgress}
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* أزرار الإجراءات المتجاوبة مع الهواتف والحالة */}
             <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
               {!isLoggedIn ? (
                 <>
@@ -123,25 +131,99 @@ export default async function PlatformHomePage() {
                     </Button>
                   </Link>
                 </>
-              ) : (
+              ) : isAdmin ? (
                 <>
-                  <Link href={preCompleted ? "/modules" : "/pre-test"} className="w-full sm:w-auto">
+                  <Link href="/admin/dashboard" className="w-full sm:w-auto">
                     <Button
                       variant="gold"
                       size="lg"
                       className="w-full sm:w-auto gap-2 shadow-lg shadow-asu-gold/20 font-extrabold"
                     >
-                      <span>{preCompleted ? "متابعة دراسة الموديولات" : "بدء الاختبار القبلي الآن"}</span>
+                      <LayoutDashboard className="w-4 h-4 ml-1" />
+                      <span>لوحة التحكم والمشرف الأكاديمي</span>
                       <ArrowLeft className="w-4 h-4 mr-1" />
                     </Button>
                   </Link>
-                  <Link href="/library" className="w-full sm:w-auto">
+                  <Link href="/modules" className="w-full sm:w-auto">
                     <Button
                       variant="outline"
                       size="lg"
                       className="w-full sm:w-auto border-white/30 text-white hover:bg-white/10 hover:text-white bg-transparent font-bold"
                     >
                       <BookMarked className="w-4 h-4 ml-1.5" />
+                      <span>معاينة الموديولات</span>
+                    </Button>
+                  </Link>
+                </>
+              ) : (
+                <>
+                  {/* أزرار مسار الطالب الذكية */}
+                  {!progress.preTestCompleted ? (
+                    <Link href="/pre-test" className="w-full sm:w-auto">
+                      <Button
+                        variant="gold"
+                        size="lg"
+                        className="w-full sm:w-auto gap-2 shadow-lg shadow-asu-gold/20 font-extrabold"
+                      >
+                        <span>بدء الاختبار القبلي الآن</span>
+                        <ArrowLeft className="w-4 h-4 mr-1" />
+                      </Button>
+                    </Link>
+                  ) : !progress.isAllModulesCompleted ? (
+                    <Link href="/modules" className="w-full sm:w-auto">
+                      <Button
+                        variant="gold"
+                        size="lg"
+                        className="w-full sm:w-auto gap-2 shadow-lg shadow-asu-gold/20 font-extrabold"
+                      >
+                        <BookOpen className="w-4 h-4 ml-1" />
+                        <span>متابعة دراسة الموديولات</span>
+                        <ArrowLeft className="w-4 h-4 mr-1" />
+                      </Button>
+                    </Link>
+                  ) : !progress.postTestCompleted ? (
+                    <Link href="/post-test" className="w-full sm:w-auto">
+                      <Button
+                        variant="gold"
+                        size="lg"
+                        className="w-full sm:w-auto gap-2 shadow-lg shadow-asu-gold/20 font-extrabold"
+                      >
+                        <Award className="w-4 h-4 ml-1" />
+                        <span>بدء الاختبار البعدي النهائي</span>
+                        <ArrowLeft className="w-4 h-4 mr-1" />
+                      </Button>
+                    </Link>
+                  ) : (
+                    <Link href="/post-test" className="w-full sm:w-auto">
+                      <Button
+                        variant="gold"
+                        size="lg"
+                        className="w-full sm:w-auto gap-2 shadow-lg shadow-asu-gold/20 font-extrabold"
+                      >
+                        <Award className="w-4 h-4 ml-1" />
+                        <span>عرض تقرير الإنجاز النهائي</span>
+                        <ArrowLeft className="w-4 h-4 mr-1" />
+                      </Button>
+                    </Link>
+                  )}
+
+                  <Link href="/modules" className="w-full sm:w-auto">
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      className="w-full sm:w-auto border-white/30 text-white hover:bg-white/10 hover:text-white bg-transparent font-bold"
+                    >
+                      <BookMarked className="w-4 h-4 ml-1.5" />
+                      <span>قائمة الوحدات</span>
+                    </Button>
+                  </Link>
+
+                  <Link href="/library" className="w-full sm:w-auto">
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      className="w-full sm:w-auto border-white/30 text-white hover:bg-white/10 hover:text-white bg-transparent font-bold"
+                    >
                       <span>المكتبة الإثرائية</span>
                     </Button>
                   </Link>
@@ -156,7 +238,7 @@ export default async function PlatformHomePage() {
               <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-white p-3 shadow-inner flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/asu-logo.png"
+                  src={ASU_LOGO_URL}
                   alt="شعار جامعة عين شمس"
                   className="w-full h-full object-contain"
                 />

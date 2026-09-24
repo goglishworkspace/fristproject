@@ -10,13 +10,13 @@ export interface ButtonProps
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = "primary", size = "md", ...props }, ref) => {
     const variantStyles = {
-      primary: "bg-asu-navy text-white hover:bg-asu-navy-light shadow-md shadow-asu-navy/20 active:scale-[0.98]",
-      gold: "bg-asu-gold text-slate-900 font-bold hover:bg-asu-gold-light shadow-md shadow-asu-gold/25 active:scale-[0.98]",
-      green: "bg-asu-green text-white font-bold hover:bg-asu-green-light shadow-md shadow-asu-green/20 active:scale-[0.98]",
-      secondary: "bg-slate-100 text-slate-800 hover:bg-slate-200 border border-slate-200/80",
-      outline: "border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 shadow-2xs",
-      danger: "bg-rose-600 text-white hover:bg-rose-700",
-      ghost: "bg-transparent hover:bg-slate-100 text-slate-700",
+      primary: "bg-asu-navy text-white hover:bg-asu-navy-light shadow-md shadow-asu-navy/20 active:brightness-90 active:opacity-95",
+      gold: "bg-asu-gold text-slate-900 font-bold hover:bg-asu-gold-light shadow-md shadow-asu-gold/25 active:brightness-95 active:opacity-95",
+      green: "bg-asu-green text-white font-bold hover:bg-asu-green-light shadow-md shadow-asu-green/20 active:brightness-95 active:opacity-95",
+      secondary: "bg-slate-100 text-slate-800 hover:bg-slate-200 border border-slate-200/80 active:bg-slate-200",
+      outline: "border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 shadow-2xs active:bg-slate-100",
+      danger: "bg-rose-600 text-white hover:bg-rose-700 active:brightness-90",
+      ghost: "bg-transparent hover:bg-slate-100 text-slate-700 active:bg-slate-100",
     };
 
     const sizeStyles = {
@@ -29,7 +29,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         ref={ref}
         className={cn(
-          "inline-flex items-center justify-center font-medium transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-asu-navy focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer select-none",
+          "inline-flex items-center justify-center font-medium transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-asu-navy focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer select-none touch-manipulation",
           variantStyles[variant],
           sizeStyles[size],
           className

@@ -8,12 +8,14 @@ import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/componen
 import { Badge } from '@/components/ui/badge';
 import {
   CheckCircle2,
+  XCircle,
   Clock,
   HelpCircle,
   AlertCircle,
   ArrowLeft,
   ArrowRight,
   Send,
+  ToggleLeft,
 } from 'lucide-react';
 import type { Question, ExamType } from '@/lib/types/database';
 
@@ -22,6 +24,8 @@ interface ExamRunnerProps {
   examTitle: string;
   questions: Question[];
 }
+
+const OPTION_LETTERS = ['أ', 'ب', 'ج', 'د', 'هـ', 'و'];
 
 export function ExamRunner({ examType, examTitle, questions }: ExamRunnerProps) {
   const router = useRouter();
@@ -55,6 +59,24 @@ export function ExamRunner({ examType, examTitle, questions }: ExamRunnerProps) 
     }));
   };
 
+  const handleNext = () => {
+    if (currentIndex < totalQ - 1) {
+      setCurrentIndex((prev) => prev + 1);
+      if (typeof window !== 'undefined') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+  };
+
+  const handlePrev = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex((prev) => prev - 1);
+      if (typeof window !== 'undefined') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+  };
+
   const handleSubmit = async () => {
     if (answeredCount < totalQ) {
       const confirmSubmit = window.confirm(
@@ -84,149 +106,304 @@ export function ExamRunner({ examType, examTitle, questions }: ExamRunnerProps) 
   if (result) {
     const isPassing = (result.score / result.total) >= 0.5;
     return (
-      <Card className="max-w-xl mx-auto text-center p-8 shadow-xl border-emerald-100 bg-white">
-        <div className="w-16 h-16 rounded-3xl bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-4">
-          <CheckCircle2 className="w-10 h-10" />
+      <Card className="max-w-xl mx-auto text-center p-6 sm:p-8 shadow-2xl border border-asu-gold/40 bg-white">
+        <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-3xl bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-4 shadow-inner">
+          <CheckCircle2 className="w-10 h-10 sm:w-12 sm:h-12" />
         </div>
-        <Badge variant={isPassing ? 'success' : 'warning'} className="mb-2">
+        <Badge variant={isPassing ? 'success' : 'warning'} className="mb-2 text-xs px-3 py-1">
           {isPassing ? 'تم اجتياز الاختبار بنجاح' : 'تم تسليم الاختبار'}
         </Badge>
-        <CardTitle className="text-2xl font-bold text-slate-800">
-          شكراً لك، تم رصد نتيجتك!
+        <CardTitle className="text-xl sm:text-2xl font-black text-asu-navy">
+          شكراً لك، تم رصد نتيجتك بنجاح!
         </CardTitle>
-        <div className="my-6 p-6 rounded-2xl bg-slate-50 border border-slate-100">
-          <span className="text-sm text-slate-500 block mb-1">الدرجة المحصلة</span>
-          <span className="text-4xl font-extrabold text-emerald-600">
-            {result.score} <span className="text-xl text-slate-400 font-normal">/ {result.total}</span>
+        <div className="my-6 p-6 rounded-2xl bg-slate-50 border border-slate-100 shadow-2xs">
+          <span className="text-xs sm:text-sm text-slate-500 block mb-1 font-bold">الدرجة المحصلة</span>
+          <span className="text-4xl sm:text-5xl font-black text-emerald-600 font-mono">
+            {result.score} <span className="text-xl sm:text-2xl text-slate-400 font-normal">/ {result.total}</span>
           </span>
         </div>
-        <p className="text-sm text-slate-600 mb-6 leading-relaxed">
+        <p className="text-xs sm:text-sm text-slate-600 mb-6 leading-relaxed">
           {examType === 'pre_test'
-            ? 'تم فتح الوحدات والموديولات التعليمية الآن، يمكنك البدء في دراسة المحتوى.'
-            : 'لقد أتممت متطلبات المنصة بالكامل، يمكنك العودة للصفحة الرئيسية ومراجعة مسارك.'}
+            ? 'تم فتح الوحدات والموديولات التعليمية الآن، يمكنك البدء في دراسة المحتوى والأنشطة.'
+            : 'لقد أتممت متطلبات البرنامج التدريبي بالكامل، يمكنك العودة للصفحة الرئيسية ومراجعة مسارك.'}
         </p>
         <Button
           onClick={() => {
-            router.push(examType === 'pre_test' ? '/modules' : '/');
-            router.refresh();
+            window.location.href = examType === 'pre_test' ? '/modules' : '/';
           }}
-          className="w-full"
+          className="w-full h-12 text-sm sm:text-base font-black bg-gradient-to-r from-asu-navy to-asu-navy-light gap-2 shadow-lg"
           size="lg"
         >
           {examType === 'pre_test' ? 'الانتقال للموديولات الدراسية' : 'العودة للرئيسية'}
+          <ArrowLeft className="w-4 h-4 mr-1" />
         </Button>
       </Card>
     );
   }
 
+  const isTrueFalseQuestion =
+    currentQ.question_type === 'true_false' ||
+    (currentQ.options.length === 2 &&
+      (currentQ.options[0] === 'صح' || currentQ.options[0] === 'صواب'));
+
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
+    <div className="max-w-3xl mx-auto space-y-4 sm:space-y-6">
       {/* هيدر الاختبار والتقدم */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
-        <div>
-          <h2 className="text-lg font-bold text-slate-800">{examTitle}</h2>
-          <p className="text-xs text-slate-500 mt-0.5">
-            السؤال {currentIndex + 1} من أصل {totalQ}
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <div className="w-36 bg-slate-100 h-2.5 rounded-full overflow-hidden">
-            <div
-              className="bg-emerald-600 h-full transition-all duration-300"
-              style={{ width: `${progressPercent}%` }}
-            />
+      <div className="bg-white p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-xs space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h2 className="text-base sm:text-lg font-black text-asu-navy">{examTitle}</h2>
+            <p className="text-xs text-slate-500 mt-0.5">
+              السؤال <span className="font-bold text-slate-700">{currentIndex + 1}</span> من أصل <span className="font-bold text-slate-700">{totalQ}</span>
+            </p>
           </div>
-          <span className="text-xs font-semibold text-slate-600 min-w-[3rem] text-left">
-            {progressPercent}%
-          </span>
+          <div className="flex items-center gap-3">
+            <div className="w-full sm:w-36 bg-slate-100 h-2.5 rounded-full overflow-hidden">
+              <div
+                className="bg-gradient-to-r from-emerald-500 to-emerald-600 h-full transition-all duration-300"
+                style={{ width: `${progressPercent}%` }}
+              />
+            </div>
+            <span className="text-xs font-bold text-slate-700 min-w-[3rem] text-left font-mono">
+              {progressPercent}%
+            </span>
+          </div>
+        </div>
+
+        {/* شريط أرقام الأسئلة والتنقل السريع للهواتف والكمبيوتر */}
+        <div className="pt-2 border-t border-slate-100 flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 no-scrollbar select-none">
+          {questions.map((q, idx) => {
+            const isAnswered = answers[q.id] !== undefined;
+            const isCurrent = idx === currentIndex;
+            return (
+              <button
+                key={q.id}
+                type="button"
+                onClick={() => {
+                  setCurrentIndex(idx);
+                  if (typeof window !== 'undefined') {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }
+                }}
+                className={`min-w-9 h-9 sm:min-w-10 sm:h-10 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-0.5 cursor-pointer touch-manipulation select-none transition-colors ${
+                  isCurrent
+                    ? 'bg-asu-navy text-white shadow-md ring-2 ring-asu-gold'
+                    : isAnswered
+                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-300 font-bold'
+                    : 'bg-slate-50 text-slate-600 border border-slate-200 hover:bg-slate-100 active:bg-slate-200'
+                }`}
+                title={`الانتقال للسؤال رقم ${idx + 1}`}
+              >
+                <span className="pointer-events-none select-none">{idx + 1}</span>
+                {isAnswered && !isCurrent && (
+                  <span className="text-[10px] text-emerald-600 pointer-events-none select-none">✓</span>
+                )}
+              </button>
+            );
+          })}
         </div>
       </div>
 
       {errorMessage && (
-        <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-sm font-medium">
-          {errorMessage}
+        <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs sm:text-sm font-medium flex items-center gap-2">
+          <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+          <span>{errorMessage}</span>
         </div>
       )}
 
       {/* بطاقة السؤال الحالي */}
-      <Card className="shadow-md border-slate-200/80 bg-white">
-        <CardHeader className="pb-4 border-b border-slate-100">
-          <div className="flex items-center gap-2 text-emerald-700 text-xs font-semibold mb-1">
-            <HelpCircle className="w-4 h-4" />
-            <span>السؤال رقم {currentIndex + 1}</span>
+      <Card className="shadow-lg border-slate-200/90 bg-white rounded-2xl sm:rounded-3xl overflow-hidden">
+        <CardHeader className="pb-4 border-b border-slate-100 bg-slate-50/40">
+          <div className="flex items-center justify-between gap-2 mb-1.5">
+            <div className="flex items-center gap-2 text-asu-navy text-xs font-bold">
+              <HelpCircle className="w-4 h-4 text-asu-gold-dark" />
+              <span>السؤال رقم {currentIndex + 1} من {totalQ}</span>
+            </div>
+            {isTrueFalseQuestion ? (
+              <Badge variant="gold" className="text-[10px] sm:text-xs gap-1 px-2.5 py-0.5 font-bold">
+                <ToggleLeft className="w-3.5 h-3.5" />
+                <span>سؤال صواب أو خطأ</span>
+              </Badge>
+            ) : (
+              <Badge variant="outline" className="text-[10px] sm:text-xs px-2.5 py-0.5 border-slate-300 text-slate-600 font-bold">
+                <span>اختيار من متعدد</span>
+              </Badge>
+            )}
           </div>
-          <CardTitle className="text-lg font-bold text-slate-900 leading-relaxed">
+          <CardTitle className="text-base sm:text-lg font-black text-slate-900 leading-relaxed pt-1">
             {currentQ.question_text}
           </CardTitle>
         </CardHeader>
 
-        <CardContent className="pt-6 space-y-3">
-          {currentQ.options.map((option, idx) => {
-            const isSelected = answers[currentQ.id] === idx;
-            return (
-              <button
-                key={idx}
-                type="button"
-                onClick={() => handleSelectOption(idx)}
-                className={`w-full text-right p-4 rounded-xl border text-sm font-medium transition-all flex items-center justify-between cursor-pointer ${
-                  isSelected
-                    ? 'border-emerald-600 bg-emerald-50/50 text-emerald-900 shadow-sm'
-                    : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-800'
+        <CardContent className="pt-6 pb-6">
+          {isTrueFalseQuestion ? (
+            /* واجهة إجابة مخصصة لسؤال صح وخطأ - بنية Label + Radio أصلية ومتوافقة 100% مع الهواتف */
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              {/* خيار صح */}
+              <label
+                htmlFor={`tf-${currentQ.id}-true`}
+                onClick={() => handleSelectOption(0)}
+                className={`w-full p-4 sm:p-5 rounded-2xl border-2 flex flex-col items-center justify-center gap-2.5 cursor-pointer select-none touch-manipulation text-center ${
+                  answers[currentQ.id] === 0
+                    ? 'border-emerald-600 bg-emerald-50 text-emerald-950 font-black shadow-lg ring-2 ring-emerald-500/30'
+                    : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50 text-slate-700'
                 }`}
               >
-                <span>{option}</span>
-                <span
-                  className={`w-5 h-5 rounded-full border flex items-center justify-center text-xs shrink-0 mr-3 ${
-                    isSelected
-                      ? 'border-emerald-600 bg-emerald-600 text-white'
-                      : 'border-slate-300 bg-white'
-                  }`}
-                >
-                  {isSelected && '✓'}
-                </span>
-              </button>
-            );
-          })}
+                <input
+                  id={`tf-${currentQ.id}-true`}
+                  type="radio"
+                  name={`exam-question-${currentQ.id}`}
+                  value={0}
+                  checked={answers[currentQ.id] === 0}
+                  onChange={() => handleSelectOption(0)}
+                  className="sr-only"
+                />
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center shadow-xs bg-emerald-100 text-emerald-700">
+                  <CheckCircle2 className="w-7 h-7 sm:w-8 sm:h-8" />
+                </div>
+                <div className="space-y-1">
+                  <span className="text-base sm:text-lg font-black block">صح (صواب)</span>
+                  {answers[currentQ.id] === 0 ? (
+                    <span className="text-xs bg-emerald-600 text-white px-3 py-1 rounded-full font-bold inline-flex items-center gap-1 shadow-xs">
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      <span>✓ إجابتك المختارة</span>
+                    </span>
+                  ) : (
+                    <span className="text-xs text-slate-400 font-medium">اضغط لتحديد الإجابة</span>
+                  )}
+                </div>
+              </label>
+
+              {/* خيار خطأ */}
+              <label
+                htmlFor={`tf-${currentQ.id}-false`}
+                onClick={() => handleSelectOption(1)}
+                className={`w-full p-4 sm:p-5 rounded-2xl border-2 flex flex-col items-center justify-center gap-2.5 cursor-pointer select-none touch-manipulation text-center ${
+                  answers[currentQ.id] === 1
+                    ? 'border-rose-600 bg-rose-50 text-rose-950 font-black shadow-lg ring-2 ring-rose-500/30'
+                    : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50 text-slate-700'
+                }`}
+              >
+                <input
+                  id={`tf-${currentQ.id}-false`}
+                  type="radio"
+                  name={`exam-question-${currentQ.id}`}
+                  value={1}
+                  checked={answers[currentQ.id] === 1}
+                  onChange={() => handleSelectOption(1)}
+                  className="sr-only"
+                />
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center shadow-xs bg-rose-100 text-rose-700">
+                  <XCircle className="w-7 h-7 sm:w-8 sm:h-8" />
+                </div>
+                <div className="space-y-1">
+                  <span className="text-base sm:text-lg font-black block">خطأ</span>
+                  {answers[currentQ.id] === 1 ? (
+                    <span className="text-xs bg-rose-600 text-white px-3 py-1 rounded-full font-bold inline-flex items-center gap-1 shadow-xs">
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      <span>✓ إجابتك المختارة</span>
+                    </span>
+                  ) : (
+                    <span className="text-xs text-slate-400 font-medium">اضغط لتحديد الإجابة</span>
+                  )}
+                </div>
+              </label>
+            </div>
+          ) : (
+            /* واجهة إجابة أسئلة الاختيار من متعدد - بنية Label + Radio أصلية ومتوافقة 100% مع الهواتف */
+            <div className="space-y-3">
+              {currentQ.options.map((option, idx) => {
+                const isSelected = answers[currentQ.id] === idx;
+                const letter = OPTION_LETTERS[idx] || `${idx + 1}`;
+                return (
+                  <label
+                    key={idx}
+                    htmlFor={`option-${currentQ.id}-${idx}`}
+                    onClick={() => handleSelectOption(idx)}
+                    className={`w-full text-right p-3.5 sm:p-4 rounded-2xl border-2 flex items-center justify-between gap-3 cursor-pointer select-none touch-manipulation ${
+                      isSelected
+                        ? 'border-asu-navy bg-asu-navy-50/90 text-asu-navy font-black ring-2 ring-asu-navy/20 shadow-md'
+                        : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50 text-slate-800'
+                    }`}
+                  >
+                    <input
+                      id={`option-${currentQ.id}-${idx}`}
+                      type="radio"
+                      name={`exam-question-${currentQ.id}`}
+                      value={idx}
+                      checked={isSelected}
+                      onChange={() => handleSelectOption(idx)}
+                      className="sr-only"
+                    />
+                    <div className="flex items-center gap-3 min-w-0 flex-1">
+                      <span
+                        className={`w-7 h-7 sm:w-8 sm:h-8 rounded-xl flex items-center justify-center text-xs sm:text-sm font-black shrink-0 ${
+                          isSelected
+                            ? 'bg-asu-navy text-white shadow-xs'
+                            : 'bg-slate-100 text-slate-600 border border-slate-200'
+                        }`}
+                      >
+                        {letter}
+                      </span>
+                      <span className="text-xs sm:text-sm md:text-base leading-relaxed break-words text-right flex-1 font-medium">
+                        {option}
+                      </span>
+                    </div>
+
+                    <div className="shrink-0 flex items-center gap-2">
+                      {isSelected ? (
+                        <span className="inline-flex items-center gap-1 text-xs bg-asu-navy text-white px-2.5 py-1 rounded-full font-bold shadow-xs">
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                          <span className="hidden sm:inline">تم الاختيار</span>
+                        </span>
+                      ) : (
+                        <span className="w-5 h-5 rounded-full border-2 border-slate-300 bg-white block" />
+                      )}
+                    </div>
+                  </label>
+                );
+              })}
+            </div>
+          )}
         </CardContent>
 
-        <CardFooter className="flex items-center justify-between pt-4 border-t border-slate-100">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setCurrentIndex((prev) => Math.max(0, prev - 1))}
+        <CardFooter className="flex items-center justify-between p-4 sm:p-5 border-t border-slate-100 bg-slate-50/50 gap-2">
+          <button
+            type="button"
+            onClick={handlePrev}
             disabled={currentIndex === 0 || isSubmitting}
-            className="gap-1"
+            className="h-12 px-5 rounded-2xl border border-slate-300 bg-white hover:bg-slate-50 active:bg-slate-100 text-slate-700 flex items-center justify-center gap-1.5 font-bold text-sm sm:text-base cursor-pointer select-none touch-manipulation shadow-2xs disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            <ArrowRight className="w-4 h-4" />
-            <span>السابق</span>
-          </Button>
+            <ArrowRight className="w-4 h-4 ml-1 pointer-events-none select-none" />
+            <span className="pointer-events-none select-none">السابق</span>
+          </button>
 
           {currentIndex < totalQ - 1 ? (
-            <Button
-              size="sm"
-              onClick={() => setCurrentIndex((prev) => Math.min(totalQ - 1, prev + 1))}
+            <button
+              type="button"
+              onClick={handleNext}
               disabled={isSubmitting}
-              className="gap-1"
+              className="h-12 px-6 sm:px-8 rounded-2xl bg-asu-navy hover:bg-asu-navy-dark active:bg-asu-navy-dark text-white flex items-center justify-center gap-2 font-black text-sm sm:text-base cursor-pointer select-none touch-manipulation shadow-lg shadow-asu-navy/25 disabled:opacity-50"
             >
-              <span>التالي</span>
-              <ArrowLeft className="w-4 h-4" />
-            </Button>
+              <span className="pointer-events-none select-none">التالي</span>
+              <ArrowLeft className="w-4 h-4 mr-1 pointer-events-none select-none" />
+            </button>
           ) : (
-            <Button
-              size="sm"
+            <button
+              type="button"
               onClick={handleSubmit}
               disabled={isSubmitting}
-              className="gap-1.5 bg-emerald-600 hover:bg-emerald-700"
+              className="h-12 px-6 sm:px-8 rounded-2xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-700 text-white flex items-center justify-center gap-2 font-black text-sm sm:text-base cursor-pointer select-none touch-manipulation shadow-lg shadow-emerald-600/25 disabled:opacity-50"
             >
               {isSubmitting ? (
-                <span>جاري التسليم...</span>
+                <span className="pointer-events-none select-none">جاري التسليم...</span>
               ) : (
                 <>
-                  <Send className="w-4 h-4" />
-                  <span>تسليم الاختبار النهائي</span>
+                  <Send className="w-4 h-4 ml-1 pointer-events-none select-none" />
+                  <span className="pointer-events-none select-none">تسليم الاختبار النهائي</span>
                 </>
               )}
-            </Button>
+            </button>
           )}
         </CardFooter>
       </Card>

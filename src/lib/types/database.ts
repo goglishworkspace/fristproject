@@ -7,14 +7,89 @@ export interface UserProfile {
   student_id: string; // كود الدخول أو الرقم الأكاديمي
   full_name: string;
   role: UserRole;
+  phone?: string;
+  is_banned?: boolean;
+  is_profile_completed?: boolean;
   created_at?: string;
 }
+
+export interface StudentActivitySubmission {
+  answerText: string;
+  fileUrl?: string;
+  submittedAt: string;
+}
+
+export interface StudentAccount {
+  id: string;
+  username: string; // e.g. user1001
+  password: string; // initial random or updated password
+  fullName: string;
+  phone: string;
+  isProfileCompleted: boolean;
+  isBanned: boolean;
+  preScore: number | null;
+  postScore: number | null;
+  preTestAnswers?: Record<string, number>;
+  postTestAnswers?: Record<string, number>;
+  activitySubmissions?: Record<string, StudentActivitySubmission>;
+  moduleProgress: string; // '0/2', '1/2', etc.
+  status: 'completed' | 'in_progress' | 'not_started';
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface ModuleSection {
+  id: string;
+  title: string;
+  content: string;
+  points?: string[];
+}
+
+export interface ModuleActivity {
+  id: string;
+  title: string;
+  description: string;
+  requiresSubmission?: boolean;
+}
+
+export interface ScaffoldingItem {
+  hint?: string;          // تلميح
+  extraInfo?: string;      // معلومة إضافية
+  example?: string;        // مثال
+  selfQuestion?: string;   // اسأل نفسك
+}
+
+export interface ModuleSlide {
+  id: string;
+  imageUrl: string;
+  title?: string;
+  scaffolding?: ScaffoldingItem;
+}
+
+export interface ModuleData {
+  id: string; // e.g. "module-1"
+  order: number;
+  title: string;
+  subtitle: string;
+  durationMinutes: number;
+  images: string[]; // URLs of images for the royal slider
+  slides?: ModuleSlide[];
+  scaffolding?: ScaffoldingItem;
+  sections: ModuleSection[];
+  activity: ModuleActivity;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export type QuestionType = 'multiple_choice' | 'true_false';
 
 export interface Question {
   id: string;
   exam_type: ExamType;
+  question_type?: QuestionType; // 'multiple_choice' | 'true_false'
   question_text: string;
   options: string[];
+  correct_option_index?: number;
   order_index: number;
   created_at?: string;
 }

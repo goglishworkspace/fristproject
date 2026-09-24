@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { LogIn, GraduationCap, ShieldCheck } from 'lucide-react';
+import { ASU_LOGO_URL } from '@/lib/constants/branding';
 
 export function LoginForm() {
   const [state, formAction, isPending] = useActionState(loginAction, null);
@@ -16,7 +17,7 @@ export function LoginForm() {
         <div className="mx-auto w-16 h-16 rounded-2xl bg-white border border-asu-gold/30 p-2 flex items-center justify-center mb-1 shadow-md">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/asu-logo.png"
+            src={ASU_LOGO_URL}
             alt="شعار جامعة عين شمس"
             className="w-full h-full object-contain"
           />
@@ -45,8 +46,8 @@ export function LoginForm() {
             <Input
               id="identifier"
               name="identifier"
-              label="اسم المستخدم أو كود الطالب"
-              placeholder="مثال: 2026101 أو admin"
+              label="اسم المستخدم أو كود الطالب / البريد الإلكتروني"
+              placeholder="مثال: user1001 أو admin@asu.edu.eg"
               required
               autoComplete="username"
               disabled={isPending}

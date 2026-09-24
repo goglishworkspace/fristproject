@@ -1,62 +1,22 @@
 [
   {
-    "id": "vid-1",
-    "title": "ما هو النظام البيئي؟ وكيف تعمل النظم البيئية بتوازن طبيعي",
-    "description": "فيديو توضيحي تفاعلي يشرح مفهوم النظام البيئي ومكوناته الحية وغير الحية وكيف تتدفق الطاقة في السلاسل الغذائية.",
-    "youtubeUrl": "https://www.youtube.com/watch?v=kP_Z83l-37Y",
-    "youtubeId": "kP_Z83l-37Y",
-    "category": "نظم بيئية",
-    "duration": "07:35",
-    "addedAt": "2026-09-21"
+    "id": "vid-1790085377156",
+    "title": "دليلك الشامل للتعلم الذاتي باستخدام الذكاء الاصطناعي",
+    "description": "دليلك الشامل للتعلم الذاتي باستخدام الذكاء الاصطناعي",
+    "youtubeUrl": "https://www.youtube.com/watch?v=-cRABLd2Ckk",
+    "youtubeId": "-cRABLd2Ckk",
+    "category": "",
+    "duration": "",
+    "addedAt": "2026-09-22"
   },
   {
-    "id": "vid-2",
-    "title": "التغير المناخي والاحتباس الحراري: الأسباب والآثار وحلول المستقبل",
-    "description": "استعراض علمي دقيق لظاهرة الاحتباس الحراري والغازات الدفيئة وتأثيراتها المباشرة على كوكب الأرض والمناخ العالمي.",
-    "youtubeUrl": "https://www.youtube.com/watch?v=E1ZHCpndn8c",
-    "youtubeId": "E1ZHCpndn8c",
-    "category": "تغير مناخي",
-    "duration": "10:15",
-    "addedAt": "2026-09-21"
-  },
-  {
-    "id": "vid-3",
-    "title": "مفهوم التنمية المستدامة ورؤية حماية الموارد الطبيعية للأجيال القادمة",
-    "description": "شرح مبسط لأهداف التنمية المستدامة الـ 17 وكيفية الموازنة بين النمو الاقتصادي والحفاظ على التوازن البيئي.",
-    "youtubeUrl": "https://www.youtube.com/watch?v=dGqZ11R0Vq8",
-    "youtubeId": "dGqZ11R0Vq8",
-    "category": "تنمية مستدامة",
-    "duration": "08:50",
-    "addedAt": "2026-09-21"
-  },
-  {
-    "id": "vid-4",
-    "title": "الاقتصاد الدائري وإعادة التدوير: تحويل النفايات إلى ثروات وموارد",
-    "description": "كيف يساهم الاقتصاد الدائري في تقليل استنزاف الموارد الخام وإعادة استخدام المنتجات بكفاءة وحماية البيئة.",
-    "youtubeUrl": "https://www.youtube.com/watch?v=zCRKvDyyHmI",
-    "youtubeId": "zCRKvDyyHmI",
-    "category": "إعادة التدوير",
-    "duration": "06:40",
-    "addedAt": "2026-09-21"
-  },
-  {
-    "id": "vid-5",
-    "title": "التنوع البيولوجي: لماذا نحتاج إلى كل كائن حي على وجه الأرض؟",
-    "description": "أهمية التنوع الحيوي في استقرار الكوكب ودوره الحاسم في توفير الغذاء والدواء وتنظيم المناخ الطبيعي.",
-    "youtubeUrl": "https://www.youtube.com/watch?v=b6Ua_zWDH6U",
-    "youtubeId": "b6Ua_zWDH6U",
-    "category": "نظم بيئية",
-    "duration": "09:20",
-    "addedAt": "2026-09-21"
-  },
-  {
-    "id": "vid-6",
-    "title": "حماية المياه والحد من التلوث البيئي: استراتيجيات عملية للحياة اليومية",
-    "description": "نصائح وإرشادات تطبيقية للطلاب للترشيد وحماية الموارد المائية ومكافحة التلوث البلاستيكي.",
-    "youtubeUrl": "https://www.youtube.com/watch?v=0QZ_Z9H1vNk",
-    "youtubeId": "0QZ_Z9H1vNk",
-    "category": "تنمية مستدامة",
-    "duration": "05:55",
-    "addedAt": "2026-09-21"
+    "id": "vid-1790085332032",
+    "title": "دليلك الشامل للتعلم الذاتي باستخدام الذكاء الاصطناعي",
+    "description": "محتوى مرئي إثرائي حول قضايا البيئة والتنمية المستدامة.",
+    "youtubeUrl": "https://www.youtube.com/watch?v=-cRABLd2Ckk",
+    "youtubeId": "-cRABLd2Ckk",
+    "category": "",
+    "duration": "",
+    "addedAt": "2026-09-22"
   }
 ]
