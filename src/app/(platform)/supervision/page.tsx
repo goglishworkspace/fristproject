@@ -1,5 +1,3 @@
-import { RoyalEagle } from '@/components/ui/royal-eagle';
-
 export const metadata = {
   title: 'الإعداد والإشراف | منصة بيئتي التعليمية • جامعة عين شمس',
   description: 'فريق الإعداد والإشراف العلمي - كلية التربية جامعة عين شمس',
@@ -11,18 +9,11 @@ const SUPERVISION_IMAGE_SRC =
 
 export default function SupervisionPage() {
   return (
-    <div className="max-w-5xl mx-auto pt-8 sm:pt-14 pb-8 px-2 sm:px-4">
+    <div className="max-w-5xl mx-auto py-6 sm:py-10 px-2 sm:px-4">
       {/* ========================================================================= */}
-      {/* 👑 الإطار الملكي الفاخر المتوج بنسر السيادة الذهبي                          */}
+      {/* 👑 الإطار الأكاديمي الفاخر والأنيق                                         */}
       {/* ========================================================================= */}
-      <div className="relative rounded-3xl p-3 sm:p-5 md:p-6 bg-gradient-to-br from-asu-navy-dark via-asu-navy to-[#0f183e] shadow-[0_25px_65px_rgba(16,26,68,0.55)] border-2 border-asu-gold/80 mt-8 sm:mt-12">
-        
-        {/* ===================================================================== */}
-        {/* 🦅 نسر السيادة الذهبي المصقول والمتوج أعلى الإطار                         */}
-        {/* ===================================================================== */}
-        <div className="absolute -top-8 sm:-top-14 md:-top-16 left-1/2 -translate-x-1/2 z-30 max-w-[82vw] sm:max-w-xs md:max-w-md w-full pointer-events-none select-none">
-          <RoyalEagle />
-        </div>
+      <div className="relative rounded-3xl p-3 sm:p-5 md:p-6 bg-gradient-to-br from-asu-navy-dark via-asu-navy to-[#0f183e] shadow-[0_25px_65px_rgba(16,26,68,0.55)] border-2 border-asu-gold/80">
 
         {/* هالات الإضاءة التراثية الذهبية خلف الإطار */}
         <div className="absolute -top-16 -right-16 w-72 h-72 bg-asu-gold/20 rounded-full blur-3xl pointer-events-none" />
