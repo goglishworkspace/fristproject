@@ -20,7 +20,7 @@ export default function SupervisionPage() {
         {/* ===================================================================== */}
         {/* 🦅 نسر السيادة الذهبي المصقول والمتوج أعلى الإطار                         */}
         {/* ===================================================================== */}
-        <div className="absolute -top-10 sm:-top-14 md:-top-16 left-1/2 -translate-x-1/2 z-30 w-64 sm:w-80 md:w-[380px] pointer-events-none select-none">
+        <div className="absolute -top-8 sm:-top-14 md:-top-16 left-1/2 -translate-x-1/2 z-30 max-w-[82vw] sm:max-w-xs md:max-w-md w-full pointer-events-none select-none">
           <RoyalEagle />
         </div>
 

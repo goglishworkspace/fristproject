@@ -631,7 +631,7 @@ export function StudentManager({ initialStudents, allQuestions = [], modules = [
                           <button
                             type="button"
                             onClick={() => setInspectingStudent(student)}
-                            className="p-1.5 rounded-lg text-emerald-600 hover:text-emerald-800 hover:bg-emerald-50 cursor-pointer"
+                            className="p-2 sm:p-1.5 rounded-lg text-emerald-600 hover:text-emerald-800 hover:bg-emerald-50 active:bg-emerald-100 cursor-pointer touch-manipulation"
                             title="عرض إجابات الطالب في الاختبارين القبلي والبعدي والأنشطة"
                           >
                             <FileText className="w-4 h-4" />
@@ -648,7 +648,7 @@ export function StudentManager({ initialStudents, allQuestions = [], modules = [
                                 phone: student.phone,
                               });
                             }}
-                            className="p-1.5 rounded-lg text-slate-500 hover:text-asu-navy hover:bg-slate-100 cursor-pointer"
+                            className="p-2 sm:p-1.5 rounded-lg text-slate-500 hover:text-asu-navy hover:bg-slate-100 active:bg-slate-200 cursor-pointer touch-manipulation"
                             title="تعديل بيانات الطالب"
                           >
                             <Edit2 className="w-4 h-4" />
@@ -661,7 +661,7 @@ export function StudentManager({ initialStudents, allQuestions = [], modules = [
                               setResettingStudent(student);
                               setCustomResetPassword('');
                             }}
-                            className="p-1.5 rounded-lg text-slate-500 hover:text-amber-600 hover:bg-amber-50 cursor-pointer"
+                            className="p-2 sm:p-1.5 rounded-lg text-slate-500 hover:text-amber-600 hover:bg-amber-50 active:bg-amber-100 cursor-pointer touch-manipulation"
                             title="إعادة تعيين كلمة المرور"
                           >
                             <KeyRound className="w-4 h-4" />
@@ -671,7 +671,7 @@ export function StudentManager({ initialStudents, allQuestions = [], modules = [
                           <button
                             type="button"
                             onClick={() => handleResetToFresh(student)}
-                            className="p-1.5 rounded-lg text-slate-500 hover:text-cyan-600 hover:bg-cyan-50 cursor-pointer"
+                            className="p-2 sm:p-1.5 rounded-lg text-slate-500 hover:text-cyan-600 hover:bg-cyan-50 active:bg-cyan-100 cursor-pointer touch-manipulation"
                             title="تصفير الحساب والدرجات وإعادته كطالب جديد لم يسجل بعد"
                           >
                             <RotateCcw className="w-4 h-4" />
@@ -681,10 +681,10 @@ export function StudentManager({ initialStudents, allQuestions = [], modules = [
                           <button
                             type="button"
                             onClick={() => handleToggleBan(student)}
-                            className={`p-1.5 rounded-lg cursor-pointer ${
+                            className={`p-2 sm:p-1.5 rounded-lg cursor-pointer touch-manipulation ${
                               student.isBanned
-                                ? 'text-emerald-600 hover:bg-emerald-50'
-                                : 'text-slate-400 hover:text-rose-600 hover:bg-rose-50'
+                                ? 'text-emerald-600 hover:bg-emerald-50 active:bg-emerald-100'
+                                : 'text-slate-400 hover:text-rose-600 hover:bg-rose-50 active:bg-rose-100'
                             }`}
                             title={student.isBanned ? 'فك الحظر عن الطالب' : 'حظر الطالب'}
                           >

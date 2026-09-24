@@ -76,8 +76,8 @@ export function StudentAnswersModal({
           </button>
         </div>
 
-        {/* أزرار التبويبات الفاخرة */}
-        <div className="flex border-b border-slate-200 bg-slate-50 px-4 pt-3 gap-2">
+        {/* أزرار التبويبات الفاخرة - قابلة للتمرير بسلاسة على الهواتف */}
+        <div className="flex border-b border-slate-200 bg-slate-50 px-2 sm:px-4 pt-3 gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar">
           <button
             type="button"
             onClick={() => setActiveTab('pre')}
