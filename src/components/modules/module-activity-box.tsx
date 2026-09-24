@@ -74,6 +74,11 @@ export function ModuleActivityBox({
       return;
     }
 
+    if (!fileUrl) {
+      setStatusMessage({ type: 'error', text: 'يرجى رفع ملف حل النشاط بصيغة PDF أولاً قبل التسليم' });
+      return;
+    }
+
     setIsSubmitting(true);
     setStatusMessage(null);
 
@@ -81,7 +86,7 @@ export function ModuleActivityBox({
     setIsSubmitting(false);
 
     if (res.success) {
-      setStatusMessage({ type: 'success', text: 'تم تسليم النشاط بنجاح وحفظه في سجلك الأكاديمي!' });
+      setStatusMessage({ type: 'success', text: 'تم تسليم النشاط وملف الـ PDF بنجاح وحفظه في سجلك الأكاديمي!' });
       setIsEditing(false);
     } else {
       setStatusMessage({ type: 'error', text: res.error || 'حدث خطأ أثناء تسليم النشاط' });
@@ -171,58 +176,41 @@ export function ModuleActivityBox({
               />
             </div>
 
-            {/* خيارات إرفاق الملف: رفع مباشر من الجهاز أو وضع رابط */}
-            <div className="space-y-3 p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
+            {/* قسم إرفاق ملف PDF للنشاط التطبيقي */}
+            <div className="space-y-3 p-4 sm:p-5 rounded-2xl bg-slate-50 border-2 border-dashed border-asu-navy/20">
               <div className="space-y-1.5">
                 <label className="block text-xs font-bold text-slate-800 flex items-center gap-1.5">
                   <FileUp className="w-4 h-4 text-asu-navy" />
-                  <span>رفع صورة أو مستند مباشرة من جهازك (اختياري)</span>
+                  <span>إرفاق ملف النشاط بصيغة PDF <span className="text-rose-500">*</span></span>
                 </label>
-                <div className="flex items-center gap-3">
-                  <label className={`cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 border-dashed border-asu-navy/30 bg-white hover:bg-slate-100 text-xs font-bold text-asu-navy transition-all ${
-                    isUploading ? 'opacity-60 pointer-events-none' : ''
-                  }`}>
+                <p className="text-[11px] text-slate-500">
+                  قم بتحميل ملف حل النشاط بتنسيق مستند PDF (.pdf) بحجم أقصى 10 ميجابايت.
+                </p>
+
+                <div className="pt-2 flex flex-wrap items-center gap-3">
+                  <label
+                    className={`cursor-pointer inline-flex items-center gap-2 px-5 py-3 rounded-xl border-2 border-asu-navy/30 bg-white hover:bg-slate-100 text-xs font-black text-asu-navy shadow-xs transition-all active:scale-95 ${
+                      isUploading ? 'opacity-60 pointer-events-none' : ''
+                    }`}
+                  >
                     <FileUp className="w-4 h-4 text-asu-gold-dark" />
-                    <span>{isUploading ? 'جاري رفع الملف...' : 'اختر ملف من الهاتف أو الكمبيوتر'}</span>
+                    <span>{isUploading ? 'جاري رفع ملف PDF...' : 'اختر ملف PDF من الهاتف أو الكمبيوتر'}</span>
                     <input
                       type="file"
-                      accept=".png,.jpg,.jpeg,.webp,.pdf,.docx"
+                      accept=".pdf,application/pdf"
                       onChange={handleFileUpload}
                       disabled={isUploading || isSubmitting}
                       className="hidden"
                     />
                   </label>
+
                   {uploadedFileName && (
-                    <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-lg border border-emerald-200 flex items-center gap-1">
-                      <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span className="text-xs font-bold text-emerald-800 bg-emerald-50 px-3.5 py-2 rounded-xl border border-emerald-300 flex items-center gap-1.5 shadow-2xs">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                       <span>{uploadedFileName}</span>
                     </span>
                   )}
                 </div>
-                <span className="text-[10px] text-slate-500 block">
-                  الأنواع المدعومة: صور (PNG, JPG, WEBP) ومستندات (PDF, Word) بحجم أقصى 10 ميجابايت.
-                </span>
-              </div>
-
-              <div className="relative flex py-1 items-center">
-                <div className="flex-grow border-t border-slate-200"></div>
-                <span className="flex-shrink mx-3 text-[11px] font-bold text-slate-400">أو يمكنك وضع رابط مباشر</span>
-                <div className="flex-grow border-t border-slate-200"></div>
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-slate-700 flex items-center gap-1.5">
-                  <LinkIcon className="w-3.5 h-3.5 text-asu-gold-dark" />
-                  <span>رابط خارجي للملف (Google Drive أو موقع خارجي)</span>
-                </label>
-                <input
-                  type="url"
-                  value={fileUrl}
-                  onChange={(e) => setFileUrl(e.target.value)}
-                  placeholder="https://..."
-                  disabled={isSubmitting || isUploading}
-                  className="w-full p-2.5 rounded-xl border border-slate-300 focus:border-asu-gold focus:ring-2 focus:ring-asu-gold/20 text-xs sm:text-sm text-slate-900 bg-white placeholder:text-slate-400 font-mono transition-all outline-hidden"
-                />
               </div>
             </div>
 
@@ -266,15 +254,16 @@ export function ModuleActivityBox({
 
             {existingSubmission?.fileUrl && (
               <div className="pt-2 flex items-center gap-2">
-                <span className="text-xs text-slate-500 font-bold">الملف المرفق:</span>
+                <span className="text-xs text-slate-500 font-bold">مستند النشاط:</span>
                 <a
                   href={existingSubmission.fileUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs text-asu-navy hover:text-asu-gold-dark font-bold underline bg-white px-3 py-1.5 rounded-lg border border-slate-200"
+                  className="inline-flex items-center gap-1.5 text-xs text-rose-700 bg-rose-50 hover:bg-rose-100 font-bold border border-rose-200 px-3 py-1.5 rounded-xl shadow-2xs transition-all"
                 >
-                  <span>عرض المرفق</span>
-                  <ExternalLink className="w-3.5 h-3.5" />
+                  <FileUp className="w-4 h-4 text-rose-600" />
+                  <span>معاينة وتحميل ملف PDF المسلّم</span>
+                  <ExternalLink className="w-3.5 h-3.5 text-rose-400" />
                 </a>
               </div>
             )}

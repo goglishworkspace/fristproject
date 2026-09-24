@@ -569,9 +569,9 @@ export function StudentAnswersModal({
                                 href={sub.fileUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1 text-xs text-asu-navy hover:text-asu-gold-dark font-bold underline bg-slate-100 px-2.5 py-1 rounded-lg"
+                                className="inline-flex items-center gap-1.5 text-xs text-rose-700 bg-rose-50 hover:bg-rose-100 font-bold border border-rose-200 px-3 py-1.5 rounded-xl shadow-2xs transition-all"
                               >
-                                <span>فتح رابط المرفق</span>
+                                <FileText className="w-4 h-4 text-rose-600 ml-1" /><span>معاينة وتحميل ملف PDF</span>
                                 <ExternalLink className="w-3 h-3" />
                               </a>
                             </div>

@@ -170,14 +170,14 @@ export async function uploadActivityFileAction(
       return { success: false, error: 'حجم الملف كبير جداً، الحد الأقصى المسموح به هو 10 ميجابايت' };
     }
 
-    const originalName = file.name || 'activity-file';
+    const originalName = file.name || 'activity-file.pdf';
     const ext = path.extname(originalName).toLowerCase();
-    const allowed = ['.png', '.jpg', '.jpeg', '.webp', '.pdf', '.docx'];
+    const allowed = ['.pdf'];
 
     if (!allowed.includes(ext)) {
       return {
         success: false,
-        error: 'نوع الملف غير مدعوم. يرجى رفع صورة (PNG, JPG, WEBP) أو مستند (PDF, DOCX)',
+        error: 'نوع الملف غير مدعوم. المنظومة تقبل فقط ملفات بصيغة مستند PDF (.pdf)',
       };
     }
 
