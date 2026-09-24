@@ -17,16 +17,17 @@
   {
     "id": "std-1002",
     "username": "user1002",
-    "password": "mP4v8y",
-    "fullName": "",
-    "phone": "",
-    "isProfileCompleted": false,
+    "password": "1234",
+    "fullName": "تيست تيست تيستتيست",
+    "phone": "0100000000",
+    "isProfileCompleted": true,
     "isBanned": false,
     "preScore": null,
     "postScore": null,
     "moduleProgress": "0/2",
     "status": "not_started",
-    "createdAt": "2026-09-22T15:20:50.381Z"
+    "createdAt": "2026-09-22T15:20:50.381Z",
+    "updatedAt": "2026-09-24T11:33:33.493Z"
   },
   {
     "id": "std-1003",

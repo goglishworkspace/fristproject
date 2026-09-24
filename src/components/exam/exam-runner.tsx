@@ -148,7 +148,7 @@ export function ExamRunner({ examType, examTitle, questions }: ExamRunnerProps) 
       (currentQ.options[0] === 'صح' || currentQ.options[0] === 'صواب'));
 
   return (
-    <div className="max-w-3xl mx-auto space-y-4 sm:space-y-6">
+    <div className="max-w-3xl mx-auto space-y-4 sm:space-y-6 relative z-10 pointer-events-auto">
       {/* هيدر الاختبار والتقدم */}
       <div className="bg-white p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-xs space-y-3">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -172,7 +172,7 @@ export function ExamRunner({ examType, examTitle, questions }: ExamRunnerProps) 
         </div>
 
         {/* شريط أرقام الأسئلة والتنقل السريع للهواتف والكمبيوتر */}
-        <div className="pt-2 border-t border-slate-100 flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 no-scrollbar select-none">
+        <div className="pt-2 border-t border-slate-100 flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 no-scrollbar">
           {questions.map((q, idx) => {
             const isAnswered = answers[q.id] !== undefined;
             const isCurrent = idx === currentIndex;
@@ -186,7 +186,7 @@ export function ExamRunner({ examType, examTitle, questions }: ExamRunnerProps) 
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }
                 }}
-                className={`min-w-9 h-9 sm:min-w-10 sm:h-10 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-0.5 cursor-pointer touch-manipulation select-none transition-colors active:scale-95 ${
+                className={`min-w-9 h-9 sm:min-w-10 sm:h-10 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-0.5 cursor-pointer touch-manipulation transition-colors active:scale-95 ${
                   isCurrent
                     ? 'bg-asu-navy text-white shadow-md ring-2 ring-asu-gold'
                     : isAnswered
@@ -195,9 +195,9 @@ export function ExamRunner({ examType, examTitle, questions }: ExamRunnerProps) 
                 }`}
                 title={`الانتقال للسؤال رقم ${idx + 1}`}
               >
-                <span>{idx + 1}</span>
+                <span className="pointer-events-none">{idx + 1}</span>
                 {isAnswered && !isCurrent && (
-                  <span className="text-[10px] text-emerald-600 font-bold">✓</span>
+                  <span className="text-[10px] text-emerald-600 font-bold pointer-events-none">✓</span>
                 )}
               </button>
             );
@@ -244,18 +244,18 @@ export function ExamRunner({ examType, examTitle, questions }: ExamRunnerProps) 
               <button
                 type="button"
                 onClick={() => handleSelectOption(0)}
-                className={`w-full min-h-[100px] p-4 sm:p-5 rounded-2xl border-2 flex flex-col items-center justify-center gap-2.5 cursor-pointer select-none touch-manipulation text-center transition-all active:scale-[0.98] ${
+                className={`w-full min-h-[100px] p-4 sm:p-5 rounded-2xl border-2 flex flex-col items-center justify-center gap-2.5 cursor-pointer touch-manipulation text-center transition-all active:scale-[0.98] ${
                   answers[currentQ.id] === 0
                     ? 'border-emerald-600 bg-emerald-50 text-emerald-950 font-black shadow-lg ring-2 ring-emerald-500/30'
                     : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50 active:bg-slate-100 text-slate-700'
                 }`}
               >
-                <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center shadow-xs ${
+                <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center shadow-xs pointer-events-none ${
                   answers[currentQ.id] === 0 ? 'bg-emerald-600 text-white' : 'bg-emerald-100 text-emerald-700'
                 }`}>
                   <CheckCircle2 className="w-7 h-7 sm:w-8 sm:h-8" />
                 </div>
-                <div className="space-y-1">
+                <div className="space-y-1 pointer-events-none">
                   <span className="text-base sm:text-lg font-black block">صح (صواب)</span>
                   {answers[currentQ.id] === 0 ? (
                     <span className="text-xs bg-emerald-600 text-white px-3 py-1 rounded-full font-bold inline-flex items-center gap-1 shadow-xs">
@@ -272,18 +272,18 @@ export function ExamRunner({ examType, examTitle, questions }: ExamRunnerProps) 
               <button
                 type="button"
                 onClick={() => handleSelectOption(1)}
-                className={`w-full min-h-[100px] p-4 sm:p-5 rounded-2xl border-2 flex flex-col items-center justify-center gap-2.5 cursor-pointer select-none touch-manipulation text-center transition-all active:scale-[0.98] ${
+                className={`w-full min-h-[100px] p-4 sm:p-5 rounded-2xl border-2 flex flex-col items-center justify-center gap-2.5 cursor-pointer touch-manipulation text-center transition-all active:scale-[0.98] ${
                   answers[currentQ.id] === 1
                     ? 'border-rose-600 bg-rose-50 text-rose-950 font-black shadow-lg ring-2 ring-rose-500/30'
                     : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50 active:bg-slate-100 text-slate-700'
                 }`}
               >
-                <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center shadow-xs ${
+                <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center shadow-xs pointer-events-none ${
                   answers[currentQ.id] === 1 ? 'bg-rose-600 text-white' : 'bg-rose-100 text-rose-700'
                 }`}>
                   <XCircle className="w-7 h-7 sm:w-8 sm:h-8" />
                 </div>
-                <div className="space-y-1">
+                <div className="space-y-1 pointer-events-none">
                   <span className="text-base sm:text-lg font-black block">خطأ</span>
                   {answers[currentQ.id] === 1 ? (
                     <span className="text-xs bg-rose-600 text-white px-3 py-1 rounded-full font-bold inline-flex items-center gap-1 shadow-xs">
@@ -307,13 +307,13 @@ export function ExamRunner({ examType, examTitle, questions }: ExamRunnerProps) 
                     key={idx}
                     type="button"
                     onClick={() => handleSelectOption(idx)}
-                    className={`w-full text-right min-h-[52px] p-3.5 sm:p-4 rounded-2xl border-2 flex items-center justify-between gap-3 cursor-pointer select-none touch-manipulation transition-all active:scale-[0.99] ${
+                    className={`w-full text-right min-h-[52px] p-3.5 sm:p-4 rounded-2xl border-2 flex items-center justify-between gap-3 cursor-pointer touch-manipulation transition-all active:scale-[0.99] ${
                       isSelected
                         ? 'border-asu-navy bg-asu-navy-50/90 text-asu-navy font-black ring-2 ring-asu-navy/20 shadow-md'
                         : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50 active:bg-slate-100 text-slate-800'
                     }`}
                   >
-                    <div className="flex items-center gap-3 min-w-0 flex-1">
+                    <div className="flex items-center gap-3 min-w-0 flex-1 pointer-events-none">
                       <span
                         className={`w-7 h-7 sm:w-8 sm:h-8 rounded-xl flex items-center justify-center text-xs sm:text-sm font-black shrink-0 ${
                           isSelected
@@ -328,7 +328,7 @@ export function ExamRunner({ examType, examTitle, questions }: ExamRunnerProps) 
                       </span>
                     </div>
 
-                    <div className="shrink-0 flex items-center gap-2">
+                    <div className="shrink-0 flex items-center gap-2 pointer-events-none">
                       {isSelected ? (
                         <span className="inline-flex items-center gap-1 text-xs bg-asu-navy text-white px-2.5 py-1 rounded-full font-bold shadow-xs">
                           <CheckCircle2 className="w-3.5 h-3.5" />
@@ -350,10 +350,10 @@ export function ExamRunner({ examType, examTitle, questions }: ExamRunnerProps) 
             type="button"
             onClick={handlePrev}
             disabled={currentIndex === 0 || isSubmitting}
-            className="h-12 px-5 rounded-2xl border border-slate-300 bg-white hover:bg-slate-50 active:bg-slate-100 text-slate-700 flex items-center justify-center gap-1.5 font-bold text-sm sm:text-base cursor-pointer select-none touch-manipulation shadow-2xs disabled:opacity-40 disabled:cursor-not-allowed"
+            className="h-12 px-5 rounded-2xl border border-slate-300 bg-white hover:bg-slate-50 active:bg-slate-100 text-slate-700 flex items-center justify-center gap-1.5 font-bold text-sm sm:text-base cursor-pointer touch-manipulation shadow-2xs disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            <ArrowRight className="w-4 h-4 ml-1" />
-            <span>السابق</span>
+            <ArrowRight className="w-4 h-4 ml-1 pointer-events-none" />
+            <span className="pointer-events-none">السابق</span>
           </button>
 
           {currentIndex < totalQ - 1 ? (
@@ -361,25 +361,25 @@ export function ExamRunner({ examType, examTitle, questions }: ExamRunnerProps) 
               type="button"
               onClick={handleNext}
               disabled={isSubmitting}
-              className="h-12 px-6 sm:px-8 rounded-2xl bg-asu-navy hover:bg-asu-navy-dark active:bg-asu-navy-dark text-white flex items-center justify-center gap-2 font-black text-sm sm:text-base cursor-pointer select-none touch-manipulation shadow-lg shadow-asu-navy/25 disabled:opacity-50"
+              className="h-12 px-6 sm:px-8 rounded-2xl bg-asu-navy hover:bg-asu-navy-dark active:bg-asu-navy-dark text-white flex items-center justify-center gap-2 font-black text-sm sm:text-base cursor-pointer touch-manipulation shadow-lg shadow-asu-navy/25 disabled:opacity-50"
             >
-              <span>التالي</span>
-              <ArrowLeft className="w-4 h-4 mr-1" />
+              <span className="pointer-events-none">التالي</span>
+              <ArrowLeft className="w-4 h-4 mr-1 pointer-events-none" />
             </button>
           ) : (
             <button
               type="button"
               onClick={handleSubmit}
               disabled={isSubmitting}
-              className="h-12 px-6 sm:px-8 rounded-2xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-700 text-white flex items-center justify-center gap-2 font-black text-sm sm:text-base cursor-pointer select-none touch-manipulation shadow-lg shadow-emerald-600/25 disabled:opacity-50"
+              className="h-12 px-6 sm:px-8 rounded-2xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-700 text-white flex items-center justify-center gap-2 font-black text-sm sm:text-base cursor-pointer touch-manipulation shadow-lg shadow-emerald-600/25 disabled:opacity-50"
             >
               {isSubmitting ? (
-                <span>جاري التسليم...</span>
+                <span className="pointer-events-none">جاري التسليم...</span>
               ) : (
-                <>
+                <div className="flex items-center gap-2 pointer-events-none">
                   <Send className="w-4 h-4 ml-1" />
                   <span>تسليم الاختبار النهائي</span>
-                </>
+                </div>
               )}
             </button>
           )}
