@@ -7,6 +7,7 @@ import { cookies } from 'next/headers';
 import type { StudentAccount, ExamType } from '@/lib/types/database';
 import { createClient } from '@/lib/supabase/server';
 import { isLiveSupabaseConfigured } from '@/lib/supabase/config';
+import { assertAdmin } from '@/lib/auth/session';
 
 const STUDENTS_FILE_PATH = path.join(process.cwd(), 'src', 'data', 'students.json');
 
@@ -50,6 +51,8 @@ export async function createStudentAction(data: {
   password?: string;
 }): Promise<{ success: boolean; student?: StudentAccount; error?: string }> {
   try {
+    await assertAdmin();
+
     const students = await getStudentsListAction();
     const cleanUsername = data.username.trim().toLowerCase();
 
@@ -92,6 +95,8 @@ export async function generateBatchStudentsAction(
   prefix = 'user'
 ): Promise<{ success: boolean; count?: number; error?: string }> {
   try {
+    await assertAdmin();
+
     if (count <= 0 || count > 500) {
       return { success: false, error: 'يرجى تحديد عدد بين 1 و 500 طالب' };
     }
@@ -137,8 +142,8 @@ export async function generateBatchStudentsAction(
     revalidatePath('/admin/dashboard');
 
     return { success: true, count: newBatch.length };
-  } catch (err) {
-    return { success: false, error: 'حدث خطأ أثناء توليد الحسابات' };
+  } catch (err: any) {
+    return { success: false, error: err?.message || 'حدث خطأ أثناء توليد الحسابات' };
   }
 }
 
@@ -152,6 +157,8 @@ export async function updateStudentAction(
   }
 ): Promise<{ success: boolean; error?: string }> {
   try {
+    await assertAdmin();
+
     const students = await getStudentsListAction();
     const studentIdx = students.findIndex((s) => s.id === id);
 
@@ -183,8 +190,8 @@ export async function updateStudentAction(
     revalidatePath('/admin/dashboard');
 
     return { success: true };
-  } catch (err) {
-    return { success: false, error: 'حدث خطأ أثناء تعديل بيانات الطالب' };
+  } catch (err: any) {
+    return { success: false, error: err?.message || 'حدث خطأ أثناء تعديل بيانات الطالب' };
   }
 }
 
@@ -194,6 +201,8 @@ export async function resetStudentPasswordAction(
   newPassword?: string
 ): Promise<{ success: boolean; newPassword?: string; error?: string }> {
   try {
+    await assertAdmin();
+
     const students = await getStudentsListAction();
     const studentIdx = students.findIndex((s) => s.id === id);
 
@@ -213,8 +222,8 @@ export async function resetStudentPasswordAction(
     revalidatePath('/admin/dashboard');
 
     return { success: true, newPassword: assignedPassword };
-  } catch (err) {
-    return { success: false, error: 'حدث خطأ أثناء إعادة تعيين كلمة المرور' };
+  } catch (err: any) {
+    return { success: false, error: err?.message || 'حدث خطأ أثناء إعادة تعيين كلمة المرور' };
   }
 }
 
@@ -223,6 +232,8 @@ export async function toggleBanStudentAction(
   id: string
 ): Promise<{ success: boolean; isBanned?: boolean; error?: string }> {
   try {
+    await assertAdmin();
+
     const students = await getStudentsListAction();
     const studentIdx = students.findIndex((s) => s.id === id);
 
@@ -238,8 +249,8 @@ export async function toggleBanStudentAction(
     revalidatePath('/admin/dashboard');
 
     return { success: true, isBanned: newBannedState };
-  } catch (err) {
-    return { success: false, error: 'حدث خطأ أثناء تغيير حالة حظر الطالب' };
+  } catch (err: any) {
+    return { success: false, error: err?.message || 'حدث خطأ أثناء تغيير حالة حظر الطالب' };
   }
 }
 
@@ -248,6 +259,8 @@ export async function deleteStudentAction(
   id: string
 ): Promise<{ success: boolean; error?: string }> {
   try {
+    await assertAdmin();
+
     const students = await getStudentsListAction();
     const filtered = students.filter((s) => s.id !== id);
 
@@ -259,8 +272,8 @@ export async function deleteStudentAction(
     revalidatePath('/admin/dashboard');
 
     return { success: true };
-  } catch (err) {
-    return { success: false, error: 'حدث خطأ أثناء حذف الطالب' };
+  } catch (err: any) {
+    return { success: false, error: err?.message || 'حدث خطأ أثناء حذف الطالب' };
   }
 }
 
@@ -269,6 +282,8 @@ export async function resetStudentToFreshAction(
   id: string
 ): Promise<{ success: boolean; student?: StudentAccount; error?: string }> {
   try {
+    await assertAdmin();
+
     const students = await getStudentsListAction();
     const studentIdx = students.findIndex(
       (s) => s.id === id || s.username.toLowerCase() === id.toLowerCase()
@@ -365,19 +380,32 @@ export async function completeStudentProfileAction(data: {
 
     await saveStudentsList(students);
 
-    // تحديث كوكيز الجلسة فوراً لتعكس البيانات الجديدة والاكتمال
+    // تحديث كوكيز الجلسة فوراً لتعكس البيانات الجديدة والاكتمال مع توقيع أمني رقمي
+    const sessionData = {
+      id: students[studentIdx].id,
+      student_id: students[studentIdx].username,
+      full_name: cleanName,
+      phone: cleanPhone,
+      role: 'student' as const,
+      is_profile_completed: true,
+      is_banned: false,
+    };
+    const { signSessionPayload } = await import('@/lib/auth/session');
+    const signature = signSessionPayload(sessionData);
+
     cookieStore.set(
       'dev_demo_user',
       JSON.stringify({
-        id: students[studentIdx].id,
-        student_id: students[studentIdx].username,
-        full_name: cleanName,
-        phone: cleanPhone,
-        role: 'student',
-        is_profile_completed: true,
-        is_banned: false,
+        ...sessionData,
+        signature,
       }),
-      { path: '/', maxAge: 86400 * 30, sameSite: 'lax' }
+      {
+        path: '/',
+        maxAge: 86400 * 30,
+        sameSite: 'lax',
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+      }
     );
 
     revalidatePath('/', 'layout');

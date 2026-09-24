@@ -8,6 +8,8 @@ import type { ExamType, QuestionWithAnswer, QuestionType } from '@/lib/types/dat
 import { createClient } from '@/lib/supabase/server';
 import { isLiveSupabaseConfigured } from '@/lib/supabase/config';
 
+import { assertAdmin } from '@/lib/auth/session';
+
 const QUESTIONS_FILE_PATH = path.join(process.cwd(), 'src', 'data', 'exam-questions.json');
 
 // 1. قراءة جميع الأسئلة من بنك الأسئلة الدائم
@@ -50,6 +52,8 @@ export async function createExamQuestionAction(data: {
   order_index?: number;
 }): Promise<{ success: boolean; question?: QuestionWithAnswer; error?: string }> {
   try {
+    await assertAdmin();
+
     const cleanText = data.question_text?.trim();
     if (!cleanText) {
       return { success: false, error: 'يرجى إدخال نص السؤال' };
@@ -113,6 +117,8 @@ export async function updateExamQuestionAction(
   data: Partial<QuestionWithAnswer>
 ): Promise<{ success: boolean; question?: QuestionWithAnswer; error?: string }> {
   try {
+    await assertAdmin();
+
     const allQuestions = await getAllQuestionsAction();
     const idx = allQuestions.findIndex((q) => q.id === id);
 
@@ -134,15 +140,17 @@ export async function updateExamQuestionAction(
     revalidatePath('/admin/dashboard');
 
     return { success: true, question: allQuestions[idx] };
-  } catch (err) {
+  } catch (err: any) {
     console.error('Error updating question:', err);
-    return { success: false, error: 'حدث خطأ أثناء تعديل السؤال' };
+    return { success: false, error: err?.message || 'حدث خطأ أثناء تعديل السؤال' };
   }
 }
 
 // 5. حذف سؤال
 export async function deleteExamQuestionAction(id: string): Promise<{ success: boolean; error?: string }> {
   try {
+    await assertAdmin();
+
     const allQuestions = await getAllQuestionsAction();
     const filtered = allQuestions.filter((q) => q.id !== id);
 
@@ -157,9 +165,9 @@ export async function deleteExamQuestionAction(id: string): Promise<{ success: b
     revalidatePath('/admin/dashboard');
 
     return { success: true };
-  } catch (err) {
+  } catch (err: any) {
     console.error('Error deleting question:', err);
-    return { success: false, error: 'حدث خطأ أثناء حذف السؤال' };
+    return { success: false, error: err?.message || 'حدث خطأ أثناء حذف السؤال' };
   }
 }
 

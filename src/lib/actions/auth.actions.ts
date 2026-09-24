@@ -31,13 +31,22 @@ export async function loginAction(
 
   if (isAdminUser && password === expectedAdminPassword) {
     const cookieStore = await cookies();
+    const adminData = {
+      id: 'admin-demo-id',
+      student_id: 'admin@asu.edu.eg',
+      full_name: 'د. المشرف الأكاديمي (جامعة عين شمس)',
+      role: 'admin' as const,
+      is_banned: false,
+      is_profile_completed: true,
+    };
+    const { signSessionPayload } = await import('@/lib/auth/session');
+    const signature = signSessionPayload(adminData);
+
     cookieStore.set(
       'dev_demo_user',
       JSON.stringify({
-        id: 'admin-demo-id',
-        student_id: 'admin@asu.edu.eg',
-        full_name: 'د. المشرف الأكاديمي (جامعة عين شمس)',
-        role: 'admin',
+        ...adminData,
+        signature,
       }),
       {
         path: '/',
@@ -70,18 +79,31 @@ export async function loginAction(
     }
 
     const cookieStore = await cookies();
+    const studentData = {
+      id: matchedStudent.id,
+      student_id: matchedStudent.username,
+      full_name: matchedStudent.fullName || `طالب (${matchedStudent.username})`,
+      phone: matchedStudent.phone || '',
+      role: 'student' as const,
+      is_banned: false,
+      is_profile_completed: matchedStudent.isProfileCompleted,
+    };
+    const { signSessionPayload } = await import('@/lib/auth/session');
+    const signature = signSessionPayload(studentData);
+
     cookieStore.set(
       'dev_demo_user',
       JSON.stringify({
-        id: matchedStudent.id,
-        student_id: matchedStudent.username,
-        full_name: matchedStudent.fullName || `طالب (${matchedStudent.username})`,
-        phone: matchedStudent.phone || '',
-        role: 'student',
-        is_banned: false,
-        is_profile_completed: matchedStudent.isProfileCompleted,
+        ...studentData,
+        signature,
       }),
-      { path: '/', maxAge: 86400 * 7 }
+      {
+        path: '/',
+        maxAge: 86400 * 7,
+        httpOnly: true,
+        sameSite: 'lax',
+        secure: process.env.NODE_ENV === 'production',
+      }
     );
 
     // إذا لم يكمل الطالب بياناته بعد (أول دخول)، نوجهه إجبارياً لشاشة استكمال البيانات

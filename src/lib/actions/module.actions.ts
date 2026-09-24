@@ -8,6 +8,7 @@ import { redirect } from 'next/navigation';
 import type { ModuleData } from '@/lib/types/database';
 import { createClient } from '@/lib/supabase/server';
 import { isLiveSupabaseConfigured } from '@/lib/supabase/config';
+import { assertAdmin } from '@/lib/auth/session';
 
 const MODULES_FILE_PATH = path.join(process.cwd(), 'src', 'data', 'modules.json');
 
@@ -40,6 +41,8 @@ export async function createModuleAction(
   data: Omit<ModuleData, 'id' | 'createdAt'>
 ): Promise<{ success: boolean; module?: ModuleData; error?: string }> {
   try {
+    await assertAdmin();
+
     const cleanTitle = data.title?.trim();
     if (!cleanTitle) {
       return { success: false, error: 'يرجى إدخال عنوان الوحدة التعليمية' };
@@ -89,6 +92,8 @@ export async function updateModuleAction(
   data: Partial<ModuleData>
 ): Promise<{ success: boolean; module?: ModuleData; error?: string }> {
   try {
+    await assertAdmin();
+
     const modules = await getModulesListAction();
     const idx = modules.findIndex((m) => m.id === id);
 
@@ -118,9 +123,9 @@ export async function updateModuleAction(
     revalidatePath('/admin/dashboard');
 
     return { success: true, module: modules[idx] };
-  } catch (err) {
+  } catch (err: any) {
     console.error('Error updating module:', err);
-    return { success: false, error: 'حدث خطأ أثناء حفظ التعديلات' };
+    return { success: false, error: err?.message || 'حدث خطأ أثناء حفظ التعديلات' };
   }
 }
 
@@ -129,6 +134,8 @@ export async function deleteModuleAction(
   id: string
 ): Promise<{ success: boolean; error?: string }> {
   try {
+    await assertAdmin();
+
     const modules = await getModulesListAction();
     const filtered = modules.filter((m) => m.id !== id);
 
@@ -143,9 +150,9 @@ export async function deleteModuleAction(
     revalidatePath('/admin/dashboard');
 
     return { success: true };
-  } catch (err) {
+  } catch (err: any) {
     console.error('Error deleting module:', err);
-    return { success: false, error: 'حدث خطأ أثناء حذف الوحدة' };
+    return { success: false, error: err?.message || 'حدث خطأ أثناء حذف الوحدة' };
   }
 }
 

@@ -74,8 +74,11 @@ export default async function SingleModulePage({ params }: ModulePageProps) {
   const existingSubmission = currentStudent?.activitySubmissions?.[moduleId] || null;
   const handleComplete = completeModuleAction.bind(null, moduleData.id);
 
-  // جلب أسئلة اختبار هذه الوحدة إن وُجدت من بنك الأسئلة
-  const allModuleQuestions = await getExamQuestionsAction(`module_${moduleId}`);
+  // جلب أسئلة اختبار هذه الوحدة إن وُجدت من بنك الأسئلة مع تعقيم الإجابات
+  const allModuleQuestionsWithAnswers = await getExamQuestionsAction(`module_${moduleId}`);
+  const safeModuleQuestions = allModuleQuestionsWithAnswers.map(
+    ({ correct_option_index, ...safeQuestion }) => safeQuestion
+  );
   const quizResult = currentStudent?.moduleQuizScores?.[moduleId] || null;
   const nextTargetUrl = isLastModule ? '/post-test' : nextModule ? `/modules/${nextModule.id}` : '/modules';
 
@@ -215,15 +218,15 @@ export default async function SingleModulePage({ params }: ModulePageProps) {
       )}
 
       {/* 6. قسم اختبار نهاية الموديول (التقويم البنائي) إن وُجدت أسئلة */}
-      {allModuleQuestions.length > 0 && (
+      {safeModuleQuestions.length > 0 && (
         <section className="pt-2">
           <ModuleQuizBox
             moduleId={moduleData.id}
             moduleOrder={moduleData.order}
             moduleTitle={moduleData.title}
-            questions={allModuleQuestions}
+            questions={safeModuleQuestions}
             existingScore={quizResult?.score}
-            totalQuestions={quizResult?.total || allModuleQuestions.length}
+            totalQuestions={quizResult?.total || safeModuleQuestions.length}
             isCompleted={isCompleted}
             nextModuleUrl={nextTargetUrl}
           />
