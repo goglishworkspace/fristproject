@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { submitModuleActivityAction } from '@/lib/actions/module.actions';
+import { submitModuleActivityAction, uploadActivityFileAction } from '@/lib/actions/module.actions';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -51,21 +51,17 @@ export function ModuleActivityBox({
     formData.append('file', file);
 
     try {
-      const res = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      });
+      const res = await uploadActivityFileAction(formData);
 
-      const data = await res.json();
-      if (res.ok && data.success && data.fileUrl) {
-        setFileUrl(data.fileUrl);
-        setUploadedFileName(data.fileName || file.name);
+      if (res.success && res.fileUrl) {
+        setFileUrl(res.fileUrl);
+        setUploadedFileName(res.fileName || file.name);
         setStatusMessage({ type: 'success', text: `تم رفع الملف (${file.name}) بنجاح!` });
       } else {
-        setStatusMessage({ type: 'error', text: data.error || 'فشل رفع الملف، يرجى المحاولة مرة ثانية' });
+        setStatusMessage({ type: 'error', text: res.error || 'فشل رفع الملف، يرجى المحاولة مرة ثانية' });
       }
     } catch {
-      setStatusMessage({ type: 'error', text: 'حدث خطأ في الاتصال أثناء رفع الملف' });
+      setStatusMessage({ type: 'error', text: 'حدث خطأ أثناء رفع الملف' });
     } finally {
       setIsUploading(false);
     }

@@ -149,6 +149,50 @@ export async function deleteModuleAction(
   }
 }
 
+// 4.5 رفع ملف النشاط مباشرة عبر Server Action بدلاً من أي API endpoint
+export async function uploadActivityFileAction(
+  formData: FormData
+): Promise<{ success: boolean; fileUrl?: string; fileName?: string; error?: string }> {
+  try {
+    const file = formData.get('file') as File | null;
+    if (!file) {
+      return { success: false, error: 'لم يتم تحديد أي ملف للرفع' };
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      return { success: false, error: 'حجم الملف كبير جداً، الحد الأقصى المسموح به هو 10 ميجابايت' };
+    }
+
+    const originalName = file.name || 'activity-file';
+    const ext = path.extname(originalName).toLowerCase();
+    const allowed = ['.png', '.jpg', '.jpeg', '.webp', '.pdf', '.docx'];
+
+    if (!allowed.includes(ext)) {
+      return {
+        success: false,
+        error: 'نوع الملف غير مدعوم. يرجى رفع صورة (PNG, JPG, WEBP) أو مستند (PDF, DOCX)',
+      };
+    }
+
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
+    await fs.mkdir(uploadsDir, { recursive: true });
+
+    const safeFileName = `act-${Date.now()}-${Math.random().toString(36).substring(2, 8)}${ext}`;
+    const filePath = path.join(uploadsDir, safeFileName);
+    await fs.writeFile(filePath, buffer);
+
+    return {
+      success: true,
+      fileUrl: `/uploads/${safeFileName}`,
+      fileName: originalName,
+    };
+  } catch (err) {
+    console.error('uploadActivityFileAction error:', err);
+    return { success: false, error: 'حدث خطأ أثناء حفظ الملف' };
+  }
+}
+
 // 5. تسليم الطالب لحل النشاط التطبيقي في الموديول
 export async function submitModuleActivityAction(
   moduleId: string,
