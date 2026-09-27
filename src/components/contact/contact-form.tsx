@@ -17,6 +17,8 @@ import {
   ShieldCheck,
   ClipboardList,
   RefreshCw,
+  Info,
+  Check,
 } from 'lucide-react';
 
 type InquiryCategory = 'academic' | 'technical' | 'exam' | 'suggestion';
@@ -190,11 +192,11 @@ export function ContactForm() {
             )}
 
             {/* اختيار تصنيف الاستفسار */}
-            <div className="space-y-2">
-              <label className="block text-xs font-black text-slate-700 tracking-wide">
-                1. تصنيف ونوع المراسلة:
+            <div className="space-y-2.5">
+              <label className="block text-xs font-bold text-slate-700">
+                تصنيف ونوع المراسلة <span className="text-rose-500">*</span>
               </label>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
                 {CATEGORIES.map((cat) => {
                   const Icon = cat.icon;
                   const isSelected = category === cat.id;
@@ -203,28 +205,43 @@ export function ContactForm() {
                       key={cat.id}
                       type="button"
                       onClick={() => setCategory(cat.id)}
-                      className={`p-3 rounded-2xl border text-right transition-all flex flex-col justify-between gap-1.5 cursor-pointer ${
+                      className={`relative p-3 sm:py-3.5 sm:px-3 rounded-2xl border text-center transition-all flex flex-col items-center justify-center gap-2 cursor-pointer min-h-[96px] ${
                         isSelected
-                          ? 'bg-asu-navy text-white border-asu-gold shadow-md shadow-asu-navy/25 scale-[1.02]'
-                          : 'bg-slate-50/70 hover:bg-white border-slate-200 text-slate-700 hover:border-slate-300'
+                          ? 'bg-asu-navy text-white border-asu-navy shadow-md shadow-asu-navy/20 ring-2 ring-asu-gold'
+                          : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-300 shadow-2xs'
                       }`}
                     >
-                      <div className="flex items-center justify-between w-full">
-                        <Icon
-                          className={`w-4 h-4 ${
-                            isSelected ? 'text-asu-gold-light' : 'text-slate-400'
-                          }`}
-                        />
-                        {isSelected && (
-                          <div className="w-2 h-2 rounded-full bg-asu-gold animate-pulse" />
-                        )}
+                      {isSelected && (
+                        <div className="absolute top-2 left-2 w-4 h-4 rounded-full bg-asu-gold text-slate-950 flex items-center justify-center shadow-xs">
+                          <Check className="w-2.5 h-2.5 stroke-[3]" />
+                        </div>
+                      )}
+                      <div
+                        className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${
+                          isSelected
+                            ? 'bg-white/15 text-asu-gold-light'
+                            : 'bg-slate-100 text-slate-600'
+                        }`}
+                      >
+                        <Icon className="w-5 h-5" />
                       </div>
-                      <span className="text-xs font-black leading-tight block">
+                      <span className="text-xs font-bold leading-tight block text-center">
                         {cat.label}
                       </span>
                     </button>
                   );
                 })}
+              </div>
+
+              {/* توضيح مباشر لنوع الاستفسار المحدد */}
+              <div className="p-2.5 px-3 rounded-xl bg-slate-50 border border-slate-200/80 text-xs text-slate-600 flex items-center gap-2">
+                <Info className="w-4 h-4 text-asu-navy shrink-0" />
+                <span>
+                  <strong className="text-asu-navy font-bold">
+                    {CATEGORIES.find((c) => c.id === category)?.label}:
+                  </strong>{' '}
+                  {CATEGORIES.find((c) => c.id === category)?.description}
+                </span>
               </div>
             </div>
 

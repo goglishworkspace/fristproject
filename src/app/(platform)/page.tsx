@@ -10,7 +10,6 @@ import {
   Sparkles,
   LogIn,
   BookMarked,
-  HelpCircle,
   ImageIcon,
   Leaf,
   Info,
@@ -109,28 +108,16 @@ export default async function PlatformHomePage() {
             {/* أزرار الإجراءات المتجاوبة مع الهواتف والحالة */}
             <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
               {!isLoggedIn ? (
-                <>
-                  <Link href="/login" className="w-full sm:w-auto">
-                    <Button
-                      variant="gold"
-                      size="lg"
-                      className="w-full sm:w-auto gap-2 shadow-lg shadow-asu-gold/20 font-extrabold"
-                    >
-                      <LogIn className="w-4 h-4 ml-1" />
-                      <span>تسجيل دخول الطالب لبدء الاختبار</span>
-                    </Button>
-                  </Link>
-                  <Link href="/instructions" className="w-full sm:w-auto">
-                    <Button
-                      variant="outline"
-                      size="lg"
-                      className="w-full sm:w-auto border-white/30 text-white hover:bg-white/10 hover:text-white bg-transparent font-bold"
-                    >
-                      <HelpCircle className="w-4 h-4 ml-1.5" />
-                      <span>دليل وتعليمات الاستخدام</span>
-                    </Button>
-                  </Link>
-                </>
+                <Link href="/login" className="w-full sm:w-auto">
+                  <Button
+                    variant="gold"
+                    size="lg"
+                    className="w-full sm:w-auto gap-2 shadow-lg shadow-asu-gold/20 font-extrabold"
+                  >
+                    <LogIn className="w-4 h-4 ml-1" />
+                    <span>تسجيل الدخول</span>
+                  </Button>
+                </Link>
               ) : isAdmin ? (
                 <>
                   <Link href="/admin/dashboard" className="w-full sm:w-auto">

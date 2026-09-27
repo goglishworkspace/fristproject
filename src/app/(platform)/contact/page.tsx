@@ -1,23 +1,15 @@
-import Link from 'next/link';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { ContactForm } from '@/components/contact/contact-form';
 import {
   Mail,
-  Phone,
-  MapPin,
   Building2,
   GraduationCap,
   Sparkles,
   ShieldCheck,
   Clock,
   ExternalLink,
-  MessageCircle,
   HelpCircle,
-  CheckCircle2,
-  BookOpen,
-  Send,
   Compass,
 } from 'lucide-react';
 import { ASU_LOGO_URL } from '@/lib/constants/branding';
@@ -112,7 +104,7 @@ export default function ContactUsPage() {
           </Badge>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
           {/* القناة 1: الإشراف الأكاديمي */}
           <div className="group rounded-2xl bg-white border border-slate-200/90 p-5 shadow-xs hover:shadow-md hover:border-asu-gold/50 transition-all flex flex-col justify-between space-y-4">
             <div className="space-y-3">
@@ -201,137 +193,12 @@ export default function ContactUsPage() {
               </a>
             </div>
           </div>
-
-          {/* القناة 4: الاستفسارات العاجلة والمحادثة */}
-          <div className="group rounded-2xl bg-gradient-to-br from-asu-navy to-[#18265b] text-white p-5 shadow-md hover:shadow-xl transition-all flex flex-col justify-between space-y-4 border border-asu-gold/30">
-            <div className="space-y-3">
-              <div className="w-12 h-12 rounded-2xl bg-white/10 text-asu-gold flex items-center justify-center border border-white/20 group-hover:scale-105 transition-transform">
-                <MessageCircle className="w-6 h-6 text-asu-gold-light" />
-              </div>
-              <div>
-                <span className="text-[10px] font-extrabold text-slate-950 bg-asu-gold px-2 py-0.5 rounded-md inline-block mb-1">
-                  استجابة سريعة
-                </span>
-                <h3 className="text-base font-black text-white">
-                  المحادثة والاستفسار
-                </h3>
-                <p className="text-xs text-slate-200 leading-relaxed mt-1">
-                  قناة تواصل سريعة ومباشرة مخصصة لطلاب المرحلة لتقديم الإرشاد الفوري.
-                </p>
-              </div>
-            </div>
-            <div className="pt-2 border-t border-white/15">
-              <a
-                href="#contact-form-section"
-                className="inline-flex items-center gap-1 text-xs font-bold text-asu-gold-light hover:text-white transition-colors"
-              >
-                <span>افتح نموذج المراسلة المباشر ↓</span>
-              </a>
-            </div>
-          </div>
         </div>
       </section>
 
-      {/* 3. النموذج الملكي واللوحة الجانبية الأكاديمية (Two Columns Section) */}
-      <section id="contact-form-section" className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* عمود النموذج الملكي التفاعلي (7 من 12) */}
-        <div className="lg:col-span-7">
-          <ContactForm />
-        </div>
-
-        {/* العمود الجانبي للمعلومات الأكاديمية والاعتماد (5 من 12) */}
-        <div className="lg:col-span-5 space-y-6">
-          {/* بطاقة الاعتماد الأكاديمي والجامعي */}
-          <div className="rounded-3xl bg-gradient-to-br from-asu-navy-dark to-asu-navy text-white p-6 sm:p-7 shadow-xl border border-asu-gold/30 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-asu-gold/10 rounded-full blur-2xl pointer-events-none" />
-            
-            <div className="space-y-4 relative z-10">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-white p-1.5 shadow-sm shrink-0 flex items-center justify-center">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={ASU_LOGO_URL}
-                    alt="جامعة عين شمس"
-                    className="w-full h-full object-contain"
-                  />
-                </div>
-                <div>
-                  <h3 className="text-base sm:text-lg font-black text-white">
-                    الاعتماد والتوثيق الأكاديمي
-                  </h3>
-                  <p className="text-xs text-asu-gold-light font-semibold">
-                    كلية التربية • جامعة عين شمس
-                  </p>
-                </div>
-              </div>
-
-              <p className="text-xs text-slate-200 leading-relaxed">
-                تأتي هذه المنصة التعليمية ضمن متطلبات مشروع بحثي أكاديمي محكّم بهدف تنمية الوعي بقضايا البيئة،
-                وقياس أثر التعلم التفاعلي باستخدام أدوات القياس والتقويم الحديثة.
-              </p>
-
-              <div className="space-y-2 pt-2 border-t border-white/15 text-xs text-slate-300">
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-asu-gold-light shrink-0" />
-                  <span>إشراف أكاديمي مباشر من أساتذة المناهج وطرق التدريس</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-asu-gold-light shrink-0" />
-                  <span>تأمين وسرية تامة لبيانات وإجابات الطلاب بالاختبارات</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-asu-gold-light shrink-0" />
-                  <span>توثيق زمني دقيق لكافة درجات القياس القبلي والبعدي</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* بطاقة مواعيد العمل وسرعة الاستجابة */}
-          <Card className="border-slate-200/90 bg-white shadow-sm">
-            <CardHeader className="border-b border-slate-100 pb-3">
-              <CardTitle className="text-base text-slate-900 flex items-center gap-2">
-                <Clock className="w-4 h-4 text-asu-gold-dark" />
-                <span>أوقات العمل وسرعة الاستجابة (SLA)</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-4 space-y-3.5 text-xs text-slate-600">
-              <div className="flex items-start justify-between border-b border-slate-100 pb-2.5">
-                <span className="font-bold text-slate-800">أيام العمل الرسمية:</span>
-                <span>من الأحد إلى الخميس</span>
-              </div>
-              <div className="flex items-start justify-between border-b border-slate-100 pb-2.5">
-                <span className="font-bold text-slate-800">ساعات الدوام الأكاديمي:</span>
-                <span>09:00 صباحاً – 03:00 مساءً</span>
-              </div>
-              <div className="flex items-start justify-between border-b border-slate-100 pb-2.5">
-                <span className="font-bold text-slate-800">الاستفسارات التقنية:</span>
-                <span className="text-emerald-600 font-bold">خلال ساعتين إلى 24 ساعة كحد أقصى</span>
-              </div>
-              <div className="flex items-start justify-between">
-                <span className="font-bold text-slate-800">الاستفسارات الأكاديمية:</span>
-                <span className="text-asu-navy font-bold">تُعرض أسبوعياً على المشرف الأكاديمي</span>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* بطاقة روابط سريعة للمنصة */}
-          <div className="p-4 rounded-2xl bg-asu-gold-50/70 border border-asu-gold/30 flex items-center justify-between">
-            <div className="space-y-0.5">
-              <p className="text-xs font-black text-asu-gold-dark">
-                هل تحتاج لمراجعة دليل الاستخدام؟
-              </p>
-              <p className="text-[11px] text-slate-600">
-                يمكنك الاطلاع على خطوات الاختبارات والوحدات بالتفصيل
-              </p>
-            </div>
-            <Link href="/instructions">
-              <Button size="sm" variant="gold" className="text-xs font-black shrink-0">
-                صفحة التعليمات
-              </Button>
-            </Link>
-          </div>
-        </div>
+      {/* 3. نموذج إرسال الاستفسار والدعم الفني المباشر */}
+      <section id="contact-form-section" className="max-w-3xl mx-auto w-full">
+        <ContactForm />
       </section>
 
       {/* 4. قسم الأسئلة الشائعة الأكاديمية والتقنية (Royal FAQ Section) */}
