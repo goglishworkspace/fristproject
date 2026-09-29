@@ -428,12 +428,16 @@ export async function deleteStudentAction(
       }
     }
 
-    const students = await getStudentsListAction();
-    const filtered = students.filter((s) => s.id !== id);
+    // محاولة الحفظ المحلي مع تجاهل قيود الـ Read-Only على Vercel
+    try {
+      const students = await getStudentsListAction();
+      const filtered = students.filter((s) => s.id !== id);
+      await saveStudentsList(filtered);
+    } catch {
+      // ignore on serverless read-only disk
+    }
 
-    await saveStudentsList(filtered);
     revalidatePath('/admin/dashboard');
-
     return { success: true };
   } catch (err: unknown) {
     const errorMsg = err instanceof Error ? err.message : 'حدث خطأ أثناء حذف الطالب';
