@@ -242,32 +242,32 @@
     "subtitle": "التعرف على التلوث البيئي ومصادره وتوزيعه المكاني وطرق الحد منه",
     "durationMinutes": 30,
     "images": [
-      "https://res.cloudinary.com/makcnu5x/image/upload/v1790622521/%D8%A7%D9%84%D8%BA%D9%84%D8%A7%D9%81.png",
-      "https://res.cloudinary.com/makcnu5x/image/upload/v1790622505/1.png",
-      "https://res.cloudinary.com/makcnu5x/image/upload/v1790622505/2.png",
-      "https://res.cloudinary.com/makcnu5x/image/upload/v1790622510/3.png",
-      "https://res.cloudinary.com/makcnu5x/image/upload/v1790622509/4.png",
-      "https://res.cloudinary.com/makcnu5x/image/upload/v1790622514/5.png",
-      "https://res.cloudinary.com/makcnu5x/image/upload/v1790622517/6.png",
-      "https://res.cloudinary.com/makcnu5x/image/upload/v1790622508/7.png",
-      "https://res.cloudinary.com/makcnu5x/image/upload/v1790622509/8.png",
-      "https://res.cloudinary.com/makcnu5x/image/upload/v1790622512/9.png",
-      "https://res.cloudinary.com/makcnu5x/image/upload/v1790622517/10.png",
-      "https://res.cloudinary.com/makcnu5x/image/upload/v1790622513/11.png",
-      "https://res.cloudinary.com/makcnu5x/image/upload/v1790622517/12.png",
-      "https://res.cloudinary.com/makcnu5x/image/upload/v1790622518/13.png",
-      "https://res.cloudinary.com/makcnu5x/image/upload/v1790622517/14.png",
-      "https://res.cloudinary.com/makcnu5x/image/upload/v1790622521/15.png"
+      "https://res.cloudinary.com/makcnu5x/image/upload/v1790686617/%D8%A7%D9%84%D8%BA%D9%84%D8%A7%D9%81_-2.png",
+      "https://res.cloudinary.com/makcnu5x/image/upload/v1790686599/1-2.png",
+      "https://res.cloudinary.com/makcnu5x/image/upload/v1790686600/2-2.png",
+      "https://res.cloudinary.com/makcnu5x/image/upload/v1790686601/3-2.png",
+      "https://res.cloudinary.com/makcnu5x/image/upload/v1790686601/4-2.png",
+      "https://res.cloudinary.com/makcnu5x/image/upload/v1790686604/5-2.png",
+      "https://res.cloudinary.com/makcnu5x/image/upload/v1790686604/6-2.png",
+      "https://res.cloudinary.com/makcnu5x/image/upload/v1790686607/7-2.png",
+      "https://res.cloudinary.com/makcnu5x/image/upload/v1790686607/8-2.png",
+      "https://res.cloudinary.com/makcnu5x/image/upload/v1790686613/9-2.png",
+      "https://res.cloudinary.com/makcnu5x/image/upload/v1790686610/10-2.png",
+      "https://res.cloudinary.com/makcnu5x/image/upload/v1790686613/11-2.png",
+      "https://res.cloudinary.com/makcnu5x/image/upload/v1790686612/12-2.png",
+      "https://res.cloudinary.com/makcnu5x/image/upload/v1790686613/13-2.png",
+      "https://res.cloudinary.com/makcnu5x/image/upload/v1790686618/14-2.png",
+      "https://res.cloudinary.com/makcnu5x/image/upload/v1790686616/15-2.png"
     ],
     "slides": [
       {
         "id": "slide-cover",
-        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790622521/%D8%A7%D9%84%D8%BA%D9%84%D8%A7%D9%81.png",
+        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790686617/%D8%A7%D9%84%D8%BA%D9%84%D8%A7%D9%81_-2.png",
         "title": "0"
       },
       {
         "id": "slide-1",
-        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790622505/1.png",
+        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790686599/1-2.png",
         "title": "1",
         "scaffolding": {
           "hint": "ركّز على الفرق بين مكونات البيئة في الجانب النظيف والجانب الملوث، ولاحظ كيف يمكن للملوثات أن تغيّر خصائصها.",
@@ -278,7 +278,7 @@
       },
       {
         "id": "slide-2",
-        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790622505/2.png",
+        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790686600/2-2.png",
         "title": "2",
         "scaffolding": {
           "hint": "اسأل أولًا: هل نتج الملوث عن عملية طبيعية أم عن نشاط قام به الإنسان؟ فهذا يساعدك على تحديد مصدره.",
@@ -289,7 +289,7 @@
       },
       {
         "id": "slide-3",
-        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790622510/3.png",
+        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790686601/3-2.png",
         "title": "3",
         "scaffolding": {
           "hint": "صنّف الملوث وفق طبيعته أولًا: صلب، سائل، غازي، أو طاقة؛ فهذا يساعدك على توقع طريقة انتشاره وتأثيره في البيئة.",
@@ -300,7 +300,7 @@
       },
       {
         "id": "slide-4",
-        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790622509/4.png",
+        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790686601/4-2.png",
         "title": "4",
         "scaffolding": {
           "hint": "اربط بين نوع الملوث والعنصر الذي يتعرض له؛ فاختلاف الملوث يؤدي إلى اختلاف الآثار الناتجة عنه.",
@@ -311,7 +311,7 @@
       },
       {
         "id": "slide-5",
-        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790622514/5.png",
+        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790686604/5-2.png",
         "title": "5",
         "scaffolding": {
           "hint": "الحد من التلوث يكون أكثر فاعلية عندما نمنع الملوثات من مصدرها قبل أن تنتشر في البيئة.",
@@ -322,7 +322,7 @@
       },
       {
         "id": "slide-6",
-        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790622517/6.png",
+        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790686604/6-2.png",
         "title": "6",
         "scaffolding": {
           "hint": "ابدأ بالسلوكيات التي تمارسها يوميًا؛ فترشيد الموارد وتقليل النفايات واختيار وسيلة النقل يمكن أن يقلل مصادر التلوث مباشرة.",
@@ -333,7 +333,7 @@
       },
       {
         "id": "slide-7",
-        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790622508/7.png",
+        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790686607/7-2.png",
         "title": "7",
         "scaffolding": {
           "hint": "ركّز على مصدر الملوث ونوعه؛ فمعرفة مصدر تلوث الهواء تساعد على تفسير ارتفاع تركيزه في بعض الأماكن.",
@@ -344,7 +344,7 @@
       },
       {
         "id": "slide-8",
-        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790622509/8.png",
+        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790686607/8-2.png",
         "title": "8",
         "scaffolding": {
           "hint": "عند تحديد منطقة تلوث الهواء، لا تكتفِ بمعرفة مصدر الانبعاث، بل لاحظ اتجاه الرياح والمسافة عن المصدر.",
@@ -355,7 +355,7 @@
       },
       {
         "id": "slide-9",
-        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790622512/9.png",
+        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790686613/9-2.png",
         "title": "9",
         "scaffolding": {
           "hint": "عند ملاحظة تغير لون المياه أو رائحتها، فكّر في مصدر الملوث الذي يمكن أن يكون قد وصل إليها.",
@@ -366,7 +366,7 @@
       },
       {
         "id": "slide-10",
-        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790622517/10.png",
+        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790686610/10-2.png",
         "title": "10",
         "scaffolding": {
           "hint": "عند تتبع ملوثات المياه، ابحث عن ثلاثة عناصر أساسية: مصدر التلوث، ومسار انتقاله، والمنطقة التي يصل إليها.",
@@ -377,7 +377,7 @@
       },
       {
         "id": "slide-11",
-        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790622513/11.png",
+        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790686613/11-2.png",
         "title": "11",
         "scaffolding": {
           "hint": "عند ملاحظة تدهور التربة، فكّر في الأنشطة التي تحدث فوقها أو بالقرب منها؛ فقد تساعدك على تحديد مصدر التلوث.",
@@ -388,7 +388,7 @@
       },
       {
         "id": "slide-12",
-        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790622517/12.png",
+        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790686612/12-2.png",
         "title": "12",
         "scaffolding": {
           "hint": "ابدأ بتحديد نوع استخدام الأرض في المكان، ثم ابحث عن الأنشطة المرتبطة به والمصادر المحتملة لتلوث التربة.",
@@ -399,7 +399,7 @@
       },
       {
         "id": "slide-13",
-        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790622518/13.png",
+        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790686613/13-2.png",
         "title": "13",
         "scaffolding": {
           "hint": "لا يُعد كل صوت تلوثًا ضوضائيًا؛ انتبه إلى شدة الصوت ومدة التعرض له ومدى إزعاجه.",
@@ -410,7 +410,7 @@
       },
       {
         "id": "slide-14",
-        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790622517/14.png",
+        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790686618/14-2.png",
         "title": "14",
         "scaffolding": {
           "hint": "عند مقارنة الضوضاء بين مكانين، راقب المسافة عن مصدر الصوت وكثافة النشاط في كل مكان.",
@@ -421,7 +421,7 @@
       },
       {
         "id": "slide-15",
-        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790622521/15.png",
+        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790686616/15-2.png",
         "title": "15"
       }
     ],
@@ -442,7 +442,7 @@
       "id": "act-1",
       "title": "النشاط الأول: تتبع مسار التلوث",
       "description": "الهدف: التعرف على مصدر التلوث ومسار انتشاره في البيئة.\nالمهمة: تأمل الخريطة أمامك التي توضح مصدرًا للتلوث ومناطق سكنية ومجرى مائيًا، ثم حدّد مصدر التلوث ومسار انتقاله والمنطقة الأكثر تأثرًا.",
-      "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790622523/%D9%86%D8%B4%D8%A7%D8%B7_1.png",
+      "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790686619/%D9%86%D8%B4%D8%A7%D8%B7_1-2.png",
       "requiresSubmission": true
     },
     "activities": [
@@ -450,21 +450,21 @@
         "id": "act-1",
         "title": "النشاط الأول: تتبع مسار التلوث",
         "description": "الهدف: التعرف على مصدر التلوث ومسار انتشاره في البيئة.\nالمهمة: تأمل الخريطة أمامك التي توضح مصدرًا للتلوث ومناطق سكنية ومجرى مائيًا، ثم حدّد مصدر التلوث ومسار انتقاله والمنطقة الأكثر تأثرًا.",
-        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790622523/%D9%86%D8%B4%D8%A7%D8%B7_1.png",
+        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790686619/%D9%86%D8%B4%D8%A7%D8%B7_1-2.png",
         "requiresSubmission": true
       },
       {
         "id": "act-2",
         "title": "النشاط الثاني: قارن مستويات التلوث",
         "description": "الهدف: مقارنة بين منطقتين مختلفتين في مصادر التلوث واستخدامات الأرض.\nالمهمة: قارن بين المنطقتين ( أ ) و ( ب ) في مصادر التلوث واستخدامات الأرض، ثم حدد المنطقة الأعلى تلوثًا وفسر اختيارك.",
-        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790622521/%D9%86%D8%B4%D8%A7%D8%B7_2.png",
+        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790686621/%D9%86%D8%B4%D8%A7%D8%B7_2-2.png",
         "requiresSubmission": true
       },
       {
         "id": "act-3",
         "title": "النشاط الثالث: أين نضع المصنع؟",
         "description": "الهدف: اختيار الموقع الأنسب لإنشاء مصنع مع مراعاة تقليل التأثير في السكان والموارد البيئية.\nالمهمة: قارن بين المواقع الثلاثة المقترحة لإنشاء مصنع (A, B, C)، ثم اختر الموقع الأقل تأثيرًا في السكان والموارد البيئية واذكر سببين لاختيارك.",
-        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790622523/%D9%86%D8%B4%D8%A7%D8%B7_3.png",
+        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790686621/%D9%86%D8%B4%D8%A7%D8%B7_3-2.png",
         "requiresSubmission": true
       }
     ],
