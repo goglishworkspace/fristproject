@@ -6,32 +6,32 @@
     "subtitle": "التعرف على مكونات البيئة الحية وغير الحية والعلاقات المكانية التفاعلية بينها",
     "durationMinutes": 30,
     "images": [
-      "https://res.cloudinary.com/makcnu5x/image/upload/v1790598096/%D8%A7%D9%84%D8%BA%D9%84%D8%A7%D9%81.png",
-      "https://res.cloudinary.com/makcnu5x/image/upload/v1790598083/1.png",
-      "https://res.cloudinary.com/makcnu5x/image/upload/v1790598083/2.png",
-      "https://res.cloudinary.com/makcnu5x/image/upload/v1790598085/3.png",
-      "https://res.cloudinary.com/makcnu5x/image/upload/v1790598084/4.png",
-      "https://res.cloudinary.com/makcnu5x/image/upload/v1790598094/5.png",
-      "https://res.cloudinary.com/makcnu5x/image/upload/v1790598087/6.png",
-      "https://res.cloudinary.com/makcnu5x/image/upload/v1790598085/7.png",
-      "https://res.cloudinary.com/makcnu5x/image/upload/v1790598086/8.png",
-      "https://res.cloudinary.com/makcnu5x/image/upload/v1790598090/9.png",
-      "https://res.cloudinary.com/makcnu5x/image/upload/v1790598090/10.png",
-      "https://res.cloudinary.com/makcnu5x/image/upload/v1790598088/11.png",
-      "https://res.cloudinary.com/makcnu5x/image/upload/v1790598091/12.png",
-      "https://res.cloudinary.com/makcnu5x/image/upload/v1790598092/13.png",
-      "https://res.cloudinary.com/makcnu5x/image/upload/v1790598093/14.png",
-      "https://res.cloudinary.com/makcnu5x/image/upload/v1790598096/15.png"
+      "https://res.cloudinary.com/makcnu5x/image/upload/v1790685920/%D8%A7%D9%84%D8%BA%D9%84%D8%A7%D9%81_-1.png",
+      "https://res.cloudinary.com/makcnu5x/image/upload/v1790685903/1-1.png",
+      "https://res.cloudinary.com/makcnu5x/image/upload/v1790685903/2-1.png",
+      "https://res.cloudinary.com/makcnu5x/image/upload/v1790685915/3-1.png",
+      "https://res.cloudinary.com/makcnu5x/image/upload/v1790685905/4-1.png",
+      "https://res.cloudinary.com/makcnu5x/image/upload/v1790685906/5-1.png",
+      "https://res.cloudinary.com/makcnu5x/image/upload/v1790685909/6-1.png",
+      "https://res.cloudinary.com/makcnu5x/image/upload/v1790685909/7-1.png",
+      "https://res.cloudinary.com/makcnu5x/image/upload/v1790685914/8-1.png",
+      "https://res.cloudinary.com/makcnu5x/image/upload/v1790685911/9-1.png",
+      "https://res.cloudinary.com/makcnu5x/image/upload/v1790685913/10-1.png",
+      "https://res.cloudinary.com/makcnu5x/image/upload/v1790685913/11-1.png",
+      "https://res.cloudinary.com/makcnu5x/image/upload/v1790685917/12-1.png",
+      "https://res.cloudinary.com/makcnu5x/image/upload/v1790685915/13-1.png",
+      "https://res.cloudinary.com/makcnu5x/image/upload/v1790685917/14-1.png",
+      "https://res.cloudinary.com/makcnu5x/image/upload/v1790685920/15-1.png"
     ],
     "slides": [
       {
         "id": "slide-cover",
-        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790598096/%D8%A7%D9%84%D8%BA%D9%84%D8%A7%D9%81.png",
+        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790685920/%D8%A7%D9%84%D8%BA%D9%84%D8%A7%D9%81_-1.png",
         "title": "0"
       },
       {
         "id": "slide-1",
-        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790598083/1.png",
+        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790685903/1-1.png",
         "title": "1",
         "scaffolding": {
           "hint": "ركّز على ما يحيط بك من ماء وهواء وتربة وكائنات حية وعناصر صنعها الإنسان.",
@@ -42,7 +42,7 @@
       },
       {
         "id": "slide-2",
-        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790598083/2.png",
+        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790685903/2-1.png",
         "title": "2",
         "scaffolding": {
           "hint": "عند دراسة أي نظام بيئي، ابحث عن الكائنات الحية والعناصر غير الحية والعلاقات التي تربط بينها.",
@@ -53,7 +53,7 @@
       },
       {
         "id": "slide-3",
-        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790598085/3.png",
+        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790685915/3-1.png",
         "title": "3",
         "scaffolding": {
           "hint": "فكّر في التوازن البيئي باعتباره شبكة مترابطة؛ فتغيّر عنصر واحد قد يؤثر في عناصر أخرى.",
@@ -64,7 +64,7 @@
       },
       {
         "id": "slide-4",
-        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790598084/4.png",
+        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790685905/4-1.png",
         "title": "4",
         "scaffolding": {
           "hint": "فكّر في الأشياء التي تستخدمها يوميًا، ثم حاول تحديد المورد البيئي الذي جاءت منه.",
@@ -75,7 +75,7 @@
       },
       {
         "id": "slide-5",
-        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790598094/5.png",
+        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790685906/5-1.png",
         "title": "5",
         "scaffolding": {
           "hint": "ليست كل العناصر التي يصنعها الإنسان ضارة بالبيئة؛ فالأثر يعتمد على طريقة التخطيط والاستخدام.",
@@ -86,7 +86,7 @@
       },
       {
         "id": "slide-6",
-        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790598087/6.png",
+        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790685909/6-1.png",
         "title": "6",
         "scaffolding": {
           "hint": "عند دراسة أي تحدٍّ بيئي، حاول تحديد المشكلة ومكان حدوثها وأسبابها ونتائجها؛ فذلك يساعدك على فهمها بصورة مكانية أفضل.",
@@ -97,7 +97,7 @@
       },
       {
         "id": "slide-7",
-        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790598085/7.png",
+        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790685909/7-1.png",
         "title": "7",
         "scaffolding": {
           "hint": "التنمية المستدامة لا تعني التوقف عن استخدام الموارد، وإنما استخدامها بطريقة تلبي احتياجاتنا مع الحفاظ عليها للأجيال القادمة.",
@@ -108,7 +108,7 @@
       },
       {
         "id": "slide-8",
-        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790598086/8.png",
+        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790685914/8-1.png",
         "title": "8",
         "scaffolding": {
           "hint": "حماية البيئة تبدأ من السلوك اليومي للفرد؛ فالعادات الصغيرة عندما يلتزم بها عدد كبير من الناس تُحدث أثرًا واضحًا.",
@@ -119,7 +119,7 @@
       },
       {
         "id": "slide-9",
-        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790598090/9.png",
+        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790685911/9-1.png",
         "title": "9",
         "scaffolding": {
           "hint": "بعض المشكلات البيئية أكبر من أن يحلها فرد بمفرده؛ لذلك تصبح المشاركة والتعاون المجتمعي أكثر فاعلية.",
@@ -130,7 +130,7 @@
       },
       {
         "id": "slide-10",
-        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790598090/10.png",
+        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790685913/10-1.png",
         "title": "10",
         "scaffolding": {
           "hint": "التكنولوجيا تصبح صديقة للبيئة عندما تساعد على تقليل استهلاك الموارد أو خفض التلوث أو مراقبة المشكلات البيئية.",
@@ -141,7 +141,7 @@
       },
       {
         "id": "slide-11",
-        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790598088/11.png",
+        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790685913/11-1.png",
         "title": "11",
         "scaffolding": {
           "hint": "فكّر في أثر قراراتك الحالية على البيئة بعد ١٠ أو ٢٠ عامًا؛ فالاستدامة تربط بين الحاضر والمستقبل.",
@@ -152,7 +152,7 @@
       },
       {
         "id": "slide-12",
-        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790598091/12.png",
+        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790685917/12-1.png",
         "title": "12",
         "scaffolding": {
           "hint": "قبل اتخاذ أي قرار يؤثر في البيئة، اسأل: هل يلبي احتياجاتنا الحالية دون الإضرار بحقوق الأجيال القادمة؟",
@@ -163,7 +163,7 @@
       },
       {
         "id": "slide-13",
-        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790598092/13.png",
+        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790685915/13-1.png",
         "title": "13",
         "scaffolding": {
           "spatialThink": "حدّد أولًا موقع المشكلة البيئية، ثم لاحظ خصائص المكان الطبيعية والبشرية التي قد تفسر ظهورها.",
@@ -174,7 +174,7 @@
       },
       {
         "id": "slide-14",
-        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790598093/14.png",
+        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790685917/14-1.png",
         "title": "14",
         "scaffolding": {
           "mapRead": "استخدم مفتاح الخريطة أولًا لمعرفة مدلول كل رمز، ثم حدّد الأماكن التي يظهر فيها كل نوع من المشكلات البيئية.",
@@ -185,7 +185,7 @@
       },
       {
         "id": "slide-15",
-        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790598096/15.png",
+        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790685920/15-1.png",
         "title": "15",
         "scaffolding": {
           "trackRelation": "اختر عنصرًا من المشهد، مثل النهر، وتتبّع كيف يؤثر في الزراعة والمدن والصناعة، وكيف تؤثر هذه الأنشطة فيه بدورها.",
@@ -206,7 +206,7 @@
       "id": "act-1",
       "title": "النشاط الأول: مكونات البيئة من حولي",
       "description": "الهدف: التمييز بين مكونات البيئة وفهمها.\nالمهمة: تأمل البيئة المحيطة بمدرستك، ثم حدّد ثلاثة مكونات طبيعية وثلاثة مكونات بشرية وفق الجدول التالي.",
-      "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790676044/%D9%86%D8%B4%D8%A7%D8%B7_1.png",
+      "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790685919/%D9%86%D8%B4%D8%A7%D8%B7_1-1.png",
       "requiresSubmission": true
     },
     "activities": [
@@ -214,21 +214,21 @@
         "id": "act-1",
         "title": "النشاط الأول: مكونات البيئة من حولي",
         "description": "الهدف: التمييز بين مكونات البيئة وفهمها.\nالمهمة: تأمل البيئة المحيطة بمدرستك، ثم حدّد ثلاثة مكونات طبيعية وثلاثة مكونات بشرية وفق الجدول التالي.",
-        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790676044/%D9%86%D8%B4%D8%A7%D8%B7_1.png",
+        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790685919/%D9%86%D8%B4%D8%A7%D8%B7_1-1.png",
         "requiresSubmission": true
       },
       {
         "id": "act-2",
         "title": "النشاط الثاني: أين تتركز المشكلة البيئية؟",
         "description": "الهدف: تنمية القدرة على إدراك التوزيع المكاني للمشكلات البيئية.\nالمهمة: أمامك خريطة افتراضية لمنطقة تضم مساكن وطرقًا ومصنعًا ومجرى مائيًا. حدّد المكان المتوقع أن يكون أكثر تعرضًا للتلوث، ثم فسّر اختيارك.",
-        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790676045/%D9%86%D8%B4%D8%A7%D8%B7_2.png",
+        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790685922/%D9%86%D8%B4%D8%A7%D8%B7_2-1.png",
         "requiresSubmission": true
       },
       {
         "id": "act-3",
         "title": "النشاط الثالث: اختر الموقع الأنسب",
         "description": "الهدف: توظيف التفكير المكاني في اتخاذ قرار بيئي.\nالمهمة: قارن بين ثلاثة مواقع مقترحة لإنشاء حديقة عامة، ثم اختر الموقع الأنسب واذكر سببين مكانيين لاختيارك.",
-        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790676043/%D9%86%D8%B4%D8%A7%D8%B7_3.png",
+        "imageUrl": "https://res.cloudinary.com/makcnu5x/image/upload/v1790685923/%D9%86%D8%B4%D8%A7%D8%B7_3-1.png",
         "requiresSubmission": true
       }
     ],
