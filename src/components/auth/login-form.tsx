@@ -30,7 +30,7 @@ export function LoginForm() {
           </CardTitle>
         </div>
         <CardDescription className="text-slate-500 text-xs sm:text-sm">
-          أدخل اسم المستخدم / كود الطالب وكلمة المرور للمتابعة
+          أدخل اسم المستخدم الخاص بك وكلمة المرور للمتابعة
         </CardDescription>
       </CardHeader>
 
@@ -47,8 +47,8 @@ export function LoginForm() {
             <Input
               id="identifier"
               name="identifier"
-              label="اسم المستخدم أو كود الطالب / البريد الإلكتروني"
-              placeholder="مثال: user1001 أو admin@asu.edu.eg"
+              label="اسم المستخدم"
+              placeholder="اكتب اسم المستخدم الخاص بك"
               required
               autoComplete="username"
               disabled={isPending}
