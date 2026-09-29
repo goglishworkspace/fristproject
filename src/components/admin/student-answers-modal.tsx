@@ -29,19 +29,183 @@ interface StudentAnswersModalProps {
 
 type QuestionFilter = 'all' | 'correct' | 'wrong' | 'unanswered';
 
+// دالة مساعدة لتلوين وتنسيق قيم إجابات الأنشطة
+function renderValueBadge(val: string) {
+  const trimmed = val ? val.trim() : '';
+  if (!trimmed || trimmed === '(لم يُحدد)' || trimmed === '(لم تُحدد)') {
+    return (
+      <span className="inline-flex items-center gap-1 text-[11px] text-slate-400 bg-slate-100 border border-dashed border-slate-300 px-2 py-0.5 rounded-md font-medium">
+        لم يُحدد من قبل الطالب
+      </span>
+    );
+  }
+
+  // تمييز خيارات النوع (طبيعي / بشري)
+  if (trimmed === 'طبيعي' || trimmed === 'النوع: طبيعي') {
+    return (
+      <span className="inline-flex items-center text-[11px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-md">
+        طبيعي
+      </span>
+    );
+  }
+  if (trimmed === 'بشري' || trimmed === 'النوع: بشري') {
+    return (
+      <span className="inline-flex items-center text-[11px] font-bold text-amber-800 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-md">
+        بشري
+      </span>
+    );
+  }
+
+  return (
+    <span className="font-bold text-asu-navy bg-white px-2.5 py-1 rounded-lg border border-slate-200/90 shadow-2xs inline-block">
+      {trimmed}
+    </span>
+  );
+}
+
+// مكوّن عرض إجابات الأنشطة التطبيقية بشكل أكاديمي واحترافي
+function ActivityReportViewer({ text }: { text?: string }) {
+  if (!text || !text.trim()) {
+    return (
+      <div className="p-6 text-center text-xs text-slate-400 italic bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+        لم يُرسل الطالب إجابة نصية لهذا النشاط حتى الآن.
+      </div>
+    );
+  }
+
+  // إذا لم يكن النص يحتوي على فواصل الأنشطة (---)
+  if (!text.includes('---')) {
+    return (
+      <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs text-xs sm:text-sm text-slate-800 leading-relaxed whitespace-pre-wrap font-sans">
+        {text}
+      </div>
+    );
+  }
+
+  // تجزئة التقرير إلى أنشطة وبنود
+  const lines = text.split('\n').map((l) => l.trim()).filter(Boolean);
+  const sections: { title: string; items: string[] }[] = [];
+  let currentSection: { title: string; items: string[] } | null = null;
+
+  for (const line of lines) {
+    if (line.startsWith('===') && line.endsWith('===')) {
+      continue; // تجاهل سطر التقرير العام لأننا نعرض عنواناً في الكرت
+    }
+    if (line.startsWith('---') && line.endsWith('---')) {
+      const cleanTitle = line.replace(/^-+\s*/, '').replace(/\s*-+$/, '').trim();
+      currentSection = { title: cleanTitle, items: [] };
+      sections.push(currentSection);
+      continue;
+    }
+    if (!currentSection) {
+      currentSection = { title: 'إجابة عامة', items: [] };
+      sections.push(currentSection);
+    }
+    currentSection.items.push(line);
+  }
+
+  return (
+    <div className="space-y-4">
+      {sections.map((sec, sIdx) => (
+        <div
+          key={sIdx}
+          className="rounded-2xl border border-slate-200/90 bg-white p-4 sm:p-5 shadow-2xs space-y-3"
+        >
+          {/* ترويسة النشاط */}
+          <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-xl bg-asu-gold/15 text-asu-gold-dark flex items-center justify-center font-black text-xs shrink-0">
+                {sIdx + 1}
+              </div>
+              <h5 className="font-extrabold text-xs sm:text-sm text-asu-navy">
+                {sec.title}
+              </h5>
+            </div>
+            <Badge variant="outline" className="text-[10px] text-slate-500 font-bold">
+              {sec.items.length} بنود
+            </Badge>
+          </div>
+
+          {/* محتويات وبنود النشاط */}
+          <div className="space-y-2">
+            {sec.items.map((item, iIdx) => {
+              // حالة السطر الذي يحتوي على pipe | (مثل: 1. المكون: ماء | النوع: طبيعي)
+              if (item.includes('|')) {
+                const parts = item.split('|').map((p) => p.trim());
+                const firstPart = parts[0].replace(/^\d+[\.\)]\s*/, '');
+                const secondPart = parts[1] || '';
+
+                return (
+                  <div
+                    key={iIdx}
+                    className="flex flex-wrap items-center justify-between gap-2 p-2.5 rounded-xl bg-slate-50/80 border border-slate-200/60 text-xs hover:bg-slate-50 transition-colors"
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="w-5 h-5 rounded-full bg-slate-200 text-slate-700 text-[10px] font-bold font-mono flex items-center justify-center shrink-0">
+                        {iIdx + 1}
+                      </span>
+                      <div className="font-medium text-slate-800 flex items-center gap-1.5">
+                        {renderValueBadge(firstPart)}
+                      </div>
+                    </div>
+                    {secondPart && (
+                      <div className="shrink-0">
+                        {renderValueBadge(secondPart)}
+                      </div>
+                    )}
+                  </div>
+                );
+              }
+
+              // حالة السطر الذي يحتوي على مفتاح وقيمة (مثل: المكان الأكثر تعرضًا: ...)
+              const colonIndex = item.indexOf(':');
+              if (colonIndex > 0) {
+                const label = item.substring(0, colonIndex).replace(/^[-*•\d\.\)]\s*/, '').trim();
+                const val = item.substring(colonIndex + 1).trim();
+
+                return (
+                  <div
+                    key={iIdx}
+                    className="p-3 rounded-xl bg-slate-50/80 border border-slate-200/60 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs hover:bg-slate-50 transition-colors"
+                  >
+                    <span className="font-bold text-slate-700">{label}:</span>
+                    <div className="sm:text-left">
+                      {renderValueBadge(val)}
+                    </div>
+                  </div>
+                );
+              }
+
+              // سطر عادي
+              return (
+                <div
+                  key={iIdx}
+                  className="p-2.5 rounded-xl bg-slate-50 text-xs text-slate-700 border border-slate-200/40"
+                >
+                  {renderValueBadge(item)}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export function StudentAnswersModal({
   student,
   allQuestions,
   modules,
   onClose,
 }: StudentAnswersModalProps) {
-  // التبويب النشط: 'pre' أو 'post' أو 'activities' أو 'mod_module-1' إلخ
+  // التبويب النشط
   const [activeTab, setActiveTab] = useState<string>('pre');
   const [filterStatus, setFilterStatus] = useState<QuestionFilter>('all');
 
   if (!student) return null;
 
-  // تجهيز الموديولات الأربعة الافتراضية في حال كانت المصفوفة غير مكتملة
+  // تجهيز الموديولات الأربعة الافتراضية
   const defaultModules: ModuleData[] = [
     { id: 'module-1', title: 'الموديول الأول: مكونات البيئة والعلاقات المكانية' } as ModuleData,
     { id: 'module-2', title: 'الموديول الثاني: التلوث البيئي ومصادره وتوزيعه المكاني' } as ModuleData,
@@ -50,6 +214,14 @@ export function StudentAnswersModal({
   ];
 
   const activeModules = modules && modules.length > 0 ? modules : defaultModules;
+
+  // أسماء التبويبات العربية الواضحة بدون أرقام منفصلة تمنع أي انعكاس نصي
+  const moduleTabNames: Record<string, string> = {
+    'module-1': 'الموديول الأول',
+    'module-2': 'الموديول الثاني',
+    'module-3': 'الموديول الثالث',
+    'module-4': 'الموديول الرابع',
+  };
 
   // أسئلة الاختبار الموحد (القبلي والبعدي)
   const unifiedQuestions = allQuestions
@@ -64,10 +236,9 @@ export function StudentAnswersModal({
   const activitySubmissions = student.activitySubmissions || {};
   const moduleQuizScores = student.moduleQuizScores || {};
 
-  // عدد التسليمات للأنشطة
   const totalSubmissionsCount = Object.keys(activitySubmissions).length;
 
-  // دالة مساعدة لفلترة الأسئلة بحسب حالة الإجابة
+  // دالة تصفية الأسئلة
   const filterQuestions = (questions: QuestionWithAnswer[], answers: Record<string, number>) => {
     if (filterStatus === 'all') return questions;
     return questions.filter((q) => {
@@ -101,13 +272,13 @@ export function StudentAnswersModal({
   const postUnansweredCount = postQuestions.length - postCorrectCount - postWrongCount;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 select-none animate-in fade-in duration-200">
-      <div className="bg-white rounded-3xl w-full max-w-5xl max-h-[92vh] flex flex-col shadow-2xl border-2 border-asu-gold/40 text-right overflow-hidden">
+    <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 select-none animate-in fade-in duration-200">
+      <div className="bg-white rounded-3xl w-full max-w-5xl h-[92vh] max-h-[92vh] flex flex-col shadow-2xl border-2 border-asu-gold/40 text-right overflow-hidden">
         
-        {/* 1. ترويسة النافذة المنبثقة الفاخرة */}
-        <div className="p-4 sm:p-6 bg-gradient-to-r from-asu-navy-dark via-asu-navy to-[#182660] text-white flex items-center justify-between gap-4">
+        {/* 1. ترويسة النافذة المنبثقة (ثابتة تماماً ومقاومة للانكماش) */}
+        <div className="shrink-0 p-4 sm:p-5 bg-gradient-to-r from-asu-navy-dark via-asu-navy to-[#182660] text-white flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-white/10 border border-asu-gold/40 flex items-center justify-center shrink-0">
+            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-white/10 border border-asu-gold/40 flex items-center justify-center shrink-0">
               <FileText className="w-6 h-6 text-asu-gold-light" />
             </div>
             <div>
@@ -119,9 +290,9 @@ export function StudentAnswersModal({
                   {student.username}
                 </span>
                 {student.isProfileCompleted ? (
-                  <Badge variant="success" className="text-[10px] py-0 px-2">مكتمل الملف</Badge>
+                  <Badge variant="success" className="text-[10px] py-0 px-2 font-bold">مكتمل الملف</Badge>
                 ) : (
-                  <Badge variant="outline" className="text-[10px] py-0 px-2">في انتظار الدخول</Badge>
+                  <Badge variant="outline" className="text-[10px] py-0 px-2 font-bold text-slate-300 border-white/20">في انتظار الدخول</Badge>
                 )}
               </div>
               <p className="text-xs text-slate-300 mt-0.5">
@@ -133,127 +304,143 @@ export function StudentAnswersModal({
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-all cursor-pointer shrink-0"
+            className="p-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-all cursor-pointer shrink-0"
             aria-label="إغلاق"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* 2. شريط التبويبات الفاخر - تبويب لكل اختبار وكل موديول على حدة */}
-        <div className="flex border-b border-slate-200 bg-slate-100/80 px-2 sm:px-4 pt-2.5 gap-1 sm:gap-1.5 overflow-x-auto scrollbar-thin">
-          
-          {/* تبويب الاختبار القبلي */}
-          <button
-            type="button"
-            onClick={() => {
-              setActiveTab('pre');
-              setFilterStatus('all');
-            }}
-            className={`px-3 sm:px-4 py-2.5 rounded-t-2xl font-bold text-xs sm:text-sm transition-all flex items-center gap-2 whitespace-nowrap shrink-0 cursor-pointer ${
-              activeTab === 'pre'
-                ? 'bg-white text-asu-navy border-t-2 border-x border-asu-gold shadow-xs font-black'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
-            }`}
-          >
-            <Award className="w-4 h-4 text-asu-navy" />
-            <span>الاختبار القبلي</span>
-            <span
-              className={`px-2 py-0.5 rounded-full text-[11px] font-mono font-bold ${
-                student.preScore !== null
-                  ? 'bg-emerald-100 text-emerald-800'
-                  : 'bg-slate-200 text-slate-600'
+        {/* 2. شريط التبويبات الفاخر (ثابت بارتفاع مريح ويمنع أي انضغاط أو اختفاء للكلام) */}
+        <div className="shrink-0 bg-slate-100/90 border-b border-slate-200 p-2.5 sm:p-3 overflow-x-auto scrollbar-thin">
+          <div className="flex items-center gap-2 min-w-max">
+            
+            {/* تبويب الاختبار القبلي */}
+            <button
+              type="button"
+              onClick={() => {
+                setActiveTab('pre');
+                setFilterStatus('all');
+              }}
+              className={`px-3.5 py-2 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center gap-2 whitespace-nowrap shrink-0 cursor-pointer shadow-2xs ${
+                activeTab === 'pre'
+                  ? 'bg-asu-navy text-white shadow-md ring-2 ring-asu-gold/60 font-black'
+                  : 'bg-white text-slate-700 hover:bg-slate-200/70 hover:text-slate-900 border border-slate-200/90'
               }`}
             >
-              {student.preScore !== null ? `${student.preScore}/${preQuestions.length}` : 'لم يؤدَ'}
-            </span>
-          </button>
-
-          {/* تبويبات الموديولات الأربعة المنفصلة */}
-          {activeModules.map((m, idx) => {
-            const tabKey = `mod_${m.id}`;
-            const quiz = moduleQuizScores[m.id];
-            const modQuestions = allQuestions.filter((q) => q.exam_type === `module_${m.id}`);
-            const totalQ = quiz?.total || modQuestions.length || 10;
-
-            return (
-              <button
-                key={m.id}
-                type="button"
-                onClick={() => {
-                  setActiveTab(tabKey);
-                  setFilterStatus('all');
-                }}
-                className={`px-3 sm:px-4 py-2.5 rounded-t-2xl font-bold text-xs sm:text-sm transition-all flex items-center gap-2 whitespace-nowrap shrink-0 cursor-pointer ${
-                  activeTab === tabKey
-                    ? 'bg-white text-asu-navy border-t-2 border-x border-asu-gold shadow-xs font-black'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
+              <Award className={`w-4 h-4 ${activeTab === 'pre' ? 'text-asu-gold-light' : 'text-slate-500'}`} />
+              <span>الاختبار القبلي</span>
+              <span
+                className={`px-2 py-0.5 rounded-full text-[11px] font-mono font-bold ${
+                  activeTab === 'pre'
+                    ? 'bg-white/20 text-white'
+                    : student.preScore !== null
+                    ? 'bg-emerald-100 text-emerald-800'
+                    : 'bg-slate-100 text-slate-600'
                 }`}
               >
-                <BookOpen className="w-4 h-4 text-asu-gold-dark" />
-                <span>الموديول {idx + 1}</span>
-                <span
-                  className={`px-2 py-0.5 rounded-full text-[11px] font-mono font-bold ${
-                    quiz
-                      ? 'bg-emerald-100 text-emerald-800'
-                      : 'bg-slate-200 text-slate-600'
+                {student.preScore !== null ? `${student.preScore}/${preQuestions.length}` : 'لم يؤدَ'}
+              </span>
+            </button>
+
+            {/* تبويبات الموديولات الأربعة بأسماء عربية صريحة */}
+            {activeModules.map((m, idx) => {
+              const tabKey = `mod_${m.id}`;
+              const quiz = moduleQuizScores[m.id];
+              const modQuestions = allQuestions.filter((q) => q.exam_type === `module_${m.id}`);
+              const totalQ = quiz?.total || modQuestions.length || 10;
+              const tabTitle = moduleTabNames[m.id] || `الموديول ${idx + 1}`;
+              const isCurrentActive = activeTab === tabKey;
+
+              return (
+                <button
+                  key={m.id}
+                  type="button"
+                  onClick={() => {
+                    setActiveTab(tabKey);
+                    setFilterStatus('all');
+                  }}
+                  className={`px-3.5 py-2 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center gap-2 whitespace-nowrap shrink-0 cursor-pointer shadow-2xs ${
+                    isCurrentActive
+                      ? 'bg-asu-navy text-white shadow-md ring-2 ring-asu-gold/60 font-black'
+                      : 'bg-white text-slate-700 hover:bg-slate-200/70 hover:text-slate-900 border border-slate-200/90'
                   }`}
                 >
-                  {quiz ? `${quiz.score}/${totalQ}` : 'لم يختبر'}
-                </span>
-              </button>
-            );
-          })}
+                  <BookOpen className={`w-4 h-4 ${isCurrentActive ? 'text-asu-gold-light' : 'text-asu-gold-dark'}`} />
+                  <span>{tabTitle}</span>
+                  <span
+                    className={`px-2 py-0.5 rounded-full text-[11px] font-mono font-bold ${
+                      isCurrentActive
+                        ? 'bg-white/20 text-white'
+                        : quiz
+                        ? 'bg-emerald-100 text-emerald-800'
+                        : 'bg-slate-100 text-slate-600'
+                    }`}
+                  >
+                    {quiz ? `${quiz.score}/${totalQ}` : 'لم يختبر'}
+                  </span>
+                </button>
+              );
+            })}
 
-          {/* تبويب الاختبار البعدي */}
-          <button
-            type="button"
-            onClick={() => {
-              setActiveTab('post');
-              setFilterStatus('all');
-            }}
-            className={`px-3 sm:px-4 py-2.5 rounded-t-2xl font-bold text-xs sm:text-sm transition-all flex items-center gap-2 whitespace-nowrap shrink-0 cursor-pointer ${
-              activeTab === 'post'
-                ? 'bg-white text-asu-navy border-t-2 border-x border-asu-gold shadow-xs font-black'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
-            }`}
-          >
-            <TrendingUp className="w-4 h-4 text-emerald-600" />
-            <span>الاختبار البعدي</span>
-            <span
-              className={`px-2 py-0.5 rounded-full text-[11px] font-mono font-bold ${
-                student.postScore !== null
-                  ? 'bg-emerald-100 text-emerald-800'
-                  : 'bg-slate-200 text-slate-600'
+            {/* تبويب الاختبار البعدي */}
+            <button
+              type="button"
+              onClick={() => {
+                setActiveTab('post');
+                setFilterStatus('all');
+              }}
+              className={`px-3.5 py-2 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center gap-2 whitespace-nowrap shrink-0 cursor-pointer shadow-2xs ${
+                activeTab === 'post'
+                  ? 'bg-asu-navy text-white shadow-md ring-2 ring-asu-gold/60 font-black'
+                  : 'bg-white text-slate-700 hover:bg-slate-200/70 hover:text-slate-900 border border-slate-200/90'
               }`}
             >
-              {student.postScore !== null ? `${student.postScore}/${postQuestions.length}` : 'لم يؤدَ'}
-            </span>
-          </button>
+              <TrendingUp className={`w-4 h-4 ${activeTab === 'post' ? 'text-asu-gold-light' : 'text-emerald-600'}`} />
+              <span>الاختبار البعدي</span>
+              <span
+                className={`px-2 py-0.5 rounded-full text-[11px] font-mono font-bold ${
+                  activeTab === 'post'
+                    ? 'bg-white/20 text-white'
+                    : student.postScore !== null
+                    ? 'bg-emerald-100 text-emerald-800'
+                    : 'bg-slate-100 text-slate-600'
+                }`}
+              >
+                {student.postScore !== null ? `${student.postScore}/${postQuestions.length}` : 'لم يؤدَ'}
+              </span>
+            </button>
 
-          {/* تبويب حلول الأنشطة التطبيقية */}
-          <button
-            type="button"
-            onClick={() => {
-              setActiveTab('activities');
-              setFilterStatus('all');
-            }}
-            className={`px-3 sm:px-4 py-2.5 rounded-t-2xl font-bold text-xs sm:text-sm transition-all flex items-center gap-2 whitespace-nowrap shrink-0 cursor-pointer ${
-              activeTab === 'activities'
-                ? 'bg-white text-asu-navy border-t-2 border-x border-asu-gold shadow-xs font-black'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
-            }`}
-          >
-            <Sparkles className="w-4 h-4 text-amber-500" />
-            <span>الأنشطة التطبيقية</span>
-            <span className="px-2 py-0.5 rounded-full text-[11px] font-mono font-bold bg-asu-gold/20 text-asu-gold-dark">
-              {totalSubmissionsCount}/{activeModules.length}
-            </span>
-          </button>
+            {/* تبويب حلول الأنشطة التطبيقية */}
+            <button
+              type="button"
+              onClick={() => {
+                setActiveTab('activities');
+                setFilterStatus('all');
+              }}
+              className={`px-3.5 py-2 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center gap-2 whitespace-nowrap shrink-0 cursor-pointer shadow-2xs ${
+                activeTab === 'activities'
+                  ? 'bg-asu-navy text-white shadow-md ring-2 ring-asu-gold/60 font-black'
+                  : 'bg-white text-slate-700 hover:bg-slate-200/70 hover:text-slate-900 border border-slate-200/90'
+              }`}
+            >
+              <Sparkles className={`w-4 h-4 ${activeTab === 'activities' ? 'text-asu-gold-light' : 'text-amber-500'}`} />
+              <span>الأنشطة التطبيقية</span>
+              <span
+                className={`px-2 py-0.5 rounded-full text-[11px] font-mono font-bold ${
+                  activeTab === 'activities'
+                    ? 'bg-white/20 text-white'
+                    : 'bg-asu-gold/20 text-asu-gold-dark'
+                }`}
+              >
+                {totalSubmissionsCount}/{activeModules.length}
+              </span>
+            </button>
+          </div>
         </div>
 
-        {/* 3. جسم المحتوى القابل للتمرير */}
-        <div className="p-4 sm:p-6 overflow-y-auto space-y-5 flex-1 bg-slate-50/30">
+        {/* 3. جسم المحتوى القابل للتمرير (يأخذ المساحة المتبقية بسلاسة) */}
+        <div className="p-4 sm:p-6 overflow-y-auto space-y-5 flex-1 bg-slate-50/40">
 
           {/* ======================================================== */}
           {/* تبويب: الاختبار القبلي                                    */}
@@ -270,7 +457,6 @@ export function StudentAnswersModal({
                 </div>
               ) : (
                 <>
-                  {/* بطاقة النتيجة والإحصائيات */}
                   <div className="p-5 rounded-2xl bg-white border border-emerald-200 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div className="space-y-1">
                       <span className="text-xs text-emerald-800 font-bold block">
@@ -289,7 +475,6 @@ export function StudentAnswersModal({
                       </div>
                     </div>
 
-                    {/* ملخص الإجابات */}
                     <div className="flex items-center gap-2 flex-wrap">
                       <div className="px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs font-bold text-emerald-800 flex items-center gap-1.5">
                         <CheckCircle2 className="w-4 h-4 text-emerald-600" />
@@ -308,7 +493,7 @@ export function StudentAnswersModal({
                     </div>
                   </div>
 
-                  {/* أزرار الفلترة السريعة للأسئلة */}
+                  {/* أزرار الفلترة السريعة */}
                   <div className="flex items-center gap-2 pt-1 flex-wrap">
                     <span className="text-xs font-bold text-slate-500 flex items-center gap-1">
                       <Filter className="w-3.5 h-3.5" /> تصفية الأسئلة:
@@ -419,7 +604,6 @@ export function StudentAnswersModal({
                             )}
                           </div>
 
-                          {/* الخيارات مع تلوين واضح لإجابة الطالب والصحيحة */}
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
                             {q.options.map((opt, optIdx) => {
                               const isStudentChoice = selectedIdx === optIdx;
@@ -463,7 +647,7 @@ export function StudentAnswersModal({
           )}
 
           {/* ======================================================== */}
-          {/* تبويبات الموديولات الفردية (الموديول 1، 2، 3، 4)             */}
+          {/* تبويبات الموديولات الفردية (الموديول الأول ... الرابع)       */}
           {/* ======================================================== */}
           {activeTab.startsWith('mod_') && (() => {
             const currentModId = activeTab.replace('mod_', '');
@@ -590,7 +774,6 @@ export function StudentAnswersModal({
                               )}
                             </div>
 
-                            {/* الخيارات الأربعة */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
                               {q.options.map((opt, optIdx) => {
                                 const isStudentChoice = selectedIdx === optIdx;
@@ -631,17 +814,17 @@ export function StudentAnswersModal({
                   </div>
                 </div>
 
-                {/* 3. قسم النشاط التطبيقي الخاص بهذا الموديول */}
-                <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-xs space-y-3">
+                {/* 3. قسم النشاط التطبيقي المنسق باحترافية */}
+                <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-xs space-y-4">
                   <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
                     <div className="flex items-center gap-2">
                       <Sparkles className="w-5 h-5 text-asu-gold-dark" />
                       <div>
                         <h4 className="font-extrabold text-sm text-asu-navy">
-                          النشاط التطبيقي لـ {currentMod.title}
+                          حل النشاط التطبيقي لـ {currentMod.title}
                         </h4>
                         <p className="text-xs text-slate-500">
-                          {currentMod.activity?.title || 'الأنشطة التطبيقية الميدانية'}
+                          {currentMod.activity?.title || 'الأنشطة الميدانية والتطبيقية'}
                         </p>
                       </div>
                     </div>
@@ -659,27 +842,33 @@ export function StudentAnswersModal({
                   </div>
 
                   {sub ? (
-                    <div className="space-y-3 pt-1">
-                      <div>
-                        <span className="text-xs font-bold text-slate-600 block mb-1">
-                          إجابة وحل الطالب:
-                        </span>
-                        <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 text-xs sm:text-sm text-slate-800 leading-relaxed whitespace-pre-wrap">
-                          {sub.answerText || 'لا توجد إجابة نصية.'}
-                        </div>
-                      </div>
+                    <div className="space-y-4 pt-1">
+                      {/* استعراض التقرير المنسق باحترافية */}
+                      <ActivityReportViewer text={sub.answerText} />
 
+                      {/* زر وملف الـ PDF المرفق إن وجد */}
                       {sub.fileUrl && (
-                        <div className="flex items-center gap-2 pt-1">
-                          <span className="text-xs text-slate-600 font-bold">الملف المرفق:</span>
+                        <div className="p-4 rounded-2xl bg-rose-50/70 border border-rose-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center shrink-0">
+                              <FileText className="w-5 h-5" />
+                            </div>
+                            <div>
+                              <p className="font-bold text-xs sm:text-sm text-rose-950">
+                                الملف المرفق من الطالب (PDF)
+                              </p>
+                              <p className="text-[11px] text-rose-700 mt-0.5">
+                                تقرير ورسومات النشاط التطبيقي المرفوعة
+                              </p>
+                            </div>
+                          </div>
                           <a
                             href={sub.fileUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 text-xs text-rose-700 bg-rose-50 hover:bg-rose-100 font-bold border border-rose-200 px-3.5 py-2 rounded-xl shadow-2xs transition-all"
+                            className="inline-flex items-center justify-center gap-2 text-xs text-white bg-rose-600 hover:bg-rose-700 font-bold px-4 py-2.5 rounded-xl shadow-xs transition-all shrink-0 cursor-pointer"
                           >
-                            <FileText className="w-4 h-4 text-rose-600 ml-1" />
-                            <span>معاينة وتحميل ملف الحل المرفق (PDF)</span>
+                            <span>معاينة وتحميل ملف PDF</span>
                             <ExternalLink className="w-3.5 h-3.5" />
                           </a>
                         </div>
@@ -716,7 +905,6 @@ export function StudentAnswersModal({
                 </div>
               ) : (
                 <>
-                  {/* بطاقة النتيجة والنمو */}
                   <div className="p-5 rounded-2xl bg-white border border-emerald-200 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div className="space-y-1">
                       <span className="text-xs text-emerald-800 font-bold block">
@@ -917,7 +1105,7 @@ export function StudentAnswersModal({
                 <div>
                   <h4 className="font-bold text-sm text-asu-navy">تسليمات الأنشطة التطبيقية</h4>
                   <p className="text-xs text-slate-500">
-                    استعراض الحلول المكتوبة وملفات الـ PDF المرفوعة من الطالب لكل موديول.
+                    استعراض الحلول المنظمة وملفات الـ PDF المرفوعة من الطالب لكل موديول.
                   </p>
                 </div>
                 <Badge variant="gold" className="text-xs font-mono font-bold">
@@ -956,22 +1144,26 @@ export function StudentAnswersModal({
                     </div>
 
                     {sub ? (
-                      <div className="space-y-2.5">
-                        <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 text-xs sm:text-sm text-slate-800 leading-relaxed whitespace-pre-wrap">
-                          {sub.answerText || 'لا يوجد نص مكتوب.'}
-                        </div>
+                      <div className="space-y-3">
+                        <ActivityReportViewer text={sub.answerText} />
 
                         {sub.fileUrl && (
-                          <div className="flex items-center gap-2 pt-1">
-                            <span className="text-xs text-slate-500 font-bold">الملف المرفق:</span>
+                          <div className="p-3.5 rounded-xl bg-rose-50/70 border border-rose-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div className="flex items-center gap-2.5">
+                              <div className="w-8 h-8 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center shrink-0">
+                                <FileText className="w-4 h-4" />
+                              </div>
+                              <span className="text-xs font-bold text-rose-950">
+                                ملف الحل المرفق (PDF)
+                              </span>
+                            </div>
                             <a
                               href={sub.fileUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1.5 text-xs text-rose-700 bg-rose-50 hover:bg-rose-100 font-bold border border-rose-200 px-3 py-1.5 rounded-xl shadow-2xs transition-all"
+                              className="inline-flex items-center gap-1.5 text-xs text-white bg-rose-600 hover:bg-rose-700 font-bold px-3.5 py-1.5 rounded-xl shadow-2xs transition-all"
                             >
-                              <FileText className="w-4 h-4 text-rose-600 ml-1" />
-                              <span>معاينة وتحميل ملف PDF</span>
+                              <span>معاينة وتحميل</span>
                               <ExternalLink className="w-3 h-3" />
                             </a>
                           </div>
@@ -996,8 +1188,8 @@ export function StudentAnswersModal({
 
         </div>
 
-        {/* 4. فوتر النافذة المنبثقة */}
-        <div className="p-4 border-t border-slate-200 bg-slate-50 flex items-center justify-between">
+        {/* 4. فوتر النافذة المنبثقة (ثابت) */}
+        <div className="shrink-0 p-4 border-t border-slate-200 bg-slate-50 flex items-center justify-between">
           <span className="text-xs text-slate-500 hidden sm:inline-block">
             منصة بيئتي التعليمية • لوحة المشرف الأكاديمي
           </span>
