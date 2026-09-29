@@ -72,13 +72,37 @@ export function ExamRunner({
 
   // اختيار خيار السؤال - نقي ومباشر ومضبوط للمس في شاشات الموبايل
   const handleSelectOption = (optionIndex: number) => {
+    setErrorMessage(null);
     setAnswers((prev) => ({
       ...prev,
       [currentQ.id]: optionIndex,
     }));
   };
 
+  // دالة القفز التلقائي إلى أول سؤال لم تتم الإجابة عليه
+  const jumpToFirstUnanswered = () => {
+    const unansweredIndex = questions.findIndex((q) => answers[q.id] === undefined);
+    if (unansweredIndex !== -1) {
+      setCurrentIndex(unansweredIndex);
+      setErrorMessage(
+        `تم نقلك إلى أول سؤال غير مُجاب (السؤال رقم ${unansweredIndex + 1})، يرجى اختياره للمتابعة.`
+      );
+      if (typeof window !== 'undefined') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+  };
+
   const handleNext = () => {
+    // شرط تربوي: منع التخطي دون اختيار إجابة للسؤال الحالي
+    if (answers[currentQ.id] === undefined) {
+      setErrorMessage(
+        `يرجى اختيار إجابة للسؤال الحالي (السؤال رقم ${currentIndex + 1}) أولاً قبل الانتقال للسؤال التالي.`
+      );
+      return;
+    }
+
+    setErrorMessage(null);
     if (currentIndex < totalQ - 1) {
       setCurrentIndex((prev) => prev + 1);
       if (typeof window !== 'undefined') {
@@ -88,6 +112,7 @@ export function ExamRunner({
   };
 
   const handlePrev = () => {
+    setErrorMessage(null);
     if (currentIndex > 0) {
       setCurrentIndex((prev) => prev - 1);
       if (typeof window !== 'undefined') {
@@ -97,11 +122,17 @@ export function ExamRunner({
   };
 
   const handleSubmit = async () => {
-    if (answeredCount < totalQ) {
-      const confirmSubmit = window.confirm(
-        `لقد قمت بالإجابة على ${answeredCount} من أصل ${totalQ} أسئلة. هل أنت متأكد من تسليم الاختبار الآن؟`
+    // شرط صارم: لا يمكن تسليم الاختبار نهائياً إلا بعد الإجابة على جميع الأسئلة
+    const unansweredIndex = questions.findIndex((q) => answers[q.id] === undefined);
+    if (unansweredIndex !== -1) {
+      setCurrentIndex(unansweredIndex);
+      setErrorMessage(
+        `تنبيه هام: لا يمكنك تسليم الاختبار حتى تجيب على جميع الأسئلة! متبقي ${totalQ - answeredCount} أسئلة غير مُجابة. تم نقلك تلقائياً إلى السؤال رقم (${unansweredIndex + 1}) الذي لم تتم الإجابة عليه بعد.`
       );
-      if (!confirmSubmit) return;
+      if (typeof window !== 'undefined') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      return;
     }
 
     setIsSubmitting(true);
@@ -206,6 +237,17 @@ export function ExamRunner({
             </p>
           </div>
           <div className="flex items-center gap-3">
+            {answeredCount < totalQ && (
+              <button
+                type="button"
+                onClick={jumpToFirstUnanswered}
+                className="hidden sm:inline-flex items-center gap-1.5 text-xs text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-300 font-bold px-3 py-1.5 rounded-xl shadow-2xs transition-all cursor-pointer"
+                title="اضغط للانتقال التلقائي لأول سؤال غير مُجاب"
+              >
+                <AlertCircle className="w-3.5 h-3.5 text-amber-600" />
+                <span>متبقي {totalQ - answeredCount} أسئلة (انتقل للناقص)</span>
+              </button>
+            )}
             <div className="w-full sm:w-36 bg-slate-100 h-2.5 rounded-full overflow-hidden">
               <div
                 className="bg-gradient-to-r from-emerald-500 to-emerald-600 h-full transition-all duration-300"
@@ -217,6 +259,21 @@ export function ExamRunner({
             </span>
           </div>
         </div>
+
+        {answeredCount < totalQ && (
+          <div className="sm:hidden flex items-center justify-between pt-1 border-t border-slate-100">
+            <span className="text-[11px] text-amber-800 font-bold">
+              متبقي {totalQ - answeredCount} أسئلة غير مُجابة
+            </span>
+            <button
+              type="button"
+              onClick={jumpToFirstUnanswered}
+              className="text-[11px] text-amber-800 bg-amber-100/70 hover:bg-amber-100 px-2.5 py-1 rounded-lg border border-amber-300 font-bold cursor-pointer"
+            >
+              الانتقال للسؤال الناقص ←
+            </button>
+          </div>
+        )}
 
         {/* شريط أرقام الأسئلة والتنقل السريع للهواتف والكمبيوتر */}
         <div className="pt-2 border-t border-slate-100 flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 scroll-smooth no-scrollbar">
@@ -254,9 +311,11 @@ export function ExamRunner({
       </div>
 
       {errorMessage && (
-        <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs sm:text-sm font-medium flex items-center gap-2">
-          <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
-          <span>{errorMessage}</span>
+        <div className="p-4 rounded-2xl bg-amber-50 border-2 border-amber-300 text-amber-950 text-xs sm:text-sm font-bold flex items-center gap-3 shadow-md">
+          <div className="w-8 h-8 rounded-xl bg-amber-200/80 text-amber-800 flex items-center justify-center shrink-0">
+            <AlertCircle className="w-5 h-5 text-amber-700" />
+          </div>
+          <span className="leading-relaxed flex-1">{errorMessage}</span>
         </div>
       )}
 
@@ -419,14 +478,22 @@ export function ExamRunner({
               type="button"
               onClick={handleSubmit}
               disabled={isSubmitting}
-              className="h-12 px-6 sm:px-8 rounded-2xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-700 text-white flex items-center justify-center gap-2 font-black text-sm sm:text-base cursor-pointer touch-manipulation shadow-lg shadow-emerald-600/25 disabled:opacity-50"
+              className={`h-12 px-6 sm:px-8 rounded-2xl text-white flex items-center justify-center gap-2 font-black text-sm sm:text-base cursor-pointer touch-manipulation shadow-lg transition-all ${
+                answeredCount < totalQ
+                  ? 'bg-amber-600 hover:bg-amber-700 shadow-amber-600/25'
+                  : 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-600/25'
+              } disabled:opacity-50`}
             >
               {isSubmitting ? (
                 <span className="pointer-events-none">جاري التسليم...</span>
               ) : (
                 <div className="flex items-center gap-2 pointer-events-none">
                   <Send className="w-4 h-4 ml-1" />
-                  <span>تسليم الاختبار النهائي</span>
+                  <span>
+                    {answeredCount < totalQ
+                      ? `تسليم الاختبار (متبقي ${totalQ - answeredCount} أسئلة)`
+                      : 'تسليم الاختبار النهائي'}
+                  </span>
                 </div>
               )}
             </button>

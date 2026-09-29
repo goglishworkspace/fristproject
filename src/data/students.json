@@ -4,15 +4,14 @@
     "username": "user1001",
     "password": "123456",
     "fullName": "احمد رمزي",
-    "phone": "01093341994",
+    "phone": "01093341944",
     "isProfileCompleted": true,
     "isBanned": false,
-    "preScore": 3,
-    "postScore": 9,
-    "moduleProgress": "4/4",
-    "status": "completed",
+    "preScore": null,
+    "postScore": null,
+    "moduleProgress": "0/2",
+    "status": "not_started",
     "createdAt": "2026-09-22T15:20:50.381Z",
-    "updatedAt": "2026-09-29T11:16:29.284Z",
     "preTestAnswers": {
       "q-post-4": 0,
       "q-pre-1": 2,
@@ -100,7 +99,8 @@
       "q-unified-85": 1,
       "q-unified-73": 1,
       "q-unified-83": 1
-    }
+    },
+    "updatedAt": "2026-09-29T12:12:24.954Z"
   },
   {
     "id": "std-1002",

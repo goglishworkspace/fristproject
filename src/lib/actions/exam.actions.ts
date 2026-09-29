@@ -241,6 +241,15 @@ export async function submitExamAction(
     return { success: false, error: 'لا توجد أسئلة متوفرة في هذا الاختبار حالياً' };
   }
 
+  // التحقق الصارم من الإجابة على جميع الأسئلة بدون أي تجاوز
+  const unansweredCount = questions.filter((q) => answers[q.id] === undefined).length;
+  if (unansweredCount > 0) {
+    return {
+      success: false,
+      error: `لا يمكن تسليم الاختبار: متبقي ${unansweredCount} أسئلة لم يتم الإجابة عليها. يجب الإجابة على كافة الأسئلة أولاً.`,
+    };
+  }
+
   let calculatedScore = 0;
   questions.forEach((q) => {
     const studentSelected = answers[q.id];
