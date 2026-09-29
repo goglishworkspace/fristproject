@@ -21,8 +21,70 @@ function generateRandomPassword(length = 6): string {
   return pwd;
 }
 
-// دالة قراءة ملف الطلاب
+// دالة مساعدة لتحويل سجل Supabase إلى StudentAccount
+function mapDbAccountToStudent(row: any): StudentAccount {
+  return {
+    id: row.id,
+    username: row.username,
+    password: row.password,
+    fullName: row.full_name || '',
+    phone: row.phone || '',
+    isProfileCompleted: !!row.is_profile_completed,
+    isBanned: !!row.is_banned,
+    preScore: row.pre_score !== null && row.pre_score !== undefined ? Number(row.pre_score) : null,
+    postScore: row.post_score !== null && row.post_score !== undefined ? Number(row.post_score) : null,
+    preTestAnswers: row.pre_test_answers || {},
+    postTestAnswers: row.post_test_answers || {},
+    moduleQuizScores: row.module_quiz_scores || {},
+    activitySubmissions: row.activity_submissions || {},
+    moduleProgress: row.module_progress || '0/2',
+    status: row.status || 'not_started',
+    createdAt: row.created_at || new Date().toISOString(),
+    updatedAt: row.updated_at,
+  };
+}
+
+// دالة مساعدة لتحويل StudentAccount إلى سجل Supabase
+function mapStudentToDbAccount(s: StudentAccount): any {
+  return {
+    id: s.id,
+    username: s.username,
+    password: s.password,
+    full_name: s.fullName,
+    phone: s.phone,
+    is_profile_completed: s.isProfileCompleted,
+    is_banned: s.isBanned,
+    pre_score: s.preScore,
+    post_score: s.postScore,
+    pre_test_answers: s.preTestAnswers || {},
+    post_test_answers: s.postTestAnswers || {},
+    module_quiz_scores: s.moduleQuizScores || {},
+    activity_submissions: s.activitySubmissions || {},
+    module_progress: s.moduleProgress,
+    status: s.status,
+    updated_at: new Date().toISOString(),
+  };
+}
+
+// دالة قراءة سجل الطلاب
 export async function getStudentsListAction(): Promise<StudentAccount[]> {
+  if (isLiveSupabaseConfigured()) {
+    try {
+      const supabase = await createClient();
+      const { data, error } = await supabase
+        .from('accounts')
+        .select('*')
+        .eq('role', 'student')
+        .order('created_at', { ascending: false });
+
+      if (!error && data && data.length > 0) {
+        return data.map(mapDbAccountToStudent);
+      }
+    } catch (err) {
+      console.warn('Supabase getStudentsListAction failed, falling back to JSON:', err);
+    }
+  }
+
   try {
     const data = await fs.readFile(STUDENTS_FILE_PATH, 'utf-8');
     return JSON.parse(data) as StudentAccount[];
@@ -32,7 +94,7 @@ export async function getStudentsListAction(): Promise<StudentAccount[]> {
   }
 }
 
-// دالة حفظ ملف الطلاب
+// دالة حفظ ملف الطلاب (Fallback محلي)
 async function saveStudentsList(students: StudentAccount[]): Promise<boolean> {
   try {
     await fs.writeFile(STUDENTS_FILE_PATH, JSON.stringify(students, null, 2), 'utf-8');
@@ -78,6 +140,27 @@ export async function createStudentAction(data: {
       status: 'not_started',
       createdAt: new Date().toISOString(),
     };
+
+    if (isLiveSupabaseConfigured()) {
+      try {
+        const supabase = await createClient();
+        await supabase.from('accounts').insert({
+          id: newStudent.id,
+          username: newStudent.username,
+          password: newStudent.password,
+          full_name: newStudent.fullName,
+          phone: newStudent.phone,
+          role: 'student',
+          is_profile_completed: newStudent.isProfileCompleted,
+          is_banned: newStudent.isBanned,
+          module_progress: newStudent.moduleProgress,
+          status: newStudent.status,
+          created_at: newStudent.createdAt,
+        });
+      } catch (e) {
+        console.warn('Supabase createStudent error:', e);
+      }
+    }
 
     students.unshift(newStudent);
     await saveStudentsList(students);
@@ -137,6 +220,28 @@ export async function generateBatchStudentsAction(
       });
     }
 
+    if (isLiveSupabaseConfigured()) {
+      try {
+        const supabase = await createClient();
+        const records = newBatch.map((s) => ({
+          id: s.id,
+          username: s.username,
+          password: s.password,
+          full_name: s.fullName,
+          phone: s.phone,
+          role: 'student',
+          is_profile_completed: s.isProfileCompleted,
+          is_banned: s.isBanned,
+          module_progress: s.moduleProgress,
+          status: s.status,
+          created_at: s.createdAt,
+        }));
+        await supabase.from('accounts').insert(records);
+      } catch (e) {
+        console.warn('Supabase batch insert error:', e);
+      }
+    }
+
     const updatedStudents = [...newBatch, ...students];
     await saveStudentsList(updatedStudents);
     revalidatePath('/admin/dashboard');
@@ -187,6 +292,21 @@ export async function updateStudentAction(
     }
 
     students[studentIdx].updatedAt = new Date().toISOString();
+
+    if (isLiveSupabaseConfigured()) {
+      try {
+        const supabase = await createClient();
+        await supabase.from('accounts').update({
+          username: students[studentIdx].username,
+          full_name: students[studentIdx].fullName,
+          phone: students[studentIdx].phone,
+          updated_at: students[studentIdx].updatedAt,
+        }).eq('id', id);
+      } catch (e) {
+        console.warn('Supabase updateStudent error:', e);
+      }
+    }
+
     await saveStudentsList(students);
     revalidatePath('/admin/dashboard');
 
@@ -220,6 +340,18 @@ export async function resetStudentPasswordAction(
     students[studentIdx].password = assignedPassword;
     students[studentIdx].updatedAt = new Date().toISOString();
 
+    if (isLiveSupabaseConfigured()) {
+      try {
+        const supabase = await createClient();
+        await supabase.from('accounts').update({
+          password: assignedPassword,
+          updated_at: students[studentIdx].updatedAt,
+        }).eq('id', id);
+      } catch (e) {
+        console.warn('Supabase resetStudentPassword error:', e);
+      }
+    }
+
     await saveStudentsList(students);
     revalidatePath('/admin/dashboard');
 
@@ -245,6 +377,19 @@ export async function toggleBanStudentAction(
     }
 
     const newBannedState = !students[studentIdx].isBanned;
+
+    if (isLiveSupabaseConfigured()) {
+      try {
+        const supabase = await createClient();
+        await supabase
+          .from('accounts')
+          .update({ is_banned: newBannedState, updated_at: new Date().toISOString() })
+          .eq('id', id);
+      } catch (e) {
+        console.warn('Supabase toggleBan failed:', e);
+      }
+    }
+
     students[studentIdx].isBanned = newBannedState;
     students[studentIdx].updatedAt = new Date().toISOString();
 
@@ -265,12 +410,26 @@ export async function deleteStudentAction(
   try {
     await assertAdmin();
 
+    if (isLiveSupabaseConfigured()) {
+      try {
+        const supabase = await createClient();
+        const { error } = await supabase
+          .from('accounts')
+          .delete()
+          .eq('id', id);
+
+        if (error) {
+          console.error('Supabase deleteStudent error:', error);
+          return { success: false, error: error.message };
+        }
+      } catch (e: unknown) {
+        const msg = e instanceof Error ? e.message : 'فشل حذف الطالب من قاعدة البيانات';
+        return { success: false, error: msg };
+      }
+    }
+
     const students = await getStudentsListAction();
     const filtered = students.filter((s) => s.id !== id);
-
-    if (filtered.length === students.length) {
-      return { success: false, error: 'لم يتم العثور على الطالب لحذفه' };
-    }
 
     await saveStudentsList(filtered);
     revalidatePath('/admin/dashboard');
@@ -298,16 +457,33 @@ export async function resetStudentToFreshAction(
       return { success: false, error: 'لم يتم العثور على الطالب' };
     }
 
+    const newPwd = generateRandomPassword();
     students[studentIdx].fullName = '';
     students[studentIdx].phone = '';
-    students[studentIdx].password = generateRandomPassword();
+    students[studentIdx].password = newPwd;
     students[studentIdx].isProfileCompleted = false;
     students[studentIdx].isBanned = false;
     students[studentIdx].preScore = null;
     students[studentIdx].postScore = null;
     students[studentIdx].moduleProgress = '0/2';
     students[studentIdx].status = 'not_started';
+    students[studentIdx].preTestAnswers = {};
+    students[studentIdx].postTestAnswers = {};
+    students[studentIdx].moduleQuizScores = {};
+    students[studentIdx].activitySubmissions = {};
     delete students[studentIdx].updatedAt;
+
+    if (isLiveSupabaseConfigured()) {
+      try {
+        const supabase = await createClient();
+        await supabase
+          .from('accounts')
+          .update(mapStudentToDbAccount(students[studentIdx]))
+          .eq('id', id);
+      } catch (e) {
+        console.warn('Supabase resetStudent failed:', e);
+      }
+    }
 
     await saveStudentsList(students);
     revalidatePath('/admin/dashboard');
@@ -386,6 +562,18 @@ export async function completeStudentProfileAction(data: {
     students[studentIdx].password = cleanPassword;
     students[studentIdx].isProfileCompleted = true;
     students[studentIdx].updatedAt = new Date().toISOString();
+
+    if (isLiveSupabaseConfigured()) {
+      try {
+        const supabase = await createClient();
+        await supabase
+          .from('accounts')
+          .update(mapStudentToDbAccount(students[studentIdx]))
+          .eq('id', students[studentIdx].id);
+      } catch (e) {
+        console.warn('Supabase completeStudentProfile error:', e);
+      }
+    }
 
     await saveStudentsList(students);
 
@@ -480,6 +668,19 @@ export async function recordExamResultAction(
     }
 
     students[studentIdx].updatedAt = new Date().toISOString();
+
+    if (isLiveSupabaseConfigured()) {
+      try {
+        const supabase = await createClient();
+        await supabase
+          .from('accounts')
+          .update(mapStudentToDbAccount(students[studentIdx]))
+          .eq('id', students[studentIdx].id);
+      } catch (e) {
+        console.warn('Supabase recordExamResult error:', e);
+      }
+    }
+
     await saveStudentsList(students);
 
     revalidatePath('/');
@@ -524,6 +725,19 @@ export async function recordActivitySubmissionAction(
     };
 
     students[studentIdx].updatedAt = new Date().toISOString();
+
+    if (isLiveSupabaseConfigured()) {
+      try {
+        const supabase = await createClient();
+        await supabase
+          .from('accounts')
+          .update(mapStudentToDbAccount(students[studentIdx]))
+          .eq('id', students[studentIdx].id);
+      } catch (e) {
+        console.warn('Supabase recordActivitySubmission error:', e);
+      }
+    }
+
     await saveStudentsList(students);
 
     revalidatePath(`/modules/${moduleId}`);
@@ -568,6 +782,18 @@ export async function recordModuleCompletionAction(
       students[studentIdx].status = 'in_progress';
     }
     students[studentIdx].updatedAt = new Date().toISOString();
+
+    if (isLiveSupabaseConfigured()) {
+      try {
+        const supabase = await createClient();
+        await supabase
+          .from('accounts')
+          .update(mapStudentToDbAccount(students[studentIdx]))
+          .eq('id', students[studentIdx].id);
+      } catch (e) {
+        console.warn('Supabase recordModuleCompletion error:', e);
+      }
+    }
 
     await saveStudentsList(students);
 
