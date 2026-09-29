@@ -12,10 +12,11 @@ function getCleanSupabaseUrl(): string {
 export async function createClient() {
   const cookieStore = await cookies()
   const cleanUrl = getCleanSupabaseUrl();
+  const apiKey = (process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '').trim();
 
   return createServerClient(
     cleanUrl,
-    (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '').trim(),
+    apiKey,
     {
       cookies: {
         getAll() {
