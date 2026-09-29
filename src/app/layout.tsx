@@ -9,8 +9,17 @@ const cairo = Cairo({
 });
 
 export const metadata: Metadata = {
-  title: "المنصة التعليمية",
+  title: "المنصة التعليمية • كلية التربية جامعة عين شمس",
   description: "المنصة التعليمية للكلية - محتوى وموديولات تفاعلية وامتحانات تقييمية",
+  icons: {
+    icon: [
+      { url: '/asu-logo.jpg' },
+      { url: '/favicon.ico' },
+    ],
+    apple: [
+      { url: '/asu-logo.jpg' },
+    ],
+  },
 };
 
 export default function RootLayout({
