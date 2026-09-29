@@ -57,6 +57,8 @@ const CATEGORIES: CategoryOption[] = [
   },
 ];
 
+import { submitContactInquiryAction } from '@/lib/actions/contact.actions';
+
 export function ContactForm() {
   const [category, setCategory] = useState<InquiryCategory>('academic');
   const [fullName, setFullName] = useState('');
@@ -73,7 +75,7 @@ export function ContactForm() {
   } | null>(null);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage('');
 
@@ -84,25 +86,35 @@ export function ContactForm() {
 
     setIsSubmitting(true);
 
-    // محاكاة إرسال فوري أنيق بدون انتظار
-    setTimeout(() => {
-      const selectedCat = CATEGORIES.find((c) => c.id === category)?.label || 'استفسار عام';
-      const randomTicketId = `ASU-${category.toUpperCase().slice(0, 3)}-${Math.floor(100000 + Math.random() * 900000)}`;
+    const selectedCat = CATEGORIES.find((c) => c.id === category)?.label || 'استفسار عام';
 
+    const res = await submitContactInquiryAction({
+      category: selectedCat,
+      fullName,
+      studentCode,
+      contactInfo,
+      subject,
+      message,
+    });
+
+    setIsSubmitting(false);
+
+    if (res.success && res.ticketId) {
       setSubmittedTicket({
-        referenceId: randomTicketId,
+        referenceId: res.ticketId,
         categoryLabel: selectedCat,
         name: fullName,
       });
 
-      setIsSubmitting(false);
       // إعادة ضبط الحقول
       setFullName('');
       setStudentCode('');
       setContactInfo('');
       setSubject('');
       setMessage('');
-    }, 600);
+    } else {
+      setErrorMessage(res.error || 'حدث خطأ أثناء إرسال الاستفسار، يرجى المحاولة لاحقاً.');
+    }
   };
 
   const handleReset = () => {
