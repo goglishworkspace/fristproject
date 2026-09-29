@@ -1,12 +1,21 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
+function getCleanSupabaseUrl(): string {
+  let url = (process.env.NEXT_PUBLIC_SUPABASE_URL || '').trim();
+  // إذا احتوى الرابط على /rest/v1 أو شرطة مائلة زائدة نقوم بإزالتها
+  url = url.replace(/\/rest\/v1\/?$/, '');
+  url = url.replace(/\/+$/, '');
+  return url;
+}
+
 export async function createClient() {
   const cookieStore = await cookies()
+  const cleanUrl = getCleanSupabaseUrl();
 
   return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    cleanUrl,
+    (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '').trim(),
     {
       cookies: {
         getAll() {
