@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Award, ArrowLeft, Lock, TrendingUp } from 'lucide-react';
 import type { Question } from '@/lib/types/database';
+import { shuffleArray } from '@/lib/utils';
 
 export default async function PostTestPage() {
   const [progress, preQuestions, postQuestions] = await Promise.all([
@@ -60,8 +61,8 @@ export default async function PostTestPage() {
     );
   }
 
-  const preTotal = preQuestions.length || 5;
-  const postTotal = postQuestions.length || 5;
+  const preTotal = preQuestions.length || 100;
+  const postTotal = postQuestions.length || 100;
 
   // 3. إذا كان الطالب قد أتم الاختبار البعدي بالفعل، عرض بطاقة الإنجاز والأثر التعليمي
   if (progress.postTestCompleted) {
@@ -141,7 +142,7 @@ export default async function PostTestPage() {
     );
   }
 
-  // 4. جلب أسئلة الاختبار البعدي
+  // 4. جلب وتجهيز أسئلة الاختبار البعدي: الاختيار من متعدد أولاً ثم الصواب والخطأ ثانياً مع خلط عشوائي لكل طالب
   const safeQuestions: Question[] = postQuestions.map((q) => ({
     id: q.id,
     exam_type: q.exam_type,
@@ -151,12 +152,20 @@ export default async function PostTestPage() {
     order_index: q.order_index,
   }));
 
+  const mcQuestions = safeQuestions.filter((q) => q.question_type === 'multiple_choice');
+  const tfQuestions = safeQuestions.filter((q) => q.question_type === 'true_false');
+
+  const studentSeed = `${progress.studentId || progress.username || 'student'}-post_test`;
+  const randomizedMC = shuffleArray(mcQuestions, `${studentSeed}-mc`);
+  const randomizedTF = shuffleArray(tfQuestions, `${studentSeed}-tf`);
+  const randomizedQuestions = [...randomizedMC, ...randomizedTF];
+
   return (
     <div className="py-4">
       <ExamRunner
         examType="post_test"
         examTitle="الاختبار البعدي النهائي وقياس الأثر (Post-Test)"
-        questions={safeQuestions}
+        questions={randomizedQuestions}
       />
     </div>
   );

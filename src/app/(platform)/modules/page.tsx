@@ -2,10 +2,23 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { getModulesListAction } from '@/lib/actions/module.actions';
 import { getStudentProgressAction } from '@/lib/actions/student.actions';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { BookOpen, Clock, CheckCircle2, ArrowLeft, ArrowRight, Lock, Award, Sparkles, ImageIcon } from 'lucide-react';
+import {
+  BookOpen,
+  CheckCircle2,
+  ArrowLeft,
+  Lock,
+  Award,
+  Sparkles,
+} from 'lucide-react';
+
+const MODULE_LABELS = [
+  'الموديول الأول',
+  'الموديول الثاني',
+  'الموديول الثالث',
+  'الموديول الرابع',
+];
 
 export default async function ModulesListPage() {
   const [progress, modules] = await Promise.all([
@@ -32,23 +45,23 @@ export default async function ModulesListPage() {
   const isAllModulesDone = currentModuleIdx >= modules.length && modules.length > 0;
 
   return (
-    <div className="space-y-8 text-right max-w-6xl mx-auto">
+    <div className="space-y-6 text-right max-w-5xl mx-auto px-2 sm:px-4 py-2">
       {/* رأس الصفحة */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200/80 pb-6 bg-white p-6 rounded-3xl shadow-sm border">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border border-slate-200/90 pb-6 bg-white p-6 sm:p-7 rounded-3xl shadow-xs">
         <div>
-          <Badge variant="gold" className="mb-2 font-bold gap-1">
+          <Badge variant="gold" className="mb-2 font-bold gap-1 px-3 py-1">
             <Sparkles className="w-3.5 h-3.5 text-asu-gold-dark" />
             <span>مسار التعلم التفاعلي • كلية التربية</span>
           </Badge>
-          <h1 className="text-2xl md:text-3xl font-black text-asu-navy">
-            الوحدات والموديولات التعليمية
+          <h1 className="text-2xl sm:text-3xl font-black text-asu-navy">
+            الموديولات التعليمية
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            يرجى دراسة الوحدات المقررة وإتمام أنشطتها بالترتيب قبل الانتقال للاختبار البعدي.
+            يرجى دراسة الموديولات المقررة بالترتيب وإتمام متطلباتها قبل الانتقال للاختبار البعدي.
           </p>
         </div>
 
-        {/* بطاقة الاختبار البعدي السريعة */}
+        {/* بطاقة الانتقال للاختبار البعدي */}
         <div className="flex items-center gap-3">
           {isAllModulesDone ? (
             <Link href="/post-test">
@@ -59,137 +72,140 @@ export default async function ModulesListPage() {
               </Button>
             </Link>
           ) : (
-            <div className="p-3.5 px-4 rounded-2xl bg-slate-50 text-slate-600 text-xs font-medium flex items-center gap-2 border border-slate-200/80">
+            <div className="p-3 px-4 rounded-2xl bg-slate-50 text-slate-600 text-xs font-bold flex items-center gap-2 border border-slate-200/80">
               <Lock className="w-4 h-4 text-slate-400" />
               <span>
-                يُفتح الاختبار البعدي بعد إتمام الوحدات ({currentModuleIdx} / {modules.length})
+                يُفتح الاختبار البعدي بعد إتمام الموديولات ({Math.min(currentModuleIdx, modules.length)} / {modules.length})
               </span>
             </div>
           )}
         </div>
       </div>
 
-      {/* قائمة بطاقات الموديولات */}
+      {/* قائمة الموديولات الـ 4 بعرض الصفحة وتحت بعض */}
       {modules.length === 0 ? (
-        <Card className="text-center p-12 max-w-xl mx-auto rounded-3xl border-dashed">
+        <div className="text-center p-12 bg-white rounded-3xl border border-dashed border-slate-300">
           <BookOpen className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-          <CardTitle className="text-lg text-slate-700">لا توجد وحدات تعليمية مضافة حالياً</CardTitle>
-          <p className="text-xs text-slate-400 mt-1">
-            يمكن للمشرف الأكاديمي إضافة الوحدات وصورها وفقراتها من لوحة التحكم.
-          </p>
-        </Card>
+          <h3 className="text-base font-bold text-slate-700">لا توجد موديولات مضافة حالياً</h3>
+        </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="flex flex-col gap-4 sm:gap-5">
           {modules.map((module, index) => {
             const isDone = index < currentModuleIdx;
             const isCurrent = index === currentModuleIdx;
             const isLocked = index > currentModuleIdx && progress.role !== 'admin';
-            const firstImage = module.images?.[0];
+            const moduleLabel = MODULE_LABELS[index] || `الموديول ${index + 1}`;
+            const moduleNumber = `0${index + 1}`;
 
             return (
-              <Card
+              <div
                 key={module.id}
-                className={`transition-all rounded-3xl overflow-hidden flex flex-col justify-between ${
+                className={`group relative overflow-hidden rounded-2xl sm:rounded-3xl border-2 transition-all duration-300 p-5 sm:p-7 flex flex-col sm:flex-row sm:items-center justify-between gap-5 sm:gap-6 ${
                   isCurrent
-                    ? 'border-2 border-asu-gold ring-4 ring-asu-gold/15 shadow-xl bg-white'
+                    ? 'bg-white border-asu-gold shadow-lg shadow-asu-gold/15 ring-4 ring-asu-gold/10'
                     : isDone
-                    ? 'border border-emerald-200 bg-emerald-50/20'
-                    : 'opacity-70 bg-slate-50 border-slate-200'
+                    ? 'bg-white border-emerald-300/80 shadow-xs hover:border-emerald-400'
+                    : 'bg-slate-50/70 border-slate-200 opacity-75'
                 }`}
               >
-                {/* صورة الغلاف إن وُجدت */}
-                {firstImage && (
-                  <div className="relative w-full h-44 bg-slate-900 overflow-hidden border-b border-slate-100">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={firstImage}
-                      alt={module.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                    />
-                    <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-full text-white text-[10px] font-bold flex items-center gap-1 font-mono">
-                      <ImageIcon className="w-3 h-3" />
-                      <span>{module.images.length} صور</span>
-                    </div>
-                  </div>
+                {/* خط جانبي جمالي للموديول النشط */}
+                {isCurrent && (
+                  <div className="absolute right-0 top-0 bottom-0 w-2 bg-gradient-to-b from-asu-gold to-asu-gold-dark" />
+                )}
+                {isDone && (
+                  <div className="absolute right-0 top-0 bottom-0 w-2 bg-emerald-500" />
                 )}
 
-                <CardHeader>
-                  <div className="flex items-center justify-between pb-2">
-                    <div className="flex items-center gap-2">
-                      <span className="w-8 h-8 rounded-xl bg-asu-navy/10 text-asu-navy font-black text-xs flex items-center justify-center font-mono">
-                        0{module.order}
-                      </span>
-                      <span className="text-xs text-slate-500 flex items-center gap-1 font-medium">
-                        <Clock className="w-3.5 h-3.5 text-asu-gold-dark" />
-                        {module.durationMinutes} دقيقة
-                      </span>
-                    </div>
-
-                    {isDone && (
-                      <Badge variant="success" className="gap-1 font-bold text-[11px]">
-                        <CheckCircle2 className="w-3.5 h-3.5" /> مكتمل
-                      </Badge>
-                    )}
-                    {isCurrent && (
-                      <Badge variant="gold" className="gap-1 font-bold text-[11px]">
-                        الوحدة الحالية
-                      </Badge>
-                    )}
-                    {isLocked && (
-                      <Badge variant="default" className="gap-1 text-[11px]">
-                        <Lock className="w-3.5 h-3.5" /> مغلق
-                      </Badge>
+                {/* الجانب الأيمن: الترقيم واسم الموديول */}
+                <div className="flex items-center gap-4 sm:gap-5">
+                  {/* شارة الترقيم الفاخرة */}
+                  <div
+                    className={`w-14 h-14 rounded-2xl flex items-center justify-center font-mono font-black text-xl shrink-0 transition-transform group-hover:scale-105 ${
+                      isCurrent
+                        ? 'bg-asu-navy text-asu-gold shadow-md shadow-asu-navy/20 border border-asu-gold/40'
+                        : isDone
+                        ? 'bg-emerald-50 text-emerald-600 border border-emerald-200'
+                        : 'bg-slate-200/80 text-slate-400 border border-slate-200'
+                    }`}
+                  >
+                    {isDone ? (
+                      <CheckCircle2 className="w-7 h-7 text-emerald-600" />
+                    ) : (
+                      moduleNumber
                     )}
                   </div>
 
-                  <CardTitle className="text-lg font-black text-asu-navy leading-snug">
-                    {module.title}
-                  </CardTitle>
-                  {module.subtitle && (
-                    <CardDescription className="text-xs text-slate-600 line-clamp-2">
-                      {module.subtitle}
-                    </CardDescription>
-                  )}
-                </CardHeader>
+                  {/* اسم الموديول وحالته فقط بدون أي بيانات أخرى أو صور */}
+                  <div className="space-y-1">
+                    <h2
+                      className={`text-xl sm:text-2xl font-black tracking-tight ${
+                        isCurrent
+                          ? 'text-asu-navy'
+                          : isDone
+                          ? 'text-slate-800'
+                          : 'text-slate-500'
+                      }`}
+                    >
+                      {moduleLabel}
+                    </h2>
 
-                <CardContent className="space-y-3">
-                  {module.sections && module.sections.length > 0 && (
-                    <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200/60 text-xs text-slate-600 space-y-1">
-                      <span className="font-bold text-slate-800 block text-[11px]">المحتويات:</span>
-                      <span className="line-clamp-2 text-[11px] leading-relaxed">
-                        {module.sections.map((s) => s.title).join(' • ')}
-                      </span>
+                    <div className="flex items-center gap-2">
+                      {isDone && (
+                        <Badge
+                          variant="success"
+                          className="px-2.5 py-0.5 text-xs font-bold gap-1 bg-emerald-50 text-emerald-700 border-emerald-200"
+                        >
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                          <span>تم إتمام الموديول بنجاح</span>
+                        </Badge>
+                      )}
+                      {isCurrent && (
+                        <Badge
+                          variant="gold"
+                          className="px-2.5 py-0.5 text-xs font-bold gap-1"
+                        >
+                          <Sparkles className="w-3.5 h-3.5 text-asu-gold-dark" />
+                          <span>الموديول متاح حالياً للتعلم</span>
+                        </Badge>
+                      )}
+                      {isLocked && (
+                        <span className="text-xs text-slate-400 font-medium flex items-center gap-1">
+                          <Lock className="w-3 h-3" />
+                          <span>مغلق (أتمم الموديول السابق أولاً)</span>
+                        </span>
+                      )}
                     </div>
-                  )}
+                  </div>
+                </div>
 
-                  {module.activity && (
-                    <div className="flex items-center gap-1.5 text-xs text-asu-gold-dark font-bold">
-                      <Sparkles className="w-3.5 h-3.5" />
-                      <span>نشاط: {module.activity.title}</span>
-                    </div>
-                  )}
-                </CardContent>
-
-                <CardFooter className="pt-3 border-t border-slate-100">
+                {/* الجانب الأيسر: زر بدء التعلم أو الدراسة */}
+                <div className="shrink-0 w-full sm:w-auto">
                   {isLocked ? (
-                    <Button variant="outline" size="md" className="w-full text-slate-400 cursor-not-allowed" disabled>
-                      <Lock className="w-4 h-4 ml-1.5" />
-                      <span>الوحدة مغلقة (أتمم الوحدة السابقة أولاً)</span>
+                    <Button
+                      size="lg"
+                      disabled
+                      className="w-full sm:w-auto px-7 py-6 rounded-2xl bg-slate-100 text-slate-400 border border-slate-200 font-bold text-sm gap-2 cursor-not-allowed shadow-none"
+                    >
+                      <Lock className="w-4 h-4 text-slate-400" />
+                      <span>مغلق حالياً</span>
                     </Button>
                   ) : (
-                    <Link href={`/modules/${module.id}`} className="w-full">
+                    <Link href={`/modules/${module.id}`} className="block w-full sm:w-auto">
                       <Button
-                        variant={isCurrent ? 'gold' : 'outline'}
-                        size="md"
-                        className="w-full font-bold justify-between"
+                        size="lg"
+                        className={`w-full sm:w-auto px-8 sm:px-10 py-6 rounded-2xl font-black text-sm sm:text-base gap-2.5 transition-all shadow-md hover:scale-[1.02] active:scale-[0.98] cursor-pointer ${
+                          isCurrent
+                            ? 'bg-gradient-to-r from-asu-navy to-[#182a63] hover:from-[#132252] hover:to-asu-navy text-white shadow-asu-navy/20'
+                            : 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-600/20'
+                        }`}
                       >
-                        <span>{isDone ? 'مراجعة محتوى الوحدة' : 'بدء دراسة الوحدة'}</span>
-                        <ArrowLeft className="w-4 h-4" />
+                        <span>{isDone ? 'مراجعة الموديول' : 'بدء التعلم'}</span>
+                        <ArrowLeft className="w-5 h-5 transition-transform group-hover:-translate-x-1" />
                       </Button>
                     </Link>
                   )}
-                </CardFooter>
-              </Card>
+                </div>
+              </div>
             );
           })}
         </div>

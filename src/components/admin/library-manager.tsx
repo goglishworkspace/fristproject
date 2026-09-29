@@ -5,8 +5,7 @@ import { addLibraryVideoAction, deleteLibraryVideoAction, type LibraryVideo } fr
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { PlusCircle, Trash2, ExternalLink, Film, CheckCircle2, AlertCircle } from 'lucide-react';
+import { PlusCircle, Trash2, ExternalLink, CheckCircle2, AlertCircle } from 'lucide-react';
 
 function YoutubeIcon({ className = "w-6 h-6" }: { className?: string }) {
   return (

@@ -57,14 +57,26 @@ export interface ModuleActivity {
   id: string;
   title: string;
   description: string;
+  imageUrl?: string;
   requiresSubmission?: boolean;
 }
 
 export interface ScaffoldingItem {
-  hint?: string;          // تلميح
-  extraInfo?: string;      // معلومة إضافية
-  example?: string;        // مثال
-  selfQuestion?: string;   // اسأل نفسك
+  hint?: string;            // تلميح
+  extraInfo?: string;        // معلومة إضافية
+  example?: string;          // مثال
+  selfQuestion?: string;     // اسأل نفسك
+  mapRead?: string;          // اقرأ الخريطة
+  patternDiscover?: string;  // اكتشف النمط
+  spatialRelate?: string;    // اربط بالمكان
+  infer?: string;            // استنتج
+  spatialThink?: string;     // فكّر مكانيًا
+  observe?: string;          // لاحظ
+  compare?: string;          // قارن
+  trackRelation?: string;    // تتبّع العلاقة
+  distinguishEffect?: string;// ميّز التأثير
+  causeEffect?: string;      // اربط الأسباب بالنتائج
+  deepThink?: string;        // فكّر بعمق
 }
 
 export interface ModuleSlide {
@@ -85,9 +97,12 @@ export interface ModuleData {
   scaffolding?: ScaffoldingItem;
   sections: ModuleSection[];
   activity: ModuleActivity;
+  activities?: ModuleActivity[];
   createdAt?: string;
   updatedAt?: string;
 }
+
+export type Module = ModuleData;
 
 export type QuestionType = 'multiple_choice' | 'true_false';
 

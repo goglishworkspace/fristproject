@@ -1,9 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Play, Search, X, ExternalLink, Clock, Tag, Film, Sparkles } from 'lucide-react';
+import { Play, Search, X, ExternalLink, Clock, Film, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import type { LibraryVideo } from '@/lib/actions/library.actions';
 
 interface VideoGalleryProps {

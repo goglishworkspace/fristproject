@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { CheckCircle2, ArrowLeft } from 'lucide-react';
 import type { Question } from '@/lib/types/database';
+import { shuffleArray } from '@/lib/utils';
 
 export default async function PreTestPage() {
   const [progress, questionsList] = await Promise.all([
@@ -23,8 +24,6 @@ export default async function PreTestPage() {
   if (!progress.isProfileCompleted && progress.role !== 'admin') {
     redirect('/complete-profile');
   }
-
-  const totalQuestions = questionsList.length;
 
   // 2. إذا كان الطالب قد أتم الاختبار القبلي بالفعل، منع الإعادة وإظهار بطاقة النجاح
   if (progress.preTestCompleted) {
@@ -43,17 +42,15 @@ export default async function PreTestPage() {
             أهلاً بك {progress.fullName || ''}، لقد أتممت هذا الاختبار مسبقاً!
           </h1>
 
-          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-around">
+          <div className="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-100 flex items-center justify-around">
             <div>
-              <span className="text-xs text-slate-500 block mb-0.5">درجة الاختبار القبلي</span>
-              <span className="text-2xl font-black text-emerald-600 font-mono">
-                {progress.preScore ?? '-'} / {totalQuestions || 5}
-              </span>
+              <span className="text-xs text-slate-500 block mb-0.5">حالة الاختبار</span>
+              <span className="text-sm font-black text-emerald-700">تم إتمام الاختبار بنجاح</span>
             </div>
-            <div className="h-8 w-px bg-slate-200" />
+            <div className="h-8 w-px bg-emerald-200" />
             <div>
               <span className="text-xs text-slate-500 block mb-0.5">حالة المسار</span>
-              <span className="text-xs font-bold text-slate-700">الوحدات التعليمية مفتوحة</span>
+              <span className="text-sm font-bold text-slate-700">الوحدات التعليمية مفتوحة</span>
             </div>
           </div>
 
@@ -79,7 +76,7 @@ export default async function PreTestPage() {
     );
   }
 
-  // 3. تجهيز الأسئلة
+  // 3. تجهيز الأسئلة: الاختيار من متعدد أولاً (60 سؤال) ثم الصواب والخطأ ثانياً (40 سؤال) مع خلط عشوائي لكل طالب
   const safeQuestions: Question[] = questionsList.map((q) => ({
     id: q.id,
     exam_type: q.exam_type,
@@ -89,12 +86,20 @@ export default async function PreTestPage() {
     order_index: q.order_index,
   }));
 
+  const mcQuestions = safeQuestions.filter((q) => q.question_type === 'multiple_choice');
+  const tfQuestions = safeQuestions.filter((q) => q.question_type === 'true_false');
+
+  const studentSeed = `${progress.studentId || progress.username || 'student'}-pre_test`;
+  const randomizedMC = shuffleArray(mcQuestions, `${studentSeed}-mc`);
+  const randomizedTF = shuffleArray(tfQuestions, `${studentSeed}-tf`);
+  const randomizedQuestions = [...randomizedMC, ...randomizedTF];
+
   return (
     <div className="py-4">
       <ExamRunner
         examType="pre_test"
         examTitle="الاختبار القبلي لتحديد المستوى (Pre-Test)"
-        questions={safeQuestions}
+        questions={randomizedQuestions}
       />
     </div>
   );

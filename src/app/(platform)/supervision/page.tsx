@@ -5,7 +5,7 @@ export const metadata = {
 
 // رابط الصورة المعتمدة للإعداد والإشراف من Cloudinary
 const SUPERVISION_IMAGE_SRC =
-  'https://res.cloudinary.com/makcnu5x/image/upload/v1790087962/c9edb0ca-aba8-49aa-b6c1-4a1a64f29987.jpg';
+  'https://res.cloudinary.com/makcnu5x/image/upload/v1790595778/1790595743141-01a0e7d2-02c9-7016-b5ad-fdbd0addfde5.png';
 
 export default function SupervisionPage() {
   return (

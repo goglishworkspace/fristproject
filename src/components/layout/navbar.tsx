@@ -32,7 +32,7 @@ export const NAV_LINKS = [
   { href: '/', label: 'الرئيسية', icon: Home },
   { href: '/supervision', label: 'الإعداد والإشراف', icon: Users2 },
   { href: '/instructions', label: 'التعليمات', icon: FileText },
-  { href: '/objectives', label: 'الأهداف التعليمية', icon: Target },
+  { href: '/objectives', label: 'الأهداف العامة', icon: Target },
   { href: '/library', label: 'المكتبة الإثرائية', icon: Library },
   { href: '/contact', label: 'تواصل معنا', icon: Mail },
 ];

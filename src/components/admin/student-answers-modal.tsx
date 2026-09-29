@@ -9,13 +9,10 @@ import {
   CheckCircle2,
   XCircle,
   FileText,
-  Award,
   ExternalLink,
   HelpCircle,
   Sparkles,
   TrendingUp,
-  User,
-  Clock,
   BookOpen,
 } from 'lucide-react';
 
@@ -26,18 +23,24 @@ interface StudentAnswersModalProps {
   onClose: () => void;
 }
 
+type ModalTab = 'pre' | 'post' | 'module_quizzes' | 'activities';
+
 export function StudentAnswersModal({
   student,
   allQuestions,
   modules,
   onClose,
 }: StudentAnswersModalProps) {
-  const [activeTab, setActiveTab] = useState<'pre' | 'post' | 'activities'>('pre');
+  const [activeTab, setActiveTab] = useState<ModalTab>('pre');
 
   if (!student) return null;
 
-  const preQuestions = allQuestions.filter((q) => q.exam_type === 'pre_test');
-  const postQuestions = allQuestions.filter((q) => q.exam_type === 'post_test');
+  const unifiedQuestions = allQuestions
+    .filter((q) => q.exam_type === 'pre_test' || q.exam_type === 'post_test')
+    .sort((a, b) => a.order_index - b.order_index);
+
+  const preQuestions = unifiedQuestions;
+  const postQuestions = unifiedQuestions;
 
   const preAnswers = student.preTestAnswers || {};
   const postAnswers = student.postTestAnswers || {};
@@ -119,9 +122,9 @@ export function StudentAnswersModal({
 
           <button
             type="button"
-            onClick={() => setActiveTab('module_quizzes' as any)}
+            onClick={() => setActiveTab('module_quizzes')}
             className={`px-4 py-2.5 rounded-t-2xl font-bold text-xs sm:text-sm transition-all flex items-center gap-2 cursor-pointer ${
-              (activeTab as string) === 'module_quizzes'
+              activeTab === 'module_quizzes'
                 ? 'bg-white text-asu-navy border-t-2 border-x border-asu-gold shadow-xs'
                 : 'text-slate-500 hover:text-slate-800'
             }`}

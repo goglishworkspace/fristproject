@@ -21,7 +21,6 @@ import {
   X,
   Check,
   HelpCircle,
-  ListOrdered,
   ToggleLeft,
   BookOpen,
 } from 'lucide-react';
@@ -53,17 +52,16 @@ export function QuestionBankManager({ initialQuestions, modules = [] }: Question
     setTimeout(() => setToastMessage(null), 3500);
   };
 
-  const preQuestions = questions
-    .filter((q) => q.exam_type === 'pre_test')
+  const unifiedMainQuestions = questions
+    .filter((q) => q.exam_type === 'pre_test' || q.exam_type === 'post_test')
     .sort((a, b) => a.order_index - b.order_index);
 
-  const postQuestions = questions
-    .filter((q) => q.exam_type === 'post_test')
-    .sort((a, b) => a.order_index - b.order_index);
-
-  const currentList = questions
-    .filter((q) => q.exam_type === activeTab)
-    .sort((a, b) => a.order_index - b.order_index);
+  const currentList =
+    activeTab === 'pre_test'
+      ? unifiedMainQuestions
+      : questions
+          .filter((q) => q.exam_type === activeTab)
+          .sort((a, b) => a.order_index - b.order_index);
 
   // فتح نافذة الإضافة
   const openAddModal = () => {
@@ -248,7 +246,7 @@ export function QuestionBankManager({ initialQuestions, modules = [] }: Question
         </Button>
       </div>
 
-      {/* التبويبات الفاخرة بين القبلي والبعدي واختبارات الموديولات */}
+      {/* التبويبات الفاخرة للاختبارات */}
       <div className="flex flex-wrap border-b border-slate-200 bg-white rounded-2xl p-1.5 shadow-2xs gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar">
         <button
           type="button"
@@ -259,13 +257,13 @@ export function QuestionBankManager({ initialQuestions, modules = [] }: Question
               : 'text-slate-600 hover:bg-slate-100'
           }`}
         >
-          <ListOrdered className="w-4 h-4 shrink-0" />
-          <span>الاختبار القبلي</span>
+          <Sparkles className="w-4 h-4 shrink-0 text-asu-gold-light" />
+          <span>الاختبار الأساسي (القبلي والبعدي الموحد)</span>
           <Badge
             variant={activeTab === 'pre_test' ? 'gold' : 'outline'}
             className="text-[11px] font-mono font-black px-2 py-0.5"
           >
-            {preQuestions.length}
+            {unifiedMainQuestions.length}
           </Badge>
         </button>
 
@@ -297,26 +295,23 @@ export function QuestionBankManager({ initialQuestions, modules = [] }: Question
             </button>
           );
         })}
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('post_test')}
-          className={`py-2.5 px-3 sm:px-4 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 cursor-pointer ${
-            activeTab === 'post_test'
-              ? 'bg-asu-navy text-white shadow-xs'
-              : 'text-slate-600 hover:bg-slate-100'
-          }`}
-        >
-          <Sparkles className="w-4 h-4 shrink-0 text-asu-gold-light" />
-          <span>الاختبار البعدي</span>
-          <Badge
-            variant={activeTab === 'post_test' ? 'gold' : 'outline'}
-            className="text-[11px] font-mono font-black px-2 py-0.5"
-          >
-            {postQuestions.length}
-          </Badge>
-        </button>
       </div>
+
+      {/* تنبيه توضيحي للاختبار الموحد */}
+      {activeTab === 'pre_test' && (
+        <div className="bg-amber-50/80 border border-amber-200/90 rounded-2xl p-4 text-xs text-amber-950 flex items-start gap-3 shadow-2xs">
+          <Sparkles className="w-5 h-5 text-asu-gold-dark shrink-0 mt-0.5" />
+          <div className="leading-relaxed space-y-1">
+            <span className="font-bold block text-sm text-slate-900">
+              الاختبار القبلي والبعدي الموحد (نفس الأسئلة بتوزيع عشوائي لكل طالب):
+            </span>
+            <p className="text-slate-700">
+              تم ربط أسئلة الاختبارين القبلي والبعدي ليكونا متطابقين تماماً ({unifiedMainQuestions.length} سؤالاً) لقياس الفروق الإحصائية وأثر التعلم بدقة.
+              تظهر الأسئلة عشوائياً لكل طالب بترتيب فريد ومستقل يمنع الغش والتكرار النمطي، مع بقاء الترتيب ثابتاً للطالب نفسه حتى إتمام المحاولة.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* قائمة الأسئلة المعروضة */}
       {currentList.length === 0 ? (
@@ -480,17 +475,16 @@ export function QuestionBankManager({ initialQuestions, modules = [] }: Question
                 <div className="space-y-1">
                   <label className="block text-xs font-bold text-slate-700">نوع الاختبار المخصص له السؤال</label>
                   <select
-                    value={formExamType}
+                    value={formExamType === 'post_test' ? 'pre_test' : formExamType}
                     onChange={(e) => setFormExamType(e.target.value as ExamType)}
                     className="w-full p-2.5 rounded-xl border border-slate-300 text-xs font-bold text-slate-900 bg-white"
                   >
-                    <option value="pre_test">الاختبار القبلي (Pre-Test)</option>
+                    <option value="pre_test">الاختبار الأساسي (القبلي والبعدي الموحد)</option>
                     {modules.map((m) => (
                       <option key={m.id} value={`module_${m.id}`}>
                         اختبار نهاية {m.title.length > 30 ? `الوحدة ${m.order}` : m.title}
                       </option>
                     ))}
-                    <option value="post_test">الاختبار البعدي النهائي (Post-Test)</option>
                   </select>
                 </div>
 

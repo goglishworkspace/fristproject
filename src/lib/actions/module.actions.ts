@@ -123,9 +123,10 @@ export async function updateModuleAction(
     revalidatePath('/admin/dashboard');
 
     return { success: true, module: modules[idx] };
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Error updating module:', err);
-    return { success: false, error: err?.message || 'حدث خطأ أثناء حفظ التعديلات' };
+    const message = err instanceof Error ? err.message : 'حدث خطأ أثناء حفظ التعديلات';
+    return { success: false, error: message };
   }
 }
 
@@ -150,9 +151,10 @@ export async function deleteModuleAction(
     revalidatePath('/admin/dashboard');
 
     return { success: true };
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Error deleting module:', err);
-    return { success: false, error: err?.message || 'حدث خطأ أثناء حذف الوحدة' };
+    const message = err instanceof Error ? err.message : 'حدث خطأ أثناء حذف الوحدة';
+    return { success: false, error: message };
   }
 }
 

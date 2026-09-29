@@ -1,184 +1,1772 @@
 [
   {
-    "id": "q-pre-1",
+    "id": "q-unified-1",
     "exam_type": "pre_test",
-    "question_text": "أي مما يلي يُعد من المكونات الحية (Biotic factors) الأساسية للنظام البيئي؟",
+    "question_type": "multiple_choice",
+    "question_text": "ما العامل الأشمل في اختلاف المشكلات البيئية بين الأماكن؟",
     "options": [
-      "ضوء الشمس والطاقة الحرارية",
-      "الكائنات المنتجة والمستهلكة والمحللة",
-      "نوع التربة والمعادن",
-      "الضغط الجوي والرطوبة"
+      "الكثافة السكانية",
+      "النشاط الاقتصادي",
+      "الخصائص المكانية",
+      "الموارد الطبيعية"
     ],
-    "correct_option_index": 1,
+    "correct_option_index": 2,
     "order_index": 1
   },
   {
-    "id": "q-pre-2",
+    "id": "q-unified-2",
     "exam_type": "pre_test",
-    "question_text": "ما هو السبب العلمي المباشر لظاهرة الاحتباس الحراري وتغير المناخ؟",
+    "question_type": "multiple_choice",
+    "question_text": "أي مما يلي مكوّن غير حي في البيئة؟",
     "options": [
-      "انخفاض نسبة غاز الأكسجين في الغلاف الجوي",
-      "تراكم الغازات الدفيئة مثل ثاني أكسيد الكربون والميثان",
-      "زيادة مساحة الغابات الاستوائية",
-      "برودة مياه المحيطات الاستوائية"
+      "التربة",
+      "النباتات",
+      "الإنسان",
+      "الحيوانات"
     ],
-    "correct_option_index": 1,
+    "correct_option_index": 0,
     "order_index": 2
   },
   {
-    "id": "q-pre-3",
+    "id": "q-unified-3",
     "exam_type": "pre_test",
-    "question_text": "يُعرّف الاقتصاد الدائري (Circular Economy) بأنه نموذج يسعى إلى:",
+    "question_type": "multiple_choice",
+    "question_text": "أي الموارد التالية غير متجدد؟",
     "options": [
-      "استنزاف الموارد الطبيعية إلى أقصى حد ممكن",
-      "تقليل الهدر وإعادة الاستخدام والتدوير المستمر للموارد",
-      "الاعتماد الكلي على حرق النفايات",
-      "زيادة الاستهلاك غير الضروري للطاقة"
+      "الشمس",
+      "الرياح",
+      "المياه",
+      "النفط"
     ],
-    "correct_option_index": 1,
+    "correct_option_index": 3,
     "order_index": 3
   },
   {
-    "id": "q-pre-4",
+    "id": "q-unified-4",
     "exam_type": "pre_test",
-    "question_text": "ما الفائدة البيئية الكبرى للمحميات الطبيعية؟",
+    "question_type": "multiple_choice",
+    "question_text": "إزالة الغطاء النباتي تؤدي غالبًا إلى:",
     "options": [
-      "تشجيع الصيد الجائر",
-      "حماية التنوع البيولوجي والأنواع المهددة بالانقراض",
-      "تحويل الأراضي لمناطق سكنية",
-      "تفريغ المياه الجوفية"
+      "زيادة التنوع الحيوي",
+      "زيادة تعرية التربة",
+      "زيادة خصوبة التربة",
+      "ثبات التربة"
     ],
     "correct_option_index": 1,
     "order_index": 4
   },
   {
-    "id": "q-pre-5",
+    "id": "q-unified-5",
     "exam_type": "pre_test",
-    "question_text": "أي من الممارسات التالية تسهم في الحد من تلوث البيئة بالبلاستيك؟",
+    "question_type": "multiple_choice",
+    "question_text": "أفضل وسيلة لإظهار توزيع مشكلة بيئية هي:",
     "options": [
-      "استخدام المنتجات البلاستيكية أحادية الاستخدام",
-      "استبدال الأكياس البلاستيكية بأكياس قماشية قابلة للغسل",
-      "حرق النفايات البلاستيكية في الهواء الطلق",
-      "إلقاء المخلفات في المسطحات المائية"
+      "الجدول",
+      "الصورة",
+      "النص",
+      "الخريطة"
     ],
-    "correct_option_index": 1,
+    "correct_option_index": 3,
     "order_index": 5
   },
   {
-    "id": "q-pre-6",
+    "id": "q-unified-6",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "ما العنصر الذي يفسر رموز الخريطة؟",
+    "options": [
+      "الاتجاه",
+      "المفتاح",
+      "المقياس",
+      "العنوان"
+    ],
+    "correct_option_index": 1,
+    "order_index": 6
+  },
+  {
+    "id": "q-unified-7",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "انتقال تلوث الهواء بين منطقتين يرتبط أكثر بـ:",
+    "options": [
+      "نوع الصخور",
+      "درجة الانحدار",
+      "اتجاه الرياح",
+      "نوع التربة"
+    ],
+    "correct_option_index": 2,
+    "order_index": 7
+  },
+  {
+    "id": "q-unified-8",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "ما الأكثر فائدة لتفسير تركز التلوث في منطقة؟",
+    "options": [
+      "عدد السكان",
+      "مواقع مصادر التلوث",
+      "مساحة المنطقة",
+      "شكل حدودها"
+    ],
+    "correct_option_index": 1,
+    "order_index": 8
+  },
+  {
+    "id": "q-unified-9",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "أي موقف يمثل استفادة الإنسان المباشرة من البيئة؟",
+    "options": [
+      "استخدام مياه الأنهار",
+      "معالجة مياه الصرف",
+      "حماية المحميات",
+      "إعادة تدوير المخلفات"
+    ],
+    "correct_option_index": 0,
+    "order_index": 9
+  },
+  {
+    "id": "q-unified-10",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "أي مصدر للطاقة أكثر استدامة؟",
+    "options": [
+      "الغاز الطبيعي",
+      "النفط",
+      "الفحم",
+      "الطاقة الشمسية"
+    ],
+    "correct_option_index": 3,
+    "order_index": 10
+  },
+  {
+    "id": "q-unified-11",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "أي حالة تزيد احتمال انجراف التربة؟",
+    "options": [
+      "كثافة الأشجار",
+      "انحدار السطح وقلة النباتات",
+      "استواء السطح",
+      "زيادة الغطاء النباتي"
+    ],
+    "correct_option_index": 1,
+    "order_index": 11
+  },
+  {
+    "id": "q-unified-12",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "أي قرار يراعي حقوق الأجيال القادمة؟",
+    "options": [
+      "زيادة استخراج الموارد",
+      "تلبية الاحتياجات الحالية",
+      "الاستخدام الرشيد للموارد",
+      "استهلاك الموارد الأقل تكلفة"
+    ],
+    "correct_option_index": 2,
+    "order_index": 12
+  },
+  {
+    "id": "q-unified-13",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "مقارنة خريطتين للمكان نفسه في زمنين مختلفين تكشف:",
+    "options": [
+      "التغير المكاني",
+      "مقياس الرسم",
+      "الموقع الفلكي",
+      "الاتجاه الجغرافي"
+    ],
+    "correct_option_index": 0,
+    "order_index": 13
+  },
+  {
+    "id": "q-unified-14",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "قبل اختيار حل لمشكلة بيئية ينبغي تحديد:",
+    "options": [
+      "الحل المستخدم في مكان آخر",
+      "تكلفة الحل فقط",
+      "عدد المتأثرين",
+      "أسباب المشكلة وتوزيعها"
+    ],
+    "correct_option_index": 3,
+    "order_index": 14
+  },
+  {
+    "id": "q-unified-15",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "أي سؤال يعكس التفكير المكاني بدرجة أكبر؟",
+    "options": [
+      "متى ظهرت المشكلة؟",
+      "أين تتركز المشكلة ولماذا؟",
+      "ما تعريف المشكلة؟",
+      "ما نتائج المشكلة؟"
+    ],
+    "correct_option_index": 1,
+    "order_index": 15
+  },
+  {
+    "id": "q-unified-16",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "التلوث البيئي هو تغير:",
+    "options": [
+      "موسمي",
+      "ضار",
+      "مؤقت",
+      "طبيعي"
+    ],
+    "correct_option_index": 1,
+    "order_index": 16
+  },
+  {
+    "id": "q-unified-17",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "من المصادر الطبيعية لتلوث الهواء:",
+    "options": [
+      "المصانع",
+      "السيارات",
+      "البراكين",
+      "المحطات"
+    ],
+    "correct_option_index": 2,
+    "order_index": 17
+  },
+  {
+    "id": "q-unified-18",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "من المصادر البشرية لتلوث الهواء:",
+    "options": [
+      "العواصف",
+      "البراكين",
+      "الغبار",
+      "المصانع"
+    ],
+    "correct_option_index": 3,
+    "order_index": 18
+  },
+  {
+    "id": "q-unified-19",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "يزداد التلوث الصناعي قرب:",
+    "options": [
+      "المزارع",
+      "المصانع",
+      "الحدائق",
+      "المحميات"
+    ],
+    "correct_option_index": 1,
+    "order_index": 19
+  },
+  {
+    "id": "q-unified-20",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "تنتقل ملوثات الأنهار مع:",
+    "options": [
+      "الجريان",
+      "التبخر",
+      "التكاثف",
+      "التسرب"
+    ],
+    "correct_option_index": 0,
+    "order_index": 20
+  },
+  {
+    "id": "q-unified-21",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "ترتبط المخلفات الصناعية بالاستخدام:",
+    "options": [
+      "الزراعي",
+      "الصناعي",
+      "السكني",
+      "الترفيهي"
+    ],
+    "correct_option_index": 1,
+    "order_index": 21
+  },
+  {
+    "id": "q-unified-22",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "بالابتعاد عن مصدر الضوضاء فإنها:",
+    "options": [
+      "تزداد",
+      "تثبت",
+      "تنخفض",
+      "تتضاعف"
+    ],
+    "correct_option_index": 2,
+    "order_index": 22
+  },
+  {
+    "id": "q-unified-23",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "يحدد اتجاه انتشار تلوث الهواء:",
+    "options": [
+      "الأمطار",
+      "التضاريس",
+      "الحرارة",
+      "الرياح"
+    ],
+    "correct_option_index": 3,
+    "order_index": 23
+  },
+  {
+    "id": "q-unified-24",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "تنتقل ملوثات النهر غالبًا نحو:",
+    "options": [
+      "المصب",
+      "المنبع",
+      "الضفاف",
+      "اليابس"
+    ],
+    "correct_option_index": 0,
+    "order_index": 24
+  },
+  {
+    "id": "q-unified-25",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "يتأثر انتشار التلوث أساسًا بـ:",
+    "options": [
+      "حجم المصدر",
+      "مسار الانتقال",
+      "شكل المصدر",
+      "عمر المصدر"
+    ],
+    "correct_option_index": 1,
+    "order_index": 25
+  },
+  {
+    "id": "q-unified-26",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "توضح خريطة التلوث:",
+    "options": [
+      "مصادر المياه",
+      "استخدامات الأرض",
+      "مستويات التلوث",
+      "توزيع الطرق"
+    ],
+    "correct_option_index": 2,
+    "order_index": 26
+  },
+  {
+    "id": "q-unified-27",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "الأكثر تعرضًا للتلوث منطقة:",
+    "options": [
+      "بعيدة عنه",
+      "مرتفعة عنه",
+      "معزولة عنه",
+      "في مساره"
+    ],
+    "correct_option_index": 3,
+    "order_index": 27
+  },
+  {
+    "id": "q-unified-28",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "لمقارنة منطقتين نستخدم:",
+    "options": [
+      "مؤشرًا موحدًا",
+      "مؤشرين مختلفين",
+      "وحدتين مختلفتين",
+      "زمنين مختلفين"
+    ],
+    "correct_option_index": 0,
+    "order_index": 28
+  },
+  {
+    "id": "q-unified-29",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "المنطقة الواقعة باتجاه الرياح من المصنع تكون:",
+    "options": [
+      "أقل تعرضًا",
+      "غير متأثرة",
+      "أكثر تعرضًا",
+      "متساوية التعرض"
+    ],
+    "correct_option_index": 2,
+    "order_index": 29
+  },
+  {
+    "id": "q-unified-30",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "تحليل التلوث مكانيًا يتطلب معرفة:",
+    "options": [
+      "المصدر",
+      "المسار",
+      "المتأثر",
+      "جميع ما سبق"
+    ],
+    "correct_option_index": 3,
+    "order_index": 30
+  },
+  {
+    "id": "q-unified-31",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "ما الذي يميز التغير المناخي عن التغيرات الجوية العابرة؟",
+    "options": [
+      "مكان حدوثه",
+      "استمراره طويلًا",
+      "سرعة حدوثه",
+      "وقت حدوثه"
+    ],
+    "correct_option_index": 1,
+    "order_index": 31
+  },
+  {
+    "id": "q-unified-32",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "أي عبارة تصف المناخ بدقة؟",
+    "options": [
+      "حالة السماء الآن",
+      "طقس يوم محدد",
+      "رياح فترة قصيرة",
+      "خصائص جوية طويلة المدى"
+    ],
+    "correct_option_index": 3,
+    "order_index": 32
+  },
+  {
+    "id": "q-unified-33",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "أي مما يلي يُعد عاملًا طبيعيًا مؤثرًا في المناخ؟",
+    "options": [
+      "الانفجارات البركانية",
+      "النقل البري",
+      "التوسع الصناعي",
+      "إزالة الغابات"
+    ],
+    "correct_option_index": 0,
+    "order_index": 33
+  },
+  {
+    "id": "q-unified-34",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "متى يصبح الاحتباس الحراري مشكلة بيئية؟",
+    "options": [
+      "عند انخفاض الأمطار",
+      "عند تغير الفصول",
+      "عند زيادة احتجاز الحرارة",
+      "عند هبوب الرياح"
+    ],
+    "correct_option_index": 2,
+    "order_index": 34
+  },
+  {
+    "id": "q-unified-35",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "أي غاز يرتبط بدرجة كبيرة بتربية الماشية ومدافن النفايات؟",
+    "options": [
+      "الأكسجين",
+      "الميثان",
+      "النيتروجين",
+      "بخار الماء"
+    ],
+    "correct_option_index": 1,
+    "order_index": 35
+  },
+  {
+    "id": "q-unified-36",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "كيف تؤثر إزالة الغابات في النظام المناخي؟",
+    "options": [
+      "تقلل تخزين الكربون",
+      "تزيد المياه الجوفية",
+      "تمنع العواصف",
+      "تخفض مستوى البحر"
+    ],
+    "correct_option_index": 0,
+    "order_index": 36
+  },
+  {
+    "id": "q-unified-37",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "أي تغير يمثل تحولًا في نمط الأمطار؟",
+    "options": [
+      "زيادة سرعة الرياح",
+      "ارتفاع مستوى البحر",
+      "تغير توقيت الهطول",
+      "انخفاض الضوضاء"
+    ],
+    "correct_option_index": 2,
+    "order_index": 37
+  },
+  {
+    "id": "q-unified-38",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "ما أحد الأسباب الرئيسة لارتفاع مستوى سطح البحر؟",
+    "options": [
+      "تغير اتجاه الرياح",
+      "التمدد الحراري للمياه",
+      "زيادة السحب",
+      "انخفاض الرطوبة"
+    ],
+    "correct_option_index": 1,
+    "order_index": 38
+  },
+  {
+    "id": "q-unified-39",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "أي مورد قد يتأثر بتغير تغذية باطن الأرض بالمياه؟",
+    "options": [
+      "الغطاء السحابي",
+      "التربة السطحية",
+      "المياه الجوفية",
+      "الطاقة الشمسية"
+    ],
+    "correct_option_index": 2,
+    "order_index": 39
+  },
+  {
+    "id": "q-unified-40",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "ما النتيجة الزراعية المباشرة المحتملة لتغير الظروف المناخية؟",
+    "options": [
+      "تغير مواعيد الزراعة",
+      "زيادة مساحة المدن",
+      "انخفاض حركة النقل",
+      "تغير شكل التضاريس"
+    ],
+    "correct_option_index": 0,
+    "order_index": 40
+  },
+  {
+    "id": "q-unified-41",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "كيف قد يمتد الأثر المناخي من الزراعة إلى المستهلك؟",
+    "options": [
+      "عبر حركة الرياح",
+      "عبر سلاسل الإمداد",
+      "عبر المياه الجوفية",
+      "عبر التضاريس"
+    ],
+    "correct_option_index": 1,
+    "order_index": 41
+  },
+  {
+    "id": "q-unified-42",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "ما استجابة بعض الأنواع الحية لتغير ظروف موائلها؟",
+    "options": [
+      "ثبات نشاطها دائمًا",
+      "توقف تكاثرها حتمًا",
+      "تغير نطاق انتشارها",
+      "زيادة أعدادها دائمًا"
+    ],
+    "correct_option_index": 2,
+    "order_index": 42
+  },
+  {
+    "id": "q-unified-43",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "أي الأنواع قد تواجه صعوبة أكبر في الاستجابة للتغير المناخي؟",
+    "options": [
+      "واسعة الانتشار دائمًا",
+      "سريعة الحركة فقط",
+      "كثيرة الغذاء",
+      "محدودة الموائل"
+    ],
+    "correct_option_index": 3,
+    "order_index": 43
+  },
+  {
+    "id": "q-unified-44",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "ما الأسلوب الأنسب لتحديد بؤر التأثر المناخي مكانيًا؟",
+    "options": [
+      "دراسة السكان",
+      "قياس الحرارة",
+      "دمج طبقات البيانات المكانية",
+      "حساب مساحة المنطقة"
+    ],
+    "correct_option_index": 2,
+    "order_index": 44
+  },
+  {
+    "id": "q-unified-45",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "ما الفائدة الأهم من تحديد المناطق الأكثر تأثرًا على الخريطة؟",
+    "options": [
+      "معرفة أسماء المواقع",
+      "تحديد اتجاه الشمال",
+      "حساب المسافات",
+      "تحديد أولويات التكيف"
+    ],
+    "correct_option_index": 3,
+    "order_index": 45
+  },
+  {
+    "id": "q-unified-46",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "تهدف الاستدامة البيئية إلى:",
+    "options": [
+      "زيادة الإنتاج",
+      "تحقيق التوازن بين الاحتياجات والموارد",
+      "منع استغلال الموارد",
+      "زيادة الاستهلاك"
+    ],
+    "correct_option_index": 1,
+    "order_index": 46
+  },
+  {
+    "id": "q-unified-47",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "الاستخدام المستدام للموارد يحقق:",
+    "options": [
+      "استمرار الاستفادة منها",
+      "زيادة استخراجها",
+      "سرعة استهلاكها",
+      "ثبات كمياتها"
+    ],
+    "correct_option_index": 0,
+    "order_index": 47
+  },
+  {
+    "id": "q-unified-48",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "رفع كفاءة الأجهزة يساعد على:",
+    "options": [
+      "زيادة الطلب",
+      "ترشيد الطاقة",
+      "زيادة الفقد",
+      "ثبات الاستهلاك"
+    ],
+    "correct_option_index": 1,
+    "order_index": 48
+  },
+  {
+    "id": "q-unified-49",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "يعتمد اختيار الطاقة المتجددة على:",
+    "options": [
+      "خصائص الموقع",
+      "عدد السكان",
+      "حجم المباني",
+      "عدد الطرق"
+    ],
+    "correct_option_index": 0,
+    "order_index": 49
+  },
+  {
+    "id": "q-unified-50",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "تبدأ الإدارة السليمة للمخلفات بـ:",
+    "options": [
+      "جمعها",
+      "معالجتها",
+      "إعادة تدويرها",
+      "تقليل إنتاجها"
+    ],
+    "correct_option_index": 3,
+    "order_index": 50
+  },
+  {
+    "id": "q-unified-51",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "يساعد فرز المخلفات على:",
+    "options": [
+      "زيادة تخزينها",
+      "زيادة نقلها",
+      "رفع كفاءة تدويرها",
+      "زيادة كميتها"
+    ],
+    "correct_option_index": 2,
+    "order_index": 51
+  },
+  {
+    "id": "q-unified-52",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "من وسائل حماية التنوع الحيوي:",
+    "options": [
+      "توسيع العمران",
+      "استعادة الموائل",
+      "زيادة الاستغلال",
+      "تجزئة الموائل"
+    ],
+    "correct_option_index": 1,
+    "order_index": 52
+  },
+  {
+    "id": "q-unified-53",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "تسهم المساحات الخضراء في:",
+    "options": [
+      "زيادة التلوث",
+      "زيادة حرارة الأسطح",
+      "تقليل الموائل",
+      "خفض درجات الحرارة"
+    ],
+    "correct_option_index": 3,
+    "order_index": 53
+  },
+  {
+    "id": "q-unified-54",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "تطوير نظم الإنذار المبكر مثال على:",
+    "options": [
+      "التخفيف",
+      "الترشيد",
+      "التكيف",
+      "إعادة التدوير"
+    ],
+    "correct_option_index": 2,
+    "order_index": 54
+  },
+  {
+    "id": "q-unified-55",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "يركز التخفيف على:",
+    "options": [
+      "آثار المشكلة",
+      "مسببات التغير المناخي",
+      "توزيع السكان",
+      "زيادة التكيف"
+    ],
+    "correct_option_index": 1,
+    "order_index": 55
+  },
+  {
+    "id": "q-unified-56",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "يركز التكيف على:",
+    "options": [
+      "التعامل مع آثار التغير المناخي",
+      "زيادة الانبعاثات",
+      "استهلاك الموارد",
+      "إنتاج المخلفات"
+    ],
+    "correct_option_index": 0,
+    "order_index": 56
+  },
+  {
+    "id": "q-unified-57",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "استخدام الطاقة المتجددة لخفض الانبعاثات يمثل:",
+    "options": [
+      "تكيفًا",
+      "معالجةً",
+      "ترشيدًا فقط",
+      "تخفيفًا"
+    ],
+    "correct_option_index": 3,
+    "order_index": 57
+  },
+  {
+    "id": "q-unified-58",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "المنطقة ذات الإشعاع الشمسي المرتفع تناسبها:",
+    "options": [
+      "الطاقة الشمسية",
+      "طاقة المياه",
+      "طاقة الرياح فقط",
+      "الوقود الأحفوري"
+    ],
+    "correct_option_index": 0,
+    "order_index": 58
+  },
+  {
+    "id": "q-unified-59",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "تساعد خرائط الأولوية على تحديد:",
+    "options": [
+      "شبكات النقل",
+      "بؤر الاحتياج",
+      "أشكال المباني",
+      "أسماء المناطق"
+    ],
+    "correct_option_index": 1,
+    "order_index": 59
+  },
+  {
+    "id": "q-unified-60",
+    "exam_type": "pre_test",
+    "question_type": "multiple_choice",
+    "question_text": "عند محدودية الموارد نبدأ بـ:",
+    "options": [
+      "المنطقة الأكبر",
+      "المنطقة الأقرب",
+      "المنطقة الأعلى أولوية",
+      "المنطقة الأقل تعرضًا"
+    ],
+    "correct_option_index": 2,
+    "order_index": 60
+  },
+  {
+    "id": "q-unified-61",
     "exam_type": "pre_test",
     "question_type": "true_false",
-    "question_text": "يُعد غاز الميثان أحد الغازات الدفيئة التي تفوق قدرتها على حبس الحرارة غاز ثاني أكسيد الكربون.",
+    "question_text": "قد تنتقل آثار المشكلة البيئية إلى مناطق بعيدة عن مصدرها.",
     "options": [
-      "صح",
+      "صواب",
       "خطأ"
     ],
     "correct_option_index": 0,
-    "order_index": 6
+    "order_index": 61
   },
   {
-    "id": "q-post-1",
-    "exam_type": "post_test",
-    "question_text": "في السلسلة الغذائية داخل النظام البيئي، تعتبر النباتات الخضراء:",
-    "options": [
-      "كائنات محللة للمواد العضوية",
-      "كائنات منتجة تعتمد على البناء الضوئي",
-      "مستهلكاً أولياً للغذاء",
-      "مستهلكاً ثانوياً"
-    ],
-    "correct_option_index": 1,
-    "order_index": 1
-  },
-  {
-    "id": "q-post-2",
-    "exam_type": "post_test",
-    "question_text": "ما هي النتيجة البيئية لارتفاع درجة حرارة الكوكب على المسطحات المائية؟",
-    "options": [
-      "تراجع منسوب مياه البحار",
-      "ذوبان الجليد القطبي وارتفاع مستوى سطح البحر وحموضة المحيطات",
-      "اختفاء الأعاصير البحرية",
-      "انخفاض رطوبة الغلاف الجوي"
-    ],
-    "correct_option_index": 1,
-    "order_index": 2
-  },
-  {
-    "id": "q-post-3",
-    "exam_type": "post_test",
-    "question_text": "استراتيجية الـ 3Rs البيئية تتضمن الترتيب الصحيح للأولويات:",
-    "options": [
-      "إعادة التدوير أولاً ثم زيادة الاستهلاك ثم الإلقاء",
-      "التقليل (Reduce)، ثم إعادة الاستخدام (Reuse)، ثم إعادة التدوير (Recycle)",
-      "الحرق ثم الدفن ثم استخراج موارد جديدة",
-      "الاستهلاك المفرط مع الاعتماد على التدوير فقط"
-    ],
-    "correct_option_index": 1,
-    "order_index": 3
-  },
-  {
-    "id": "q-post-4",
-    "exam_type": "post_test",
-    "question_text": "تعتبر الطاقة الشمسية وطاقة الرياح من مصادر الطاقة:",
-    "options": [
-      "الناضبة والملوثة للغلاف الجوي",
-      "المتجددة والنظيفة والصديقة للبيئة",
-      "عالية الانبعاثات الكربونية",
-      "المسببة للمطر الحمضي"
-    ],
-    "correct_option_index": 1,
-    "order_index": 4
-  },
-  {
-    "id": "q-post-5",
-    "exam_type": "post_test",
-    "question_text": "الهدف الأساسي من التنمية المستدامة هو:",
-    "options": [
-      "تحقيق أرباح سريعة دون مراعاة الموارد",
-      "تلبية احتياجات الحاضر دون المساس بقدرة الأجيال القادمة على تلبية احتياجاتها",
-      "إيقاف جميع الأنشطة الصناعية حول العالم",
-      "الاعتماد فقط على الموارد الأحفورية غير المتجددة"
-    ],
-    "correct_option_index": 1,
-    "order_index": 5
-  },
-  {
-    "id": "q-post-6",
-    "exam_type": "post_test",
+    "id": "q-unified-62",
+    "exam_type": "pre_test",
     "question_type": "true_false",
-    "question_text": "إعادة التدوير وحدها تكفي لحل أزمة التلوث البيئي دون الحاجة إلى ترشيد الاستهلاك من المصدر الأساسي.",
+    "question_text": "تشابه المناخ بين منطقتين يعني تشابه مشكلاتهما البيئية.",
     "options": [
-      "صح",
+      "صواب",
       "خطأ"
     ],
     "correct_option_index": 1,
-    "order_index": 6
+    "order_index": 62
   },
   {
-    "id": "q-mod-module-1-1",
+    "id": "q-unified-63",
+    "exam_type": "pre_test",
+    "question_type": "true_false",
+    "question_text": "يساعد مفتاح الخريطة في تفسير دلالات الرموز والألوان.",
+    "options": [
+      "صواب",
+      "خطأ"
+    ],
+    "correct_option_index": 0,
+    "order_index": 63
+  },
+  {
+    "id": "q-unified-64",
+    "exam_type": "pre_test",
+    "question_type": "true_false",
+    "question_text": "زيادة الغطاء النباتي تؤدي عادةً إلى زيادة تعرية التربة.",
+    "options": [
+      "صواب",
+      "خطأ"
+    ],
+    "correct_option_index": 1,
+    "order_index": 64
+  },
+  {
+    "id": "q-unified-65",
+    "exam_type": "pre_test",
+    "question_type": "true_false",
+    "question_text": "يمكن أن يؤثر النشاط البشري في توزيع المشكلات البيئية.",
+    "options": [
+      "صواب",
+      "خطأ"
+    ],
+    "correct_option_index": 0,
+    "order_index": 65
+  },
+  {
+    "id": "q-unified-66",
+    "exam_type": "pre_test",
+    "question_type": "true_false",
+    "question_text": "تركز التلوث في مكان معين يعني أن مصدره يقع داخله بالضرورة.",
+    "options": [
+      "صواب",
+      "خطأ"
+    ],
+    "correct_option_index": 1,
+    "order_index": 66
+  },
+  {
+    "id": "q-unified-67",
+    "exam_type": "pre_test",
+    "question_type": "true_false",
+    "question_text": "مقارنة خرائط المكان عبر الزمن تساعد في اكتشاف التغيرات المكانية.",
+    "options": [
+      "صواب",
+      "خطأ"
+    ],
+    "correct_option_index": 0,
+    "order_index": 67
+  },
+  {
+    "id": "q-unified-68",
+    "exam_type": "pre_test",
+    "question_type": "true_false",
+    "question_text": "المورد المتجدد لا يتأثر بمعدل استهلاكه مهما زاد.",
+    "options": [
+      "صواب",
+      "خطأ"
+    ],
+    "correct_option_index": 1,
+    "order_index": 68
+  },
+  {
+    "id": "q-unified-69",
+    "exam_type": "pre_test",
+    "question_type": "true_false",
+    "question_text": "قد يختلف الحل المناسب للمشكلة نفسها باختلاف خصائص المكان.",
+    "options": [
+      "صواب",
+      "خطأ"
+    ],
+    "correct_option_index": 0,
+    "order_index": 69
+  },
+  {
+    "id": "q-unified-70",
+    "exam_type": "pre_test",
+    "question_type": "true_false",
+    "question_text": "التفكير المكاني يهتم بموقع الظاهرة دون دراسة علاقتها بالمناطق المحيطة.",
+    "options": [
+      "صواب",
+      "خطأ"
+    ],
+    "correct_option_index": 1,
+    "order_index": 70
+  },
+  {
+    "id": "q-unified-71",
+    "exam_type": "pre_test",
+    "question_type": "true_false",
+    "question_text": "يمكن أن تختلف مستويات تلوث الهواء بين منطقتين متقاربتين بسبب اختلاف اتجاه الرياح.",
+    "options": [
+      "صواب",
+      "خطأ"
+    ],
+    "correct_option_index": 0,
+    "order_index": 71
+  },
+  {
+    "id": "q-unified-72",
+    "exam_type": "pre_test",
+    "question_type": "true_false",
+    "question_text": "تبقى ملوثات المياه دائمًا في المكان الذي دخلت منه إلى البيئة المائية.",
+    "options": [
+      "صواب",
+      "خطأ"
+    ],
+    "correct_option_index": 1,
+    "order_index": 72
+  },
+  {
+    "id": "q-unified-73",
+    "exam_type": "pre_test",
+    "question_type": "true_false",
+    "question_text": "قد ينقل الجريان السطحي المبيدات من الأراضي الزراعية إلى المجاري المائية.",
+    "options": [
+      "صواب",
+      "خطأ"
+    ],
+    "correct_option_index": 0,
+    "order_index": 73
+  },
+  {
+    "id": "q-unified-74",
+    "exam_type": "pre_test",
+    "question_type": "true_false",
+    "question_text": "ترتبط المناطق الصناعية بالمبيدات والأسمدة بوصفها المصدر الرئيس لتلوث تربتها.",
+    "options": [
+      "صواب",
+      "خطأ"
+    ],
+    "correct_option_index": 1,
+    "order_index": 74
+  },
+  {
+    "id": "q-unified-75",
+    "exam_type": "pre_test",
+    "question_type": "true_false",
+    "question_text": "قد تصل بعض ملوثات التربة إلى المياه الجوفية وتؤثر في مناطق بعيدة.",
+    "options": [
+      "صواب",
+      "خطأ"
+    ],
+    "correct_option_index": 0,
+    "order_index": 75
+  },
+  {
+    "id": "q-unified-76",
+    "exam_type": "pre_test",
+    "question_type": "true_false",
+    "question_text": "تقل شدة الضوضاء دائمًا كلما اقتربنا من مصدرها.",
+    "options": [
+      "صواب",
+      "خطأ"
+    ],
+    "correct_option_index": 1,
+    "order_index": 76
+  },
+  {
+    "id": "q-unified-77",
+    "exam_type": "pre_test",
+    "question_type": "true_false",
+    "question_text": "تساعد خريطة استخدامات الأرض في تفسير التوزيع المكاني لتلوث التربة.",
+    "options": [
+      "صواب",
+      "خطأ"
+    ],
+    "correct_option_index": 0,
+    "order_index": 77
+  },
+  {
+    "id": "q-unified-78",
+    "exam_type": "pre_test",
+    "question_type": "true_false",
+    "question_text": "تتساوى مستويات الضوضاء في المكان نفسه مهما اختلف وقت القياس.",
+    "options": [
+      "صواب",
+      "خطأ"
+    ],
+    "correct_option_index": 1,
+    "order_index": 78
+  },
+  {
+    "id": "q-unified-79",
+    "exam_type": "pre_test",
+    "question_type": "true_false",
+    "question_text": "لا يشترط أن تكون المنطقة الأكثر تضررًا من التلوث هي الأقرب إلى مصدره.",
+    "options": [
+      "صواب",
+      "خطأ"
+    ],
+    "correct_option_index": 0,
+    "order_index": 79
+  },
+  {
+    "id": "q-unified-80",
+    "exam_type": "pre_test",
+    "question_type": "true_false",
+    "question_text": "تحديد مصدر التلوث وحده يكفي لفهم نمط انتشاره المكاني دون دراسة مسار انتقاله.",
+    "options": [
+      "صواب",
+      "خطأ"
+    ],
+    "correct_option_index": 1,
+    "order_index": 80
+  },
+  {
+    "id": "q-unified-81",
+    "exam_type": "pre_test",
+    "question_type": "true_false",
+    "question_text": "يشير التغير المناخي إلى تحولات طويلة المدى في خصائص النظام المناخي.",
+    "options": [
+      "صواب",
+      "خطأ"
+    ],
+    "correct_option_index": 0,
+    "order_index": 81
+  },
+  {
+    "id": "q-unified-82",
+    "exam_type": "pre_test",
+    "question_type": "true_false",
+    "question_text": "يمكن تحديد مناخ منطقة ما من خلال حالة الطقس فيها خلال عدة أيام فقط.",
+    "options": [
+      "صواب",
+      "خطأ"
+    ],
+    "correct_option_index": 1,
+    "order_index": 82
+  },
+  {
+    "id": "q-unified-83",
+    "exam_type": "pre_test",
+    "question_type": "true_false",
+    "question_text": "يؤدي الاحتباس الحراري الطبيعي دورًا في المحافظة على درجة حرارة مناسبة للحياة على الأرض.",
+    "options": [
+      "صواب",
+      "خطأ"
+    ],
+    "correct_option_index": 0,
+    "order_index": 83
+  },
+  {
+    "id": "q-unified-84",
+    "exam_type": "pre_test",
+    "question_type": "true_false",
+    "question_text": "تنتج جميع غازات الاحتباس الحراري من مصدر واحد فقط هو حرق الوقود الأحفوري.",
+    "options": [
+      "صواب",
+      "خطأ"
+    ],
+    "correct_option_index": 1,
+    "order_index": 84
+  },
+  {
+    "id": "q-unified-85",
+    "exam_type": "pre_test",
+    "question_type": "true_false",
+    "question_text": "لا يعني حدوث الاحترار العالمي أن درجات الحرارة ترتفع بالمقدار نفسه في جميع المناطق.",
+    "options": [
+      "صواب",
+      "خطأ"
+    ],
+    "correct_option_index": 0,
+    "order_index": 85
+  },
+  {
+    "id": "q-unified-86",
+    "exam_type": "pre_test",
+    "question_type": "true_false",
+    "question_text": "يقتصر تغير أنماط الأمطار على تغير كميتها فقط دون توقيتها أو شدة هطولها.",
+    "options": [
+      "صواب",
+      "خطأ"
+    ],
+    "correct_option_index": 1,
+    "order_index": 86
+  },
+  {
+    "id": "q-unified-87",
+    "exam_type": "pre_test",
+    "question_type": "true_false",
+    "question_text": "قد يؤدي ارتفاع مستوى سطح البحر إلى تداخل المياه المالحة مع بعض مصادر المياه العذبة.",
+    "options": [
+      "صواب",
+      "خطأ"
+    ],
+    "correct_option_index": 0,
+    "order_index": 87
+  },
+  {
+    "id": "q-unified-88",
+    "exam_type": "pre_test",
+    "question_type": "true_false",
+    "question_text": "تقتصر آثار التغيرات المناخية على إنتاج المحاصيل ولا تمتد إلى سلاسل الإمداد والأسواق.",
+    "options": [
+      "صواب",
+      "خطأ"
+    ],
+    "correct_option_index": 1,
+    "order_index": 88
+  },
+  {
+    "id": "q-unified-89",
+    "exam_type": "pre_test",
+    "question_type": "true_false",
+    "question_text": "قد تغير بعض الأنواع الحية نطاق انتشارها أو توقيت نشاطها استجابةً للتحولات المناخية.",
+    "options": [
+      "صواب",
+      "خطأ"
+    ],
+    "correct_option_index": 0,
+    "order_index": 89
+  },
+  {
+    "id": "q-unified-90",
+    "exam_type": "pre_test",
+    "question_type": "true_false",
+    "question_text": "تتأثر جميع المناطق بالظاهرة المناخية نفسها بالدرجة ذاتها مهما اختلفت خصائص المكان وقدرته على التكيف.",
+    "options": [
+      "صواب",
+      "خطأ"
+    ],
+    "correct_option_index": 1,
+    "order_index": 90
+  },
+  {
+    "id": "q-unified-91",
+    "exam_type": "pre_test",
+    "question_type": "true_false",
+    "question_text": "تهدف الاستدامة البيئية إلى تلبية احتياجات الحاضر مع الحفاظ على حقوق الأجيال القادمة.",
+    "options": [
+      "صواب",
+      "خطأ"
+    ],
+    "correct_option_index": 0,
+    "order_index": 91
+  },
+  {
+    "id": "q-unified-92",
+    "exam_type": "pre_test",
+    "question_type": "true_false",
+    "question_text": "تعتمد استدامة الموارد المتجددة على استخدامها بمعدل أكبر من قدرتها على التجدد.",
+    "options": [
+      "صواب",
+      "خطأ"
+    ],
+    "correct_option_index": 1,
+    "order_index": 92
+  },
+  {
+    "id": "q-unified-93",
+    "exam_type": "pre_test",
+    "question_type": "true_false",
+    "question_text": "يعني ترشيد استهلاك المياه الامتناع عن استخدامها قدر الإمكان.",
+    "options": [
+      "صواب",
+      "خطأ"
+    ],
+    "correct_option_index": 1,
+    "order_index": 93
+  },
+  {
+    "id": "q-unified-94",
+    "exam_type": "pre_test",
+    "question_type": "true_false",
+    "question_text": "يعتمد اختيار مصدر الطاقة المتجددة المناسب على خصائص الموقع.",
+    "options": [
+      "صواب",
+      "خطأ"
+    ],
+    "correct_option_index": 0,
+    "order_index": 94
+  },
+  {
+    "id": "q-unified-95",
+    "exam_type": "pre_test",
+    "question_type": "true_false",
+    "question_text": "يساعد فرز المخلفات من المصدر على رفع كفاءة إعادة التدوير.",
+    "options": [
+      "صواب",
+      "خطأ"
+    ],
+    "correct_option_index": 0,
+    "order_index": 95
+  },
+  {
+    "id": "q-unified-96",
+    "exam_type": "pre_test",
+    "question_type": "true_false",
+    "question_text": "تكون مكافحة التلوث أكثر فاعلية بعد انتشار الملوثات بعيدًا عن مصدرها.",
+    "options": [
+      "صواب",
+      "خطأ"
+    ],
+    "correct_option_index": 1,
+    "order_index": 96
+  },
+  {
+    "id": "q-unified-97",
+    "exam_type": "pre_test",
+    "question_type": "true_false",
+    "question_text": "تتأثر فاعلية المساحات الخضراء بموقعها ومساحتها وتوزيعها.",
+    "options": [
+      "صواب",
+      "خطأ"
+    ],
+    "correct_option_index": 0,
+    "order_index": 97
+  },
+  {
+    "id": "q-unified-98",
+    "exam_type": "pre_test",
+    "question_type": "true_false",
+    "question_text": "يركز التكيف مع التغير المناخي على خفض مسبباته فقط.",
+    "options": [
+      "صواب",
+      "خطأ"
+    ],
+    "correct_option_index": 1,
+    "order_index": 98
+  },
+  {
+    "id": "q-unified-99",
+    "exam_type": "pre_test",
+    "question_type": "true_false",
+    "question_text": "يمكن تطبيق الحل البيئي نفسه في جميع الأماكن دون دراسة خصائصها.",
+    "options": [
+      "صواب",
+      "خطأ"
+    ],
+    "correct_option_index": 1,
+    "order_index": 99
+  },
+  {
+    "id": "q-unified-100",
+    "exam_type": "pre_test",
+    "question_type": "true_false",
+    "question_text": "تساعد خرائط الأولوية على تحديد المناطق الأكثر احتياجًا للتدخل البيئي.",
+    "options": [
+      "صواب",
+      "خطأ"
+    ],
+    "correct_option_index": 0,
+    "order_index": 100
+  },
+  {
+    "id": "q-mod1-1",
     "exam_type": "module_module-1",
     "question_type": "multiple_choice",
-    "question_text": "ما هو المفهوم العلمي الدقيق للنظام البيئي المتوازن؟",
+    "question_text": "أي مما يلي يُعد مكونًا طبيعيًا للبيئة؟",
     "options": [
-      "منطقة خالية تماماً من الكائنات الحية والتدخل البشري",
-      "مجتمع متكامل من الكائنات الحية يتفاعل بتوازن مع العناصر غير الحية في بيئته",
-      "تراكم مستمر للنفايات الصناعية في البحار والمحيطات",
-      "استهلاك الموارد الطبيعية دون تجديدها"
+      "الطرق",
+      "المصانع",
+      "التربة",
+      "المباني"
     ],
-    "correct_option_index": 1,
+    "correct_option_index": 2,
     "order_index": 1,
-    "created_at": "2026-09-24T12:00:00.000Z"
+    "created_at": "2026-09-28T17:00:00.000Z"
   },
   {
-    "id": "q-mod-module-1-2",
+    "id": "q-mod1-2",
     "exam_type": "module_module-1",
-    "question_type": "true_false",
-    "question_text": "يعتمد الإنسان اعتماداً كلياً على البيئة في توفير الغذاء والماء النقي والهواء الضروري للحياة واستمرارها.",
+    "question_type": "multiple_choice",
+    "question_text": "أي مما يلي يُعد مكونًا بشريًا؟",
     "options": [
-      "صح",
-      "خطأ"
+      "المدرسة",
+      "المياه",
+      "التربة",
+      "النباتات"
     ],
     "correct_option_index": 0,
     "order_index": 2,
-    "created_at": "2026-09-24T12:01:00.000Z"
+    "created_at": "2026-09-28T17:00:00.000Z"
+  },
+  {
+    "id": "q-mod1-3",
+    "exam_type": "module_module-1",
+    "question_type": "multiple_choice",
+    "question_text": "تتأثر مكونات البيئة بعضها ببعض بعلاقة:",
+    "options": [
+      "منفصلة",
+      "متبادلة",
+      "مؤقتة",
+      "ثابتة"
+    ],
+    "correct_option_index": 1,
+    "order_index": 3,
+    "created_at": "2026-09-28T17:00:00.000Z"
+  },
+  {
+    "id": "q-mod1-4",
+    "exam_type": "module_module-1",
+    "question_type": "multiple_choice",
+    "question_text": "يختلف توزيع المشكلات البيئية بسبب اختلاف:",
+    "options": [
+      "أسماء الأماكن",
+      "أشكال المباني",
+      "أعداد الطرق",
+      "خصائص المكان"
+    ],
+    "correct_option_index": 3,
+    "order_index": 4,
+    "created_at": "2026-09-28T17:00:00.000Z"
+  },
+  {
+    "id": "q-mod1-5",
+    "exam_type": "module_module-1",
+    "question_type": "multiple_choice",
+    "question_text": "تساعد الخريطة البيئية على تحديد:",
+    "options": [
+      "توزيع الظواهر",
+      "أسماء السكان",
+      "أعمار المباني",
+      "أوقات الدراسة"
+    ],
+    "correct_option_index": 0,
+    "order_index": 5,
+    "created_at": "2026-09-28T17:00:00.000Z"
+  },
+  {
+    "id": "q-mod1-6",
+    "exam_type": "module_module-1",
+    "question_type": "multiple_choice",
+    "question_text": "يُحدد موقع الظاهرة بالنسبة لغيرها من خلال:",
+    "options": [
+      "اللون",
+      "الحجم",
+      "العلاقة المكانية",
+      "الزمن"
+    ],
+    "correct_option_index": 2,
+    "order_index": 6,
+    "created_at": "2026-09-28T17:00:00.000Z"
+  },
+  {
+    "id": "q-mod1-7",
+    "exam_type": "module_module-1",
+    "question_type": "multiple_choice",
+    "question_text": "المنطقة الأقرب إلى مصدر التلوث تكون غالبًا:",
+    "options": [
+      "أقل تعرضًا",
+      "أكثر تعرضًا",
+      "غير متأثرة",
+      "متساوية التأثر"
+    ],
+    "correct_option_index": 1,
+    "order_index": 7,
+    "created_at": "2026-09-28T17:00:00.000Z"
+  },
+  {
+    "id": "q-mod1-8",
+    "exam_type": "module_module-1",
+    "question_type": "multiple_choice",
+    "question_text": "تفيد مقارنة خرائط المكان عبر الزمن في معرفة:",
+    "options": [
+      "اتجاه الشمال",
+      "أسماء المواقع",
+      "مساحة الخريطة",
+      "التغير البيئي"
+    ],
+    "correct_option_index": 3,
+    "order_index": 8,
+    "created_at": "2026-09-28T17:00:00.000Z"
+  },
+  {
+    "id": "q-mod1-9",
+    "exam_type": "module_module-1",
+    "question_type": "multiple_choice",
+    "question_text": "لتحديد منطقة التلوث نبحث أولًا عن:",
+    "options": [
+      "مصدر التلوث",
+      "عدد المباني",
+      "مساحة المنطقة",
+      "شكل الطرق"
+    ],
+    "correct_option_index": 0,
+    "order_index": 9,
+    "created_at": "2026-09-28T17:00:00.000Z"
+  },
+  {
+    "id": "q-mod1-10",
+    "exam_type": "module_module-1",
+    "question_type": "multiple_choice",
+    "question_text": "يعتمد القرار البيئي المكاني على:",
+    "options": [
+      "الرأي الشخصي",
+      "عامل واحد",
+      "تحليل بيانات المكان",
+      "مساحة المكان فقط"
+    ],
+    "correct_option_index": 2,
+    "order_index": 10,
+    "created_at": "2026-09-28T17:00:00.000Z"
+  },
+  {
+    "id": "q-mod3-1",
+    "exam_type": "module_module-3",
+    "question_type": "multiple_choice",
+    "question_text": "التغير المناخي يشير إلى تغيرات:",
+    "options": [
+      "يومية",
+      "قصيرة",
+      "طويلة المدى",
+      "مفاجئة"
+    ],
+    "correct_option_index": 2,
+    "order_index": 1,
+    "created_at": "2026-09-29T10:38:00.000Z"
+  },
+  {
+    "id": "q-mod3-2",
+    "exam_type": "module_module-3",
+    "question_type": "multiple_choice",
+    "question_text": "يختلف المناخ عن الطقس في:",
+    "options": [
+      "المدة الزمنية",
+      "اتجاه الرياح",
+      "كمية المياه",
+      "نوع التربة"
+    ],
+    "correct_option_index": 0,
+    "order_index": 2,
+    "created_at": "2026-09-29T10:38:00.000Z"
+  },
+  {
+    "id": "q-mod3-3",
+    "exam_type": "module_module-3",
+    "question_type": "multiple_choice",
+    "question_text": "من أهم أسباب زيادة الاحتباس الحراري:",
+    "options": [
+      "الأمطار",
+      "الانبعاثات",
+      "الرياح",
+      "السحب"
+    ],
+    "correct_option_index": 1,
+    "order_index": 3,
+    "created_at": "2026-09-29T10:38:00.000Z"
+  },
+  {
+    "id": "q-mod3-4",
+    "exam_type": "module_module-3",
+    "question_type": "multiple_choice",
+    "question_text": "يؤدي ارتفاع الحرارة إلى زيادة:",
+    "options": [
+      "التجمد",
+      "الرطوبة دائمًا",
+      "الأمطار دائمًا",
+      "التبخر"
+    ],
+    "correct_option_index": 3,
+    "order_index": 4,
+    "created_at": "2026-09-29T10:38:00.000Z"
+  },
+  {
+    "id": "q-mod3-5",
+    "exam_type": "module_module-3",
+    "question_type": "multiple_choice",
+    "question_text": "المناطق الساحلية أكثر تعرضًا لخطر:",
+    "options": [
+      "ارتفاع سطح البحر",
+      "انجراف الرياح",
+      "الزلازل",
+      "البراكين"
+    ],
+    "correct_option_index": 0,
+    "order_index": 5,
+    "created_at": "2026-09-29T10:38:00.000Z"
+  },
+  {
+    "id": "q-mod3-6",
+    "exam_type": "module_module-3",
+    "question_type": "multiple_choice",
+    "question_text": "قلة الأمطار قد تؤدي إلى:",
+    "options": [
+      "الفيضانات",
+      "الجفاف",
+      "الأعاصير",
+      "المد والجزر"
+    ],
+    "correct_option_index": 1,
+    "order_index": 6,
+    "created_at": "2026-09-29T10:38:00.000Z"
+  },
+  {
+    "id": "q-mod3-7",
+    "exam_type": "module_module-3",
+    "question_type": "multiple_choice",
+    "question_text": "تختلف آثار التغير المناخي بين الأماكن بسبب اختلاف:",
+    "options": [
+      "أسمائها",
+      "مساحاتها فقط",
+      "خصائصها",
+      "حدودها"
+    ],
+    "correct_option_index": 2,
+    "order_index": 7,
+    "created_at": "2026-09-29T10:38:00.000Z"
+  },
+  {
+    "id": "q-mod3-8",
+    "exam_type": "module_module-3",
+    "question_type": "multiple_choice",
+    "question_text": "تساعد الخرائط المناخية على تحديد:",
+    "options": [
+      "أسماء المدن",
+      "أنواع المباني",
+      "شبكة الطرق",
+      "مناطق الخطر"
+    ],
+    "correct_option_index": 3,
+    "order_index": 8,
+    "created_at": "2026-09-29T10:38:00.000Z"
+  },
+  {
+    "id": "q-mod3-9",
+    "exam_type": "module_module-3",
+    "question_type": "multiple_choice",
+    "question_text": "بناء حواجز ضد ارتفاع البحر يُعد:",
+    "options": [
+      "تكيفًا",
+      "تخفيفًا",
+      "تلوثًا",
+      "استنزافًا"
+    ],
+    "correct_option_index": 0,
+    "order_index": 9,
+    "created_at": "2026-09-29T10:38:00.000Z"
+  },
+  {
+    "id": "q-mod3-10",
+    "exam_type": "module_module-3",
+    "question_type": "multiple_choice",
+    "question_text": "استخدام الطاقة الشمسية لخفض الانبعاثات يُعد:",
+    "options": [
+      "تكيفًا",
+      "تخفيفًا",
+      "استنزافًا",
+      "معالجةً"
+    ],
+    "correct_option_index": 1,
+    "order_index": 10,
+    "created_at": "2026-09-29T10:38:00.000Z"
+  },
+  {
+    "id": "q-mod4-1",
+    "exam_type": "module_module-4",
+    "question_type": "multiple_choice",
+    "question_text": "تهدف الاستدامة البيئية إلى:",
+    "options": [
+      "زيادة الاستهلاك",
+      "استنزاف الموارد",
+      "حفظ الموارد",
+      "زيادة المخلفات"
+    ],
+    "correct_option_index": 2,
+    "order_index": 1,
+    "created_at": "2026-09-29T10:55:00.000Z"
+  },
+  {
+    "id": "q-mod4-2",
+    "exam_type": "module_module-4",
+    "question_type": "multiple_choice",
+    "question_text": "الاستخدام المستدام للموارد يعني:",
+    "options": [
+      "تقليل الهدر",
+      "زيادة الاستهلاك",
+      "وقف الاستخدام",
+      "تجاهل التجدد"
+    ],
+    "correct_option_index": 0,
+    "order_index": 2,
+    "created_at": "2026-09-29T10:55:00.000Z"
+  },
+  {
+    "id": "q-mod4-3",
+    "exam_type": "module_module-4",
+    "question_type": "multiple_choice",
+    "question_text": "من وسائل ترشيد المياه:",
+    "options": [
+      "زيادة الري",
+      "إصلاح التسربات",
+      "زيادة التصريف",
+      "ترك الصنابير"
+    ],
+    "correct_option_index": 1,
+    "order_index": 3,
+    "created_at": "2026-09-29T10:55:00.000Z"
+  },
+  {
+    "id": "q-mod4-4",
+    "exam_type": "module_module-4",
+    "question_type": "multiple_choice",
+    "question_text": "أي مصدر يُعد متجددًا؟",
+    "options": [
+      "الفحم",
+      "النفط",
+      "الغاز",
+      "الشمس"
+    ],
+    "correct_option_index": 3,
+    "order_index": 4,
+    "created_at": "2026-09-29T10:55:00.000Z"
+  },
+  {
+    "id": "q-mod4-5",
+    "exam_type": "module_module-4",
+    "question_type": "multiple_choice",
+    "question_text": "يساعد فرز المخلفات على:",
+    "options": [
+      "إعادة التدوير",
+      "زيادة التلوث",
+      "زيادة الهدر",
+      "استنزاف الموارد"
+    ],
+    "correct_option_index": 0,
+    "order_index": 5,
+    "created_at": "2026-09-29T10:55:00.000Z"
+  },
+  {
+    "id": "q-mod4-6",
+    "exam_type": "module_module-4",
+    "question_type": "multiple_choice",
+    "question_text": "أفضل وسيلة للحد من التلوث هي:",
+    "options": [
+      "نقله",
+      "تقليله عند المصدر",
+      "نشره",
+      "تجاهله"
+    ],
+    "correct_option_index": 1,
+    "order_index": 6,
+    "created_at": "2026-09-29T10:55:00.000Z"
+  },
+  {
+    "id": "q-mod4-7",
+    "exam_type": "module_module-4",
+    "question_type": "multiple_choice",
+    "question_text": "حماية موائل الكائنات تساعد على حفظ:",
+    "options": [
+      "الوقود",
+      "المباني",
+      "التنوع الحيوي",
+      "الطرق"
+    ],
+    "correct_option_index": 2,
+    "order_index": 7,
+    "created_at": "2026-09-29T10:55:00.000Z"
+  },
+  {
+    "id": "q-mod4-8",
+    "exam_type": "module_module-4",
+    "question_type": "multiple_choice",
+    "question_text": "بناء حواجز لمواجهة ارتفاع البحر يُعد:",
+    "options": [
+      "تدويرًا",
+      "ترشيدًا",
+      "تخفيفًا",
+      "تكيفًا"
+    ],
+    "correct_option_index": 3,
+    "order_index": 8,
+    "created_at": "2026-09-29T10:55:00.000Z"
+  },
+  {
+    "id": "q-mod4-9",
+    "exam_type": "module_module-4",
+    "question_type": "multiple_choice",
+    "question_text": "تُحدد أولوية التدخل البيئي وفق:",
+    "options": [
+      "شدة المشكلة والتعرض",
+      "اسم المنطقة",
+      "شكل المباني",
+      "عدد الطرق"
+    ],
+    "correct_option_index": 0,
+    "order_index": 9,
+    "created_at": "2026-09-29T10:55:00.000Z"
+  },
+  {
+    "id": "q-mod4-10",
+    "exam_type": "module_module-4",
+    "question_type": "multiple_choice",
+    "question_text": "اختيار الحل البيئي المناسب يعتمد على:",
+    "options": [
+      "الرأي الشخصي",
+      "خصائص المكان",
+      "لون الخريطة",
+      "اسم المشروع"
+    ],
+    "correct_option_index": 1,
+    "order_index": 10,
+    "created_at": "2026-09-29T10:55:00.000Z"
   }
 ]

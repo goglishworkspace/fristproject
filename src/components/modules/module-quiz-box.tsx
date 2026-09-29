@@ -9,10 +9,10 @@ import { Button } from '@/components/ui/button';
 import {
   FileQuestion,
   CheckCircle2,
-  AlertCircle,
   Sparkles,
   ChevronDown,
   RotateCcw,
+  ArrowLeft,
 } from 'lucide-react';
 
 interface ModuleQuizBoxProps {
@@ -24,6 +24,9 @@ interface ModuleQuizBoxProps {
   totalQuestions?: number;
   isCompleted?: boolean;
   nextModuleUrl: string;
+  defaultOpen?: boolean;
+  onBackToActivity?: () => void;
+  onBackToSlides?: () => void;
 }
 
 export function ModuleQuizBox({
@@ -33,10 +36,12 @@ export function ModuleQuizBox({
   questions,
   existingScore = null,
   totalQuestions = questions.length,
-  isCompleted = false,
   nextModuleUrl,
+  defaultOpen = false,
+  onBackToActivity,
+  onBackToSlides,
 }: ModuleQuizBoxProps) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(defaultOpen);
   const [retrying, setRetrying] = useState(false);
 
   const hasScore = existingScore !== null && existingScore !== undefined;
@@ -121,15 +126,30 @@ export function ModuleQuizBox({
                 يحتوي الاختبار على {questions.length} أسئلة متنوعة (اختيار من متعدد وصواب أو خطأ).
               </p>
             </div>
-            <Button
-              type="button"
-              onClick={() => setIsOpen(true)}
-              variant="gold"
-              className="w-full sm:w-auto shrink-0 font-black text-xs gap-1.5 shadow-md shadow-asu-gold/20"
-            >
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>{hasScore ? 'مراجعة أو إعادة الاختبار' : 'بدء أداء الاختبار الآن'}</span>
-            </Button>
+            <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto shrink-0">
+              {hasScore && nextModuleUrl && (
+                <Button
+                  type="button"
+                  onClick={() => {
+                    window.location.href = nextModuleUrl;
+                  }}
+                  variant="gold"
+                  className="w-full sm:w-auto font-black text-xs gap-1.5 shadow-md shadow-asu-gold/20 cursor-pointer"
+                >
+                  <span>المتابعة للمرحلة التالية</span>
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                </Button>
+              )}
+              <Button
+                type="button"
+                onClick={() => setIsOpen(true)}
+                variant={hasScore ? 'outline' : 'gold'}
+                className="w-full sm:w-auto shrink-0 font-black text-xs gap-1.5 shadow-md cursor-pointer"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>{hasScore ? 'مراجعة أو إعادة الاختبار' : 'بدء أداء الاختبار الآن'}</span>
+              </Button>
+            </div>
           </div>
         ) : (
           <div className="pt-2">
@@ -140,6 +160,29 @@ export function ModuleQuizBox({
               onCompleteRedirectUrl={nextModuleUrl}
               passingScorePercent={50}
             />
+          </div>
+        )}
+
+        {(onBackToActivity || onBackToSlides) && (
+          <div className="pt-4 border-t border-slate-100 flex items-center justify-between gap-2 text-xs">
+            {onBackToActivity ? (
+              <button
+                type="button"
+                onClick={onBackToActivity}
+                className="font-bold text-slate-600 hover:text-asu-navy cursor-pointer transition-colors"
+              >
+                ← مراجعة النشاط التطبيقي
+              </button>
+            ) : <span />}
+            {onBackToSlides && (
+              <button
+                type="button"
+                onClick={onBackToSlides}
+                className="font-bold text-slate-500 hover:text-slate-800 cursor-pointer transition-colors"
+              >
+                مراجعة الشرائح التعليمية →
+              </button>
+            )}
           </div>
         )}
       </CardContent>

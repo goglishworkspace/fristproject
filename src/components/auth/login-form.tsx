@@ -2,10 +2,11 @@
 
 import { useActionState } from 'react';
 import { loginAction } from '@/lib/actions/auth.actions';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { LogIn, GraduationCap, ShieldCheck } from 'lucide-react';
+import { LogIn, ShieldCheck, Home, ArrowRight } from 'lucide-react';
 import { ASU_LOGO_URL } from '@/lib/constants/branding';
 
 export function LoginForm() {
@@ -82,6 +83,19 @@ export function LoginForm() {
               </>
             )}
           </Button>
+
+          <Link href="/" className="block w-full">
+            <Button
+              type="button"
+              variant="outline"
+              size="md"
+              className="w-full gap-2 border-slate-200 text-slate-700 hover:text-asu-navy hover:bg-slate-50 font-bold"
+            >
+              <Home className="w-4 h-4 ml-1 text-asu-gold-dark" />
+              <span>العودة للصفحة الرئيسية</span>
+              <ArrowRight className="w-4 h-4 mr-1 text-slate-400" />
+            </Button>
+          </Link>
 
           <div className="pt-4 border-t border-slate-100 flex items-center justify-center gap-1.5 text-xs text-slate-400">
             <ShieldCheck className="w-4 h-4 text-asu-navy" />

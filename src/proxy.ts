@@ -5,7 +5,7 @@ import { updateSession } from '@/lib/supabase/middleware';
 const PROTECTED_STUDENT_PREFIXES = ['/pre-test', '/modules', '/post-test'];
 const ADMIN_PREFIX = '/admin';
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // 1. فحص الجلسة أولاً

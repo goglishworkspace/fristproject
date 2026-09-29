@@ -92,7 +92,7 @@ export function ModuleAdminManager({ initialModules }: ModuleAdminManagerProps) 
     setFormDuration(30);
     setFormSlides([
       {
-        id: `slide-${Date.now()}`,
+        id: 'slide-1',
         imageUrl: '',
         hint: '',
         extraInfo: '',
@@ -104,7 +104,7 @@ export function ModuleAdminManager({ initialModules }: ModuleAdminManagerProps) 
     setFormDefaultExtraInfo('');
     setFormDefaultExample('');
     setFormDefaultSelfQuestion('');
-    setFormSections([{ id: `sec-${Date.now()}`, title: '', content: '' }]);
+    setFormSections([{ id: 'sec-1', title: '', content: '' }]);
     setFormActivityTitle('نشاط تطبيقي');
     setFormActivityDesc('');
     setIsAdding(true);
@@ -144,7 +144,7 @@ export function ModuleAdminManager({ initialModules }: ModuleAdminManagerProps) 
     } else {
       setFormSlides([
         {
-          id: `slide-${Date.now()}`,
+          id: 'slide-1',
           imageUrl: '',
           hint: '',
           extraInfo: '',
@@ -162,7 +162,7 @@ export function ModuleAdminManager({ initialModules }: ModuleAdminManagerProps) 
     setFormSections(
       m.sections && m.sections.length > 0
         ? m.sections.map((s) => ({ ...s }))
-        : [{ id: `sec-${Date.now()}`, title: '', content: '' }]
+        : [{ id: 'sec-1', title: '', content: '' }]
     );
     setFormActivityTitle(m.activity?.title || 'نشاط تطبيقي');
     setFormActivityDesc(m.activity?.description || '');
@@ -179,7 +179,7 @@ export function ModuleAdminManager({ initialModules }: ModuleAdminManagerProps) 
     setFormSlides((prev) => [
       ...prev,
       {
-        id: `slide-${Date.now()}-${prev.length + 1}`,
+        id: `slide-${prev.length + 1}`,
         imageUrl: '',
         hint: '',
         extraInfo: '',
@@ -205,7 +205,7 @@ export function ModuleAdminManager({ initialModules }: ModuleAdminManagerProps) 
   const handleAddSection = () => {
     setFormSections((prev) => [
       ...prev,
-      { id: `sec-${Date.now()}-${prev.length + 1}`, title: '', content: '' },
+      { id: `sec-${prev.length + 1}`, title: '', content: '' },
     ]);
   };
 

@@ -35,11 +35,21 @@ async function saveQuestionsList(questions: QuestionWithAnswer[]): Promise<boole
   }
 }
 
-// 2. جلب أسئلة اختبار معين (قبلي أو بعدي)
+// 2. جلب أسئلة اختبار معين (الاختبار القبلي والبعدي موحدان ويشتركان في نفس الأسئلة تماماً)
 export async function getExamQuestionsAction(examType?: ExamType): Promise<QuestionWithAnswer[]> {
   const all = await getAllQuestionsAction();
   if (!examType) return all;
-  return all.filter((q) => q.exam_type === examType);
+
+  // الربط التام: الاختبار القبلي والبعدي متطابقان تماماً ويستخدمان نفس بنك الأسئلة الموحد
+  if (examType === 'pre_test' || examType === 'post_test') {
+    return all
+      .filter((q) => q.exam_type === 'pre_test' || q.exam_type === 'post_test')
+      .sort((a, b) => a.order_index - b.order_index);
+  }
+
+  return all
+    .filter((q) => q.exam_type === examType)
+    .sort((a, b) => a.order_index - b.order_index);
 }
 
 // 3. إضافة سؤال جديد لبنك الأسئلة
@@ -72,22 +82,27 @@ export async function createExamQuestionAction(data: {
       return { success: false, error: 'يرجى تحديد الإجابة الصحيحة بشكل صحيح' };
     }
 
+    const effectiveExamType: ExamType =
+      data.exam_type === 'post_test' ? 'pre_test' : data.exam_type;
+
     const allQuestions = await getAllQuestionsAction();
-    const sameTypeQuestions = allQuestions.filter((q) => q.exam_type === data.exam_type);
+    const sameTypeQuestions = allQuestions.filter((q) =>
+      effectiveExamType === 'pre_test'
+        ? q.exam_type === 'pre_test' || q.exam_type === 'post_test'
+        : q.exam_type === effectiveExamType
+    );
     const nextOrder =
       data.order_index || (sameTypeQuestions.length > 0 ? Math.max(...sameTypeQuestions.map((q) => q.order_index)) + 1 : 1);
 
     const questionType: QuestionType = data.question_type || (cleanOptions.length === 2 ? 'true_false' : 'multiple_choice');
 
-    const prefix = data.exam_type.startsWith('module_')
-      ? data.exam_type.replace('module_', 'mod-')
-      : data.exam_type === 'pre_test'
-      ? 'pre'
-      : 'post';
+    const prefix = effectiveExamType.startsWith('module_')
+      ? effectiveExamType.replace('module_', 'mod-')
+      : 'main';
 
     const newQuestion: QuestionWithAnswer = {
       id: `q-${prefix}-${Date.now()}`,
-      exam_type: data.exam_type,
+      exam_type: effectiveExamType,
       question_type: questionType,
       question_text: cleanText,
       options: cleanOptions,
@@ -105,8 +120,7 @@ export async function createExamQuestionAction(data: {
     revalidatePath('/admin/dashboard');
 
     return { success: true, question: newQuestion };
-  } catch (err) {
-    console.error('Error creating question:', err);
+  } catch {
     return { success: false, error: 'حدث خطأ أثناء إضافة السؤال' };
   }
 }
@@ -140,9 +154,10 @@ export async function updateExamQuestionAction(
     revalidatePath('/admin/dashboard');
 
     return { success: true, question: allQuestions[idx] };
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Error updating question:', err);
-    return { success: false, error: err?.message || 'حدث خطأ أثناء تعديل السؤال' };
+    const message = err instanceof Error ? err.message : 'حدث خطأ أثناء تعديل السؤال';
+    return { success: false, error: message };
   }
 }
 
@@ -165,9 +180,10 @@ export async function deleteExamQuestionAction(id: string): Promise<{ success: b
     revalidatePath('/admin/dashboard');
 
     return { success: true };
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Error deleting question:', err);
-    return { success: false, error: err?.message || 'حدث خطأ أثناء حذف السؤال' };
+    const message = err instanceof Error ? err.message : 'حدث خطأ أثناء حذف السؤال';
+    return { success: false, error: message };
   }
 }
 
@@ -234,8 +250,14 @@ export async function submitExamAction(
   });
 
   // 2. تخزين النتيجة مع خريطة الإجابات الكاملة في سجل الطلاب students.json
-  const { recordExamResultAction } = await import('@/lib/actions/student.actions');
+  const { recordExamResultAction, recordModuleCompletionAction } = await import('@/lib/actions/student.actions');
   await recordExamResultAction(studentIdentifier, examType, calculatedScore, totalQuestions, answers);
+
+  // إذا كان اختبار موديول، نسجل إتمام الموديول للتقدم الأكاديمي
+  if (examType.startsWith('module_')) {
+    const modId = examType.replace('module_', '');
+    await recordModuleCompletionAction(studentIdentifier, modId);
+  }
 
   // 3. تخزين في Supabase إذا كانت متصلة
   if (isLive && currentUserId) {
@@ -267,6 +289,21 @@ export async function submitExamAction(
           },
           { onConflict: 'student_id' }
         );
+      } else if (examType.startsWith('module_')) {
+        const modId = examType.replace('module_', '');
+        const { getModulesListAction } = await import('@/lib/actions/module.actions');
+        const modules = await getModulesListAction();
+        const modIdx = modules.findIndex((m) => m.id === modId);
+        if (modIdx !== -1) {
+          await supabase.from('student_progress').upsert(
+            {
+              student_id: currentUserId,
+              current_module_index: modIdx + 1,
+              updated_at: new Date().toISOString(),
+            },
+            { onConflict: 'student_id' }
+          );
+        }
       }
     } catch (err) {
       console.error('Supabase exam record error:', err);

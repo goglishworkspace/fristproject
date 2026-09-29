@@ -1,7 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useRef, useEffect } from 'react';
 import { submitExamAction } from '@/lib/actions/exam.actions';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
@@ -9,7 +8,6 @@ import { Badge } from '@/components/ui/badge';
 import {
   CheckCircle2,
   XCircle,
-  Clock,
   HelpCircle,
   AlertCircle,
   ArrowLeft,
@@ -36,12 +34,24 @@ export function ExamRunner({
   onCompleteRedirectUrl,
   passingScorePercent = 50,
 }: ExamRunnerProps) {
-  const router = useRouter();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [result, setResult] = useState<{ score: number; total: number } | null>(null);
+
+  // مرجع للتمرير التلقائي لرقم السؤال النشط في شريط الأرقام العلوي
+  const activeQuestionBtnRef = useRef<HTMLButtonElement | null>(null);
+
+  useEffect(() => {
+    if (activeQuestionBtnRef.current) {
+      activeQuestionBtnRef.current.scrollIntoView({
+        behavior: 'smooth',
+        inline: 'center',
+        block: 'nearest',
+      });
+    }
+  }, [currentIndex]);
 
   if (!questions || questions.length === 0) {
     return (
@@ -113,41 +123,52 @@ export function ExamRunner({
 
   // شاشة ظهور النتيجة بعد التسليم
   if (result) {
+    const isPreTest = examType === 'pre_test';
     const isPassing = (result.score / (result.total || 1)) >= (passingScorePercent / 100);
     const isModuleExam = examType.startsWith('module_');
 
-    const defaultNextUrl = onCompleteRedirectUrl || (examType === 'pre_test' ? '/modules' : '/');
+    const defaultNextUrl = onCompleteRedirectUrl || (isPreTest ? '/modules' : '/');
 
     return (
       <Card className="max-w-xl mx-auto text-center p-6 sm:p-8 shadow-2xl border border-asu-gold/40 bg-white">
         <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-inner ${
-          isPassing ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-700'
+          isPreTest || isPassing ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-700'
         }`}>
-          {isPassing ? (
+          {isPreTest || isPassing ? (
             <CheckCircle2 className="w-10 h-10 sm:w-12 sm:h-12" />
           ) : (
             <AlertCircle className="w-10 h-10 sm:w-12 sm:h-12" />
           )}
         </div>
-        <Badge variant={isPassing ? 'success' : 'warning'} className="mb-2 text-xs px-3 py-1">
-          {isPassing ? 'تم اجتياز الاختبار بنجاح' : 'تم تسليم الاختبار'}
+        <Badge variant={isPreTest || isPassing ? 'success' : 'warning'} className="mb-2 text-xs px-3 py-1">
+          {isPreTest ? 'تم تسليم الاختبار القبلي بنجاح' : isPassing ? 'تم اجتياز الاختبار بنجاح' : 'تم تسليم الاختبار'}
         </Badge>
         <CardTitle className="text-xl sm:text-2xl font-black text-asu-navy">
-          {isPassing ? 'شكراً لك، تم رصد نتيجتك بنجاح!' : 'تم رصد درجتك في سجل الاختبارات'}
+          {isPreTest
+            ? 'شكراً لك، تم تسجيل إجاباتك بنجاح!'
+            : isPassing
+            ? 'شكراً لك، تم رصد نتيجتك بنجاح!'
+            : 'تم رصد درجتك في سجل الاختبارات'}
         </CardTitle>
-        <div className="my-6 p-6 rounded-2xl bg-slate-50 border border-slate-100 shadow-2xs">
-          <span className="text-xs sm:text-sm text-slate-500 block mb-1 font-bold">الدرجة المحصلة</span>
-          <span className={`text-4xl sm:text-5xl font-black font-mono ${isPassing ? 'text-emerald-600' : 'text-amber-600'}`}>
-            {result.score} <span className="text-xl sm:text-2xl text-slate-400 font-normal">/ {result.total}</span>
-          </span>
-        </div>
-        <p className="text-xs sm:text-sm text-slate-600 mb-6 leading-relaxed">
-          {isModuleExam
+
+        {/* لا تظهر نتيجة الدرجة إطلاقاً في الاختبار القبلي */}
+        {!isPreTest && (
+          <div className="my-6 p-6 rounded-2xl bg-slate-50 border border-slate-100 shadow-2xs">
+            <span className="text-xs sm:text-sm text-slate-500 block mb-1 font-bold">الدرجة المحصلة</span>
+            <span className={`text-4xl sm:text-5xl font-black font-mono ${isPassing ? 'text-emerald-600' : 'text-amber-600'}`}>
+              {result.score} <span className="text-xl sm:text-2xl text-slate-400 font-normal">/ {result.total}</span>
+            </span>
+          </div>
+        )}
+
+        <p className="text-xs sm:text-sm text-slate-600 my-6 leading-relaxed">
+          {isPreTest
+            ? 'تم حفظ إجاباتك في سجلك بنجاح، وفُتحت لك الموديولات التعليمية للبدء في دراستها الآن.'
+            : isModuleExam
             ? 'تم حفظ نتيجة اختبار الوحدة في سجلك الأكاديمي، يمكنك الآن المتابعة والانتقال للمرحلة التالية.'
-            : examType === 'pre_test'
-            ? 'تم فتح الوحدات والموديولات التعليمية الآن، يمكنك البدء في دراسة المحتوى والأنشطة.'
-            : 'لقد أتممت متطلبات البرنامج التدريبي بالكامل، يمكنك العودة للصفحة الرئيسية ومراجعة مسارك.'}
+            : 'لقد أتممت متطلبات البرنامج التدريبي بالكامل، ويمكنك الآن مراجعة مسارك ونتيجتك النهائية.'}
         </p>
+
         <Button
           onClick={() => {
             window.location.href = defaultNextUrl;
@@ -158,7 +179,7 @@ export function ExamRunner({
           <span>
             {isModuleExam
               ? 'المتابعة والانتقال للخطوة التالية'
-              : examType === 'pre_test'
+              : isPreTest
               ? 'الانتقال للموديولات الدراسية'
               : 'العودة للرئيسية'}
           </span>
@@ -198,13 +219,14 @@ export function ExamRunner({
         </div>
 
         {/* شريط أرقام الأسئلة والتنقل السريع للهواتف والكمبيوتر */}
-        <div className="pt-2 border-t border-slate-100 flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 no-scrollbar">
+        <div className="pt-2 border-t border-slate-100 flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 scroll-smooth no-scrollbar">
           {questions.map((q, idx) => {
             const isAnswered = answers[q.id] !== undefined;
             const isCurrent = idx === currentIndex;
             return (
               <button
                 key={q.id}
+                ref={isCurrent ? activeQuestionBtnRef : null}
                 type="button"
                 onClick={() => {
                   setCurrentIndex(idx);

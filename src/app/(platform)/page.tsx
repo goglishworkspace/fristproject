@@ -1,7 +1,4 @@
 import Link from 'next/link';
-import { createClient } from '@/lib/supabase/server';
-import { isLiveSupabaseConfigured } from '@/lib/supabase/config';
-import { cookies } from 'next/headers';
 import { getStudentProgressAction } from '@/lib/actions/student.actions';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -10,9 +7,7 @@ import {
   Sparkles,
   LogIn,
   BookMarked,
-  ImageIcon,
   Leaf,
-  Info,
   CheckCircle2,
   Award,
   User,
@@ -20,12 +15,7 @@ import {
   BookOpen,
 } from 'lucide-react';
 import { ASU_LOGO_URL } from '@/lib/constants/branding';
-
-// ============================================================================
-// 🖼️ رابط صورة "تنمية الوعي بقضايا البيئة"
-// ضع الرابط أو المسار هنا بمجرد أن يرسله المستخدم (مثال: "https://..." أو "/images/...")
-// ============================================================================
-export const ENVIRONMENTAL_AWARENESS_IMAGE_SRC = '';
+import { EnvironmentalAwarenessCarousel } from '@/components/home/environmental-awareness-carousel';
 
 export default async function PlatformHomePage() {
   const progress = await getStudentProgressAction();
@@ -89,7 +79,7 @@ export default async function PlatformHomePage() {
                     ) : progress.preTestCompleted ? (
                       <>
                         <BookOpen className="w-4 h-4 text-emerald-400" />
-                        <span>اجتزت الاختبار القبلي ({progress.preScore ?? '-'} / 10) • جارٍ دراسة الموديولات</span>
+                        <span>أتممت الاختبار القبلي بنجاح • جارٍ دراسة الموديولات</span>
                       </>
                     ) : (
                       <>
@@ -261,45 +251,8 @@ export default async function PlatformHomePage() {
           </Badge>
         </div>
 
-        {/* إطار عرض الصورة المتجاوب بدقة عالية للهواتف والشاشات الكبيرة */}
-        <div className="w-full rounded-3xl overflow-hidden bg-white border border-slate-200/90 shadow-lg transition-all hover:shadow-xl">
-          {ENVIRONMENTAL_AWARENESS_IMAGE_SRC ? (
-            <div className="relative w-full overflow-hidden flex items-center justify-center bg-slate-50">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={ENVIRONMENTAL_AWARENESS_IMAGE_SRC}
-                alt="تنمية الوعي بقضايا البيئة"
-                className="w-full h-auto max-h-[720px] object-contain rounded-2xl transition-transform duration-300 hover:scale-[1.01]"
-              />
-            </div>
-          ) : (
-            /* مكان مجهز ومهيأ في انتظار رابط الصورة من المستخدم */
-            <div className="p-8 sm:p-14 md:p-20 flex flex-col items-center justify-center text-center space-y-4 bg-gradient-to-b from-slate-50/60 to-white min-h-[360px] sm:min-h-[460px] border-2 border-dashed border-asu-navy/20 rounded-3xl m-2 sm:m-3">
-              <div className="relative">
-                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-asu-navy-50 text-asu-navy flex items-center justify-center border border-asu-navy/15 shadow-sm">
-                  <ImageIcon className="w-10 h-10 sm:w-12 sm:h-12 text-asu-navy" />
-                </div>
-                <div className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-asu-gold text-slate-900 flex items-center justify-center font-bold text-xs shadow-md border-2 border-white">
-                  <Leaf className="w-4 h-4" />
-                </div>
-              </div>
-
-              <div className="space-y-2 max-w-md">
-                <h3 className="text-lg sm:text-2xl font-black text-asu-navy">
-                  تنمية الوعي بقضايا البيئة
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
-                  هذا المكان مجهز ومخصص لعرض الصورة الرسمية الخاصة بتنمية الوعي بقضايا البيئة.
-                </p>
-              </div>
-
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-asu-gold-50 border border-asu-gold/30 text-asu-gold-dark text-xs font-bold shadow-2xs">
-                <Info className="w-4 h-4 text-asu-gold-dark shrink-0" />
-                <span>المكان جاهز تماماً وبانتظار تزويدي برابط الصورة لإدراجها فوراً</span>
-              </div>
-            </div>
-          )}
-        </div>
+        {/* معرض وبانر الصور التفاعلي المتنقل (Carousel) مع تبديل تلقائي وتأثير ناعم */}
+        <EnvironmentalAwarenessCarousel />
       </section>
     </div>
   );

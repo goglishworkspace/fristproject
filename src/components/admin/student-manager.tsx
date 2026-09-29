@@ -11,7 +11,7 @@ import {
   deleteStudentAction,
   resetStudentToFreshAction,
 } from '@/lib/actions/student.actions';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -29,12 +29,9 @@ import {
   EyeOff,
   Copy,
   Check,
-  Filter,
   Users,
   ShieldAlert,
   Sparkles,
-  Phone,
-  User,
   X,
   AlertTriangle,
   RotateCcw,
@@ -59,9 +56,11 @@ export function StudentManager({ initialStudents, allQuestions = [], modules = [
   // معاينة إجابات الطالب
   const [inspectingStudent, setInspectingStudent] = useState<StudentAccount | null>(null);
 
-  // حساب إجمالي الأسئلة ديناميكياً
-  const preQuestionsCount = allQuestions.filter((q) => q.exam_type === 'pre_test').length || 5;
-  const postQuestionsCount = allQuestions.filter((q) => q.exam_type === 'post_test').length || 5;
+  // حساب إجمالي الأسئلة ديناميكياً للاختبار القبلي والبعدي الموحد
+  const mainExamQuestionsCount =
+    allQuestions.filter((q) => q.exam_type === 'pre_test' || q.exam_type === 'post_test').length || 12;
+  const preQuestionsCount = mainExamQuestionsCount;
+  const postQuestionsCount = mainExamQuestionsCount;
 
   // نسخ كلمة المرور السريعة
   const [copiedId, setCopiedId] = useState<string | null>(null);

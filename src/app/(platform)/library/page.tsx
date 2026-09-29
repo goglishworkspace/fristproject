@@ -1,6 +1,6 @@
 import { getLibraryVideos } from '@/lib/actions/library.actions';
 import { VideoGallery } from '@/components/library/video-gallery';
-import { Video, Film, Sparkles, BookOpen, Play } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 function YoutubeIcon({ className = "w-4 h-4" }: { className?: string }) {

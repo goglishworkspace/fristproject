@@ -84,7 +84,7 @@ export async function createStudentAction(data: {
     revalidatePath('/admin/dashboard');
 
     return { success: true, student: newStudent };
-  } catch (err) {
+  } catch {
     return { success: false, error: 'حدث خطأ أثناء إضافة الطالب' };
   }
 }
@@ -142,8 +142,9 @@ export async function generateBatchStudentsAction(
     revalidatePath('/admin/dashboard');
 
     return { success: true, count: newBatch.length };
-  } catch (err: any) {
-    return { success: false, error: err?.message || 'حدث خطأ أثناء توليد الحسابات' };
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : 'حدث خطأ أثناء توليد الحسابات';
+    return { success: false, error: errorMsg };
   }
 }
 
@@ -190,8 +191,9 @@ export async function updateStudentAction(
     revalidatePath('/admin/dashboard');
 
     return { success: true };
-  } catch (err: any) {
-    return { success: false, error: err?.message || 'حدث خطأ أثناء تعديل بيانات الطالب' };
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : 'حدث خطأ أثناء تعديل بيانات الطالب';
+    return { success: false, error: errorMsg };
   }
 }
 
@@ -222,8 +224,9 @@ export async function resetStudentPasswordAction(
     revalidatePath('/admin/dashboard');
 
     return { success: true, newPassword: assignedPassword };
-  } catch (err: any) {
-    return { success: false, error: err?.message || 'حدث خطأ أثناء إعادة تعيين كلمة المرور' };
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : 'حدث خطأ أثناء إعادة تعيين كلمة المرور';
+    return { success: false, error: errorMsg };
   }
 }
 
@@ -249,8 +252,9 @@ export async function toggleBanStudentAction(
     revalidatePath('/admin/dashboard');
 
     return { success: true, isBanned: newBannedState };
-  } catch (err: any) {
-    return { success: false, error: err?.message || 'حدث خطأ أثناء تغيير حالة حظر الطالب' };
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : 'حدث خطأ أثناء تغيير حالة حظر الطالب';
+    return { success: false, error: errorMsg };
   }
 }
 
@@ -272,8 +276,9 @@ export async function deleteStudentAction(
     revalidatePath('/admin/dashboard');
 
     return { success: true };
-  } catch (err: any) {
-    return { success: false, error: err?.message || 'حدث خطأ أثناء حذف الطالب' };
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : 'حدث خطأ أثناء حذف الطالب';
+    return { success: false, error: errorMsg };
   }
 }
 
@@ -312,7 +317,7 @@ export async function resetStudentToFreshAction(
     revalidatePath('/modules');
 
     return { success: true, student: students[studentIdx] };
-  } catch (err) {
+  } catch {
     return { success: false, error: 'حدث خطأ أثناء إعادة ضبط بيانات الطالب' };
   }
 }
@@ -331,10 +336,14 @@ export async function completeStudentProfileAction(data: {
       return { success: false, error: 'يرجى تسجيل الدخول أولاً' };
     }
 
-    let parsedUser: any = null;
+    let parsedUser: { id?: string; student_id?: string; username?: string } | null = null;
     try {
       parsedUser = JSON.parse(demoCookie.value);
     } catch {
+      return { success: false, error: 'جلسة المستخدم غير صالحة، يرجى تسجيل الدخول مجدداً' };
+    }
+
+    if (!parsedUser) {
       return { success: false, error: 'جلسة المستخدم غير صالحة، يرجى تسجيل الدخول مجدداً' };
     }
 
@@ -415,7 +424,7 @@ export async function completeStudentProfileAction(data: {
     revalidatePath('/admin/dashboard');
 
     return { success: true, redirectTo: '/' };
-  } catch (err) {
+  } catch {
     return { success: false, error: 'حدث خطأ أثناء حفظ البيانات، يرجى المحاولة مجدداً' };
   }
 }
