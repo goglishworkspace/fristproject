@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Play, Search, X, ExternalLink, Clock, Film, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { LibraryVideo } from '@/lib/actions/library.actions';
@@ -14,13 +14,30 @@ export function VideoGallery({ videos }: VideoGalleryProps) {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [activeVideo, setActiveVideo] = useState<LibraryVideo | null>(null);
 
+  // إغلاق النافذة المنبثقة بالضغط على Escape وتعطيل التمرير في الخلفية
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setActiveVideo(null);
+      }
+    };
+    if (activeVideo) {
+      document.body.style.overflow = 'hidden';
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [activeVideo]);
+
   // استخراج الفئات المتاحة
   const categories = ['الكل', ...Array.from(new Set(videos.map((v) => v.category).filter(Boolean)))];
 
   // تصفية الفيديوهات حسب الفئة والبحث
   const filteredVideos = videos.filter((video) => {
     const matchesCategory =
-      selectedCategory === 'الكل' || !video.category || video.category === selectedCategory;
+      selectedCategory === 'الكل' || video.category === selectedCategory;
     const matchesSearch =
       searchQuery.trim() === '' ||
       video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -35,19 +52,27 @@ export function VideoGallery({ videos }: VideoGalleryProps) {
         {/* أزرار الفئات إذا وُجدت */}
         {categories.length > 2 ? (
           <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1 md:pb-0">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer select-none ${
-                  selectedCategory === cat
-                    ? 'bg-asu-navy text-white shadow-sm'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
+            {categories.map((cat) => {
+              const count = cat === 'الكل' ? videos.length : videos.filter((v) => v.category === cat).length;
+              return (
+                <button
+                  key={cat}
+                  onClick={() => setSelectedCategory(cat)}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer select-none flex items-center gap-1.5 ${
+                    selectedCategory === cat
+                      ? 'bg-asu-navy text-white shadow-sm'
+                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  }`}
+                >
+                  <span>{cat}</span>
+                  <span className={`px-1.5 py-0.5 rounded-full text-[10px] ${
+                    selectedCategory === cat ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'
+                  }`}>
+                    {count}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         ) : (
           <div className="text-xs font-bold text-slate-600 flex items-center gap-1.5">
@@ -159,8 +184,14 @@ export function VideoGallery({ videos }: VideoGalleryProps) {
 
       {/* نافذة تشغيل الفيديو المنبثقة (Video Modal Player) */}
       {activeVideo && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="relative w-full max-w-4xl bg-slate-950 rounded-3xl overflow-hidden shadow-2xl border border-asu-gold/30">
+        <div
+          onClick={() => setActiveVideo(null)}
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200 cursor-pointer"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative w-full max-w-4xl bg-slate-950 rounded-3xl overflow-hidden shadow-2xl border border-asu-gold/30 cursor-default"
+          >
             {/* شريط رأس النافذة */}
             <div className="flex items-center justify-between p-3 sm:p-4 bg-slate-900 border-b border-white/10 text-white">
               <div className="flex items-center gap-2">
