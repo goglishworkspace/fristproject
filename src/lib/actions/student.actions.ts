@@ -77,7 +77,7 @@ export async function getStudentsListAction(): Promise<StudentAccount[]> {
         .eq('role', 'student')
         .order('created_at', { ascending: false });
 
-      if (!error && data && data.length > 0) {
+      if (!error && data) {
         return data.map(mapDbAccountToStudent);
       }
     } catch (err) {

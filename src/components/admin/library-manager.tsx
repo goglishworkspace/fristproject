@@ -31,7 +31,7 @@ export function LibraryManager({ initialVideos }: LibraryManagerProps) {
     if (res.success) {
       setVideos((prev) => prev.filter((v) => v.id !== id));
     } else {
-      alert('حدث خطأ أثناء محاولة حذف الفيديو');
+      alert(res.error || 'حدث خطأ أثناء محاولة حذف الفيديو');
     }
     setDeletingId(null);
   };

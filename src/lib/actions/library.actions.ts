@@ -48,7 +48,7 @@ export async function getLibraryVideos(): Promise<LibraryVideo[]> {
         .select('*')
         .order('added_at', { ascending: false });
 
-      if (!error && data && data.length > 0) {
+      if (!error && data) {
         return data.map((item) => ({
           id: item.id,
           title: item.title,
