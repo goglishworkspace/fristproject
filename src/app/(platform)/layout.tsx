@@ -99,7 +99,7 @@ export default async function PlatformLayout({
           {/* 5. حقوق الملكية في المنتصف */}
           <div className="pt-4 border-t border-slate-100 w-full flex flex-col items-center justify-center text-[11px] text-slate-400 gap-1 text-center">
             <span>جميع الحقوق محفوظة © {new Date().getFullYear()} - محمد فاروق مبارك أحمد • جامعة عين شمس</span>
-            <span>تصميم وتطوير وفق المعايير الأكاديمية والتربوية</span>
+            <span dir="rtl">تم تصميم وتطوير البيئة وفق المعايير الأكاديمية والتربوية والتكنولوجية بواسطة مؤسسة رؤية للتصميم التعليمي 01006656234</span>
           </div>
         </div>
       </footer>
