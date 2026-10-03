@@ -1,4 +1,10 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+};
 import { Cairo } from "next/font/google";
 import "./globals.css";
 
@@ -28,8 +34,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ar" dir="rtl" className={`${cairo.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col font-sans bg-slate-50 text-slate-900">
+    <html lang="ar" dir="rtl" className={`${cairo.variable} h-full antialiased overflow-x-hidden`}>
+      <body className="min-h-full flex flex-col font-sans bg-slate-50 text-slate-900 overflow-x-hidden w-full max-w-full">
         {children}
       </body>
     </html>

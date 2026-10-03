@@ -23,22 +23,22 @@ export default async function PlatformHomePage() {
   const isAdmin = progress.role === 'admin';
 
   return (
-    <div className="space-y-8 md:space-y-10 pb-6">
+    <div className="space-y-6 sm:space-y-8 md:space-y-10 pb-6 w-full max-w-full overflow-hidden">
       {/* 1. قسم البانر التعريفي الرئيسي (Hero Section) لمنصة الوعي بقضايا البيئة للمرحلة الثانوية */}
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-asu-navy-dark via-asu-navy to-[#1c2c6d] text-white p-5 sm:p-8 md:p-12 shadow-2xl border border-asu-gold/20">
+      <section className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-br from-asu-navy-dark via-asu-navy to-[#1c2c6d] text-white p-4 sm:p-8 md:p-12 shadow-2xl border border-asu-gold/20 w-full max-w-full">
         {/* خلفيات ضوئية جمالية مستوحاة من ألوان الشعار */}
         <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/3 w-80 h-80 sm:w-96 sm:h-96 bg-asu-gold/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 left-0 translate-y-1/3 -translate-x-1/4 w-80 h-80 sm:w-[420px] sm:h-[420px] bg-asu-navy-light/40 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-center">
           {/* المحتوى النصي للبانر */}
-          <div className="lg:col-span-8 space-y-4 md:space-y-6 text-right">
-            <div className="flex flex-wrap items-center gap-2">
-              <Badge className="bg-asu-gold/20 text-asu-gold-light border border-asu-gold/40 text-[11px] sm:text-xs px-3 py-1 font-bold">
-                <Sparkles className="w-3.5 h-3.5 ml-1.5 inline text-asu-gold-light" />
-                جامعة عين شمس • كلية الدراسات العليا والبحوث البيئية
+          <div className="lg:col-span-8 space-y-3.5 sm:space-y-4 md:space-y-6 text-right">
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+              <Badge className="bg-asu-gold/20 text-asu-gold-light border border-asu-gold/40 text-[10px] sm:text-xs px-2.5 sm:px-3 py-1 font-bold leading-normal">
+                <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5 ml-1 inline text-asu-gold-light" />
+                <span>جامعة عين شمس • كلية الدراسات العليا والبحوث البيئية</span>
               </Badge>
-              <span className="text-[11px] text-slate-300 font-medium hidden sm:inline-block">
+              <span className="text-[10px] sm:text-[11px] text-slate-300 font-medium hidden sm:inline-block">
                 قسم المناهج وطرق التدريس
               </span>
             </div>
@@ -52,7 +52,7 @@ export default async function PlatformHomePage() {
               </div>
             )}
 
-            <h1 className="text-2xl sm:text-3xl md:text-5xl font-black tracking-tight leading-tight sm:leading-tight text-white">
+            <h1 className="text-xl sm:text-3xl md:text-5xl font-black tracking-tight leading-snug sm:leading-tight text-white">
               منصة <span className="text-asu-gold-light">الوعي بقضايا البيئة</span> للمرحلة الثانوية
             </h1>
 

@@ -58,9 +58,9 @@ export default async function PlatformLayout({
 
   // متاح للزائر تماماً تصفح الموقع والنبذة دون أي إجبار على تسجيل الدخول
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50/50">
+    <div className="min-h-screen flex flex-col bg-slate-50/50 w-full max-w-full overflow-x-hidden">
       <Navbar user={userProfile} />
-      <main className="flex-1 container mx-auto px-3 sm:px-4 py-6 sm:py-8 max-w-6xl">
+      <main className="flex-1 container mx-auto px-3 sm:px-4 py-4 sm:py-8 max-w-6xl w-full">
         {children}
       </main>
       <footer className="border-t border-slate-200/90 bg-white text-slate-600 mt-12 py-8 sm:py-10">
