@@ -14,8 +14,53 @@ import {
   ArrowRight,
   Send,
   ToggleLeft,
+  BookOpen,
+  Sparkles,
+  Target,
+  X,
 } from 'lucide-react';
 import type { Question, ExamType } from '@/lib/types/database';
+
+export interface ExamInstructionsData {
+  title?: string;
+  salutation?: string;
+  intro?: string;
+  purpose?: string;
+  rules?: string[];
+  note?: string;
+  sections?: {
+    id: string;
+    title: string;
+    description?: string;
+    count?: number;
+  }[];
+}
+
+export const DEFAULT_PRE_TEST_INSTRUCTIONS: ExamInstructionsData = {
+  title: 'تعليمات الاختبار',
+  salutation: 'عزيزي الطالب / الطالبة',
+  intro: 'اقرأ التعليمات التالية بعناية قبل أن تبدأ في الإجابة عن الاختبار.',
+  purpose: 'وُضع هذا الاختبار لقياس مستوى الوعي بقضايا البيئة لديك، ومدى فهمك للمفاهيم والقضايا والمشكلات البيئية وطرق التعامل معها.',
+  rules: [
+    'يتكون الاختبار من (60) سؤالًا من نوع الاختيار من متعدد، ويتبع كل سؤال أربعة بدائل محتملة، أحدها فقط صحيح، ومشار إليها بالأحرف (أ، ب، ج، د) اقرأ السؤال جيدًا، ثم اختر إجابة واحدة فقط من بين البدائل المتاحة.',
+    'كما يتضمن الاختبار (40) عبارة من نوع الصواب والخطأ. اقرأ كل عبارة بعناية، ثم حدد ما إذا كانت صوابًا أم خطأ.',
+  ],
+  note: 'أجب عن جميع الأسئلة، ولا تترك أي سؤال دون إجابة.',
+  sections: [
+    {
+      id: 'mc',
+      title: 'أولًا: أسئلة الاختيار من متعدد',
+      description: 'يتكون من (60) سؤالًا، لكل سؤال 4 بدائل محتملة يمثل أحدها الإجابة الصحيحة.',
+      count: 60,
+    },
+    {
+      id: 'tf',
+      title: 'ثانيًا: حدد الصواب والخطأ للأسئلة التالية',
+      description: 'يتضمن (40) عبارة لتحديد ما إذا كانت العبارة صوابًا أم خطأ.',
+      count: 40,
+    },
+  ],
+};
 
 interface ExamRunnerProps {
   examType: ExamType;
@@ -23,6 +68,7 @@ interface ExamRunnerProps {
   questions: Question[];
   onCompleteRedirectUrl?: string;
   passingScorePercent?: number;
+  instructions?: ExamInstructionsData | boolean;
 }
 
 const OPTION_LETTERS = ['أ', 'ب', 'ج', 'د', 'هـ', 'و'];
@@ -33,7 +79,20 @@ export function ExamRunner({
   questions,
   onCompleteRedirectUrl,
   passingScorePercent = 50,
+  instructions,
 }: ExamRunnerProps) {
+  // التحقق من تفعيل شاشة التعليمات (تلقائياً للاختبار القبلي أو عند تمرير instructions)
+  const activeInstructions: ExamInstructionsData | null =
+    instructions === false
+      ? null
+      : typeof instructions === 'object'
+      ? instructions
+      : examType === 'pre_test'
+      ? DEFAULT_PRE_TEST_INSTRUCTIONS
+      : null;
+
+  const [hasStarted, setHasStarted] = useState<boolean>(!activeInstructions);
+  const [showInstructionsModal, setShowInstructionsModal] = useState<boolean>(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -220,6 +279,152 @@ export function ExamRunner({
     );
   }
 
+  // 1. شاشة تعليمات الاختبار التمهيدية الإلزامية قبل بدء الإجابة
+  if (!hasStarted && activeInstructions) {
+    return (
+      <div className="max-w-3xl mx-auto py-2 sm:py-6 text-right space-y-6">
+        <Card className="border-asu-gold/40 shadow-2xl bg-white rounded-3xl overflow-hidden border">
+          {/* هيدر التعليمات التراثي الملكي */}
+          <div className="bg-gradient-to-br from-asu-navy-dark via-asu-navy to-[#18265b] p-6 sm:p-8 text-white relative overflow-hidden">
+            <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/3 w-80 h-80 bg-asu-gold/15 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute bottom-0 left-0 translate-y-1/3 -translate-x-1/4 w-80 h-80 bg-asu-navy-light/30 rounded-full blur-3xl pointer-events-none" />
+
+            <div className="relative z-10 space-y-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge className="bg-asu-gold/20 text-asu-gold-light border border-asu-gold/40 text-xs px-3 py-1 font-bold">
+                  <Sparkles className="w-3.5 h-3.5 ml-1.5 inline text-asu-gold-light" />
+                  جامعة عين شمس • كلية التربية
+                </Badge>
+                <Badge variant="outline" className="border-white/20 text-slate-200 text-xs px-2.5 py-0.5">
+                  قسم المناهج وطرق التدريس
+                </Badge>
+              </div>
+
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-white leading-tight">
+                {activeInstructions.title || 'تعليمات الاختبار'}
+              </h1>
+
+              <div className="pt-2 text-asu-gold-light font-black text-base sm:text-lg">
+                {activeInstructions.salutation || 'عزيزي الطالب / الطالبة'}
+              </div>
+
+              <p className="text-slate-200 text-xs sm:text-sm md:text-base leading-relaxed font-normal">
+                {activeInstructions.intro || 'اقرأ التعليمات التالية بعناية قبل أن تبدأ في الإجابة عن الاختبار.'}
+              </p>
+            </div>
+          </div>
+
+          <CardContent className="p-5 sm:p-8 space-y-6">
+            {/* هدف الاختبار */}
+            {activeInstructions.purpose && (
+              <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200/90 space-y-2">
+                <div className="flex items-center gap-2 text-asu-navy font-black text-sm sm:text-base">
+                  <div className="w-8 h-8 rounded-xl bg-asu-navy/10 text-asu-navy flex items-center justify-center shrink-0">
+                    <Target className="w-4.5 h-4.5 text-asu-gold-dark" />
+                  </div>
+                  <span>هدف الاختبار:</span>
+                </div>
+                <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium pr-10">
+                  {activeInstructions.purpose}
+                </p>
+              </div>
+            )}
+
+            {/* بنود الاختبار وتفاصيل الأسئلة */}
+            {activeInstructions.rules && activeInstructions.rules.length > 0 && (
+              <div className="space-y-3">
+                <h3 className="text-xs font-black text-slate-500 uppercase tracking-wider flex items-center gap-2">
+                  <BookOpen className="w-4 h-4 text-asu-navy" />
+                  <span>ضوابط وتعليمات الإجابة:</span>
+                </h3>
+                <div className="space-y-3">
+                  {activeInstructions.rules.map((rule, idx) => (
+                    <div
+                      key={idx}
+                      className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex items-start gap-3 hover:border-asu-gold/40 transition-colors"
+                    >
+                      <div className="w-7 h-7 rounded-xl bg-asu-navy text-white text-xs font-black flex items-center justify-center shrink-0 mt-0.5 shadow-xs">
+                        {idx + 1}
+                      </div>
+                      <p className="text-xs sm:text-sm text-slate-800 leading-relaxed font-medium">
+                        {rule}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* تفصيل الأقسام (أولاً وثانياً) */}
+            {activeInstructions.sections && activeInstructions.sections.length > 0 && (
+              <div className="space-y-3 pt-1">
+                <h3 className="text-xs font-black text-slate-500 uppercase tracking-wider">
+                  أقسام ومكونات الاختبار:
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                  {activeInstructions.sections.map((sec, sIdx) => (
+                    <div
+                      key={sec.id || sIdx}
+                      className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-slate-50 to-white border border-slate-200 shadow-2xs space-y-2"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="font-black text-sm sm:text-base text-asu-navy">{sec.title}</span>
+                        {sec.count && (
+                          <Badge variant="outline" className="text-xs bg-white text-slate-800 font-bold border-slate-300">
+                            ({sec.count}) سؤال
+                          </Badge>
+                        )}
+                      </div>
+                      {sec.description && (
+                        <p className="text-xs text-slate-500 leading-relaxed font-normal">
+                          {sec.description}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* تنبيه بعدم ترك أي سؤال دون إجابة */}
+            {activeInstructions.note && (
+              <div className="p-4 sm:p-5 rounded-2xl bg-amber-50/90 border border-amber-300 text-amber-950 flex items-center gap-3.5 shadow-2xs">
+                <div className="w-10 h-10 rounded-2xl bg-amber-200/80 text-amber-900 flex items-center justify-center shrink-0">
+                  <AlertCircle className="w-5 h-5 text-amber-800" />
+                </div>
+                <div className="text-right">
+                  <span className="block font-black text-xs sm:text-sm text-amber-950">
+                    من فضلك:
+                  </span>
+                  <span className="text-xs sm:text-sm font-bold text-amber-900">
+                    {activeInstructions.note}
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* زر البدء في الاختبار */}
+            <div className="pt-2">
+              <Button
+                type="button"
+                onClick={() => {
+                  setHasStarted(true);
+                  if (typeof window !== 'undefined') {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }
+                }}
+                className="w-full h-13 sm:h-14 text-sm sm:text-base font-black bg-gradient-to-r from-asu-navy via-[#1e2f75] to-asu-navy-light text-white shadow-xl hover:shadow-2xl hover:scale-[1.01] transition-all cursor-pointer rounded-2xl gap-2 border border-asu-gold/40"
+              >
+                <span>ابدأ الإجابة عن الاختبار الآن</span>
+                <ArrowLeft className="w-5 h-5 mr-1" />
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   const isTrueFalseQuestion =
     currentQ.question_type === 'true_false' ||
     (currentQ.options.length === 2 &&
@@ -236,7 +441,18 @@ export function ExamRunner({
               السؤال <span className="font-bold text-slate-700">{currentIndex + 1}</span> من أصل <span className="font-bold text-slate-700">{totalQ}</span>
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+            {activeInstructions && (
+              <button
+                type="button"
+                onClick={() => setShowInstructionsModal(true)}
+                className="inline-flex items-center gap-1.5 text-xs text-asu-navy bg-slate-100 hover:bg-slate-200 active:bg-slate-300 font-bold px-2.5 sm:px-3 py-1.5 rounded-xl border border-slate-200 transition-colors cursor-pointer"
+                title="عرض تعليمات الاختبار"
+              >
+                <BookOpen className="w-3.5 h-3.5 text-asu-navy" />
+                <span>تعليمات الاختبار</span>
+              </button>
+            )}
             {answeredCount < totalQ && (
               <button
                 type="button"
@@ -322,19 +538,20 @@ export function ExamRunner({
       {/* بطاقة السؤال الحالي */}
       <Card className="shadow-lg border-slate-200/90 bg-white rounded-2xl sm:rounded-3xl overflow-hidden">
         <CardHeader className="pb-4 border-b border-slate-100 bg-slate-50/40">
-          <div className="flex items-center justify-between gap-2 mb-1.5">
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
             <div className="flex items-center gap-2 text-asu-navy text-xs font-bold">
               <HelpCircle className="w-4 h-4 text-asu-gold-dark" />
               <span>السؤال رقم {currentIndex + 1} من {totalQ}</span>
             </div>
             {isTrueFalseQuestion ? (
-              <Badge variant="gold" className="text-[10px] sm:text-xs gap-1 px-2.5 py-0.5 font-bold">
-                <ToggleLeft className="w-3.5 h-3.5" />
-                <span>سؤال صواب أو خطأ</span>
+              <Badge variant="gold" className="text-[10px] sm:text-xs gap-1.5 px-3 py-1 font-black bg-amber-100 text-amber-950 border border-amber-300 shadow-2xs">
+                <ToggleLeft className="w-3.5 h-3.5 text-amber-700" />
+                <span>ثانيًا: حدد الصواب والخطأ للأسئلة التالية</span>
               </Badge>
             ) : (
-              <Badge variant="outline" className="text-[10px] sm:text-xs px-2.5 py-0.5 border-slate-300 text-slate-600 font-bold">
-                <span>اختيار من متعدد</span>
+              <Badge variant="outline" className="text-[10px] sm:text-xs gap-1.5 px-3 py-1 font-black bg-asu-navy/10 text-asu-navy border border-asu-navy/25 shadow-2xs">
+                <span className="w-2 h-2 rounded-full bg-asu-navy inline-block" />
+                <span>أولًا: أسئلة الاختيار من متعدد</span>
               </Badge>
             )}
           </div>
@@ -500,6 +717,97 @@ export function ExamRunner({
           )}
         </CardFooter>
       </Card>
+
+      {/* نافذة عرض التعليمات المنبثقة أثناء سير الاختبار */}
+      {showInstructionsModal && activeInstructions && (
+        <div
+          onClick={() => setShowInstructionsModal(false)}
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/75 backdrop-blur-xs animate-in fade-in duration-200 cursor-pointer"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative w-full max-w-2xl bg-white rounded-3xl overflow-hidden shadow-2xl border border-asu-gold/40 cursor-default max-h-[90vh] flex flex-col text-right"
+          >
+            <div className="p-4 sm:p-5 bg-gradient-to-r from-asu-navy-dark to-asu-navy text-white flex items-center justify-between border-b border-white/10 shrink-0">
+              <div className="flex items-center gap-2">
+                <BookOpen className="w-5 h-5 text-asu-gold-light" />
+                <h3 className="font-black text-sm sm:text-base text-white">
+                  {activeInstructions.title || 'تعليمات الاختبار'}
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowInstructionsModal(false)}
+                className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors cursor-pointer"
+                aria-label="إغلاق"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="p-5 sm:p-6 overflow-y-auto space-y-4 text-xs sm:text-sm">
+              <div className="font-extrabold text-asu-navy text-sm sm:text-base">
+                {activeInstructions.salutation}
+              </div>
+              <p className="text-slate-600 font-medium leading-relaxed">
+                {activeInstructions.intro}
+              </p>
+
+              {activeInstructions.purpose && (
+                <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/90 space-y-1">
+                  <span className="font-black text-asu-navy block">هدف الاختبار:</span>
+                  <p className="text-slate-700 leading-relaxed font-normal">{activeInstructions.purpose}</p>
+                </div>
+              )}
+
+              {activeInstructions.rules && (
+                <div className="space-y-2">
+                  <span className="font-black text-slate-700 block">ضوابط الإجابة:</span>
+                  <div className="space-y-2">
+                    {activeInstructions.rules.map((rule, idx) => (
+                      <div key={idx} className="flex items-start gap-2.5 p-2.5 rounded-xl bg-slate-50 border border-slate-100 text-slate-800">
+                        <span className="w-5 h-5 rounded-lg bg-asu-navy text-white text-[11px] font-black flex items-center justify-center shrink-0 mt-0.5">
+                          {idx + 1}
+                        </span>
+                        <p className="leading-relaxed font-medium">{rule}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {activeInstructions.sections && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+                  {activeInstructions.sections.map((sec, sIdx) => (
+                    <div key={sec.id || sIdx} className="p-3 rounded-xl bg-slate-50 border border-slate-200">
+                      <span className="font-black text-xs text-asu-navy block mb-0.5">{sec.title}</span>
+                      <span className="text-[11px] text-slate-500">{sec.description}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {activeInstructions.note && (
+                <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-950 font-bold flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 text-amber-700 shrink-0" />
+                  <span>من فضلك: {activeInstructions.note}</span>
+                </div>
+              )}
+            </div>
+
+            <div className="p-4 bg-slate-50 border-t border-slate-100 flex justify-end shrink-0">
+              <Button
+                type="button"
+                onClick={() => setShowInstructionsModal(false)}
+                size="sm"
+                className="font-bold bg-asu-navy hover:bg-asu-navy-light text-white px-6"
+              >
+                متابعة الاختبار
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
