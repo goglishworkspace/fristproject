@@ -401,7 +401,7 @@ export function ExamRunner({
               <div className="flex flex-wrap items-center gap-2">
                 <Badge className="bg-asu-gold/20 text-asu-gold-light border border-asu-gold/40 text-xs px-3 py-1 font-bold">
                   <Sparkles className="w-3.5 h-3.5 ml-1.5 inline text-asu-gold-light" />
-                  جامعة عين شمس • كلية التربية
+                  جامعة عين شمس • كلية الدراسات العليا والبحوث البيئية
                 </Badge>
                 <Badge variant="outline" className="border-white/20 text-slate-200 text-xs px-2.5 py-0.5">
                   قسم المناهج وطرق التدريس

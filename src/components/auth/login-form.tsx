@@ -24,7 +24,7 @@ export function LoginForm() {
           />
         </div>
         <div className="space-y-0.5">
-          <p className="text-xs font-bold text-asu-gold-dark">جامعة عين شمس • كلية التربية</p>
+          <p className="text-xs font-bold text-asu-gold-dark">جامعة عين شمس • كلية الدراسات العليا والبحوث البيئية</p>
           <CardTitle className="text-2xl font-black text-asu-navy">
             تسجيل الدخول للمنصة
           </CardTitle>

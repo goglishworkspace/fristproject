@@ -51,7 +51,7 @@ export default async function AdminDashboardPage() {
               </Badge>
             </div>
             <h1 className="text-xl sm:text-2xl font-black text-asu-navy">
-              إدارة المنصة الأكاديمية • كلية التربية جامعة عين شمس
+              إدارة المنصة الأكاديمية • كلية الدراسات العليا والبحوث البيئية - جامعة عين شمس
             </h1>
             <p className="text-xs text-slate-500 mt-1">
               إدارة حسابات الطلاب، وتخصيص الموديولات وسلايدر الصور، والتحكم ببنك أسئلة الاختبارات، والمكتبة

@@ -75,7 +75,7 @@ export function Navbar({ user }: NavbarProps) {
               </span>
             </div>
             <span className="block text-[9px] sm:text-xs text-slate-500 font-medium">
-              البيئة الرقمية • كلية التربية
+              البيئة الرقمية • كلية الدراسات العليا والبحوث البيئية
             </span>
           </div>
         </Link>

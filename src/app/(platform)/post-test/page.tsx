@@ -85,7 +85,7 @@ export default async function PostTestPage() {
               تهانينا يا {progress.fullName || 'طالبنا العزيز'}!
             </h1>
             <p className="text-xs sm:text-sm text-slate-600 mt-1">
-              جامعة عين شمس • كلية التربية • تنمية الوعي بقضايا البيئة
+              جامعة عين شمس • كلية الدراسات العليا والبحوث البيئية • تنمية الوعي بقضايا البيئة
             </p>
           </div>
 

@@ -240,7 +240,7 @@ export default function CompleteProfilePage() {
                 <div className="pt-2 text-center">
                   <span className="inline-flex items-center gap-1.5 text-[11px] text-slate-400">
                     <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>بياناتكم مسجلة برعاية وإشراف كلية التربية - جامعة عين شمس</span>
+                    <span>بياناتكم مسجلة برعاية وإشراف كلية الدراسات العليا والبحوث البيئية - جامعة عين شمس</span>
                   </span>
                 </div>
               </form>

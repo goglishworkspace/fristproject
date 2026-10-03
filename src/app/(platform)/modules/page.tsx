@@ -51,7 +51,7 @@ export default async function ModulesListPage() {
         <div>
           <Badge variant="gold" className="mb-2 font-bold gap-1 px-3 py-1">
             <Sparkles className="w-3.5 h-3.5 text-asu-gold-dark" />
-            <span>مسار التعلم التفاعلي • كلية التربية</span>
+            <span>مسار التعلم التفاعلي • كلية الدراسات العليا والبحوث البيئية</span>
           </Badge>
           <h1 className="text-2xl sm:text-3xl font-black text-asu-navy">
             الموديولات التعليمية

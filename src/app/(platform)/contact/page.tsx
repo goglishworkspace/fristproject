@@ -5,7 +5,7 @@ import { ASU_LOGO_URL } from '@/lib/constants/branding';
 
 export const metadata = {
   title: 'تواصل معنا والدعم الفني | منصة الوعي بقضايا البيئة للمرحلة الثانوية • جامعة عين شمس',
-  description: 'قنوات التواصل المعتمدة مع فريق الإشراف الأكاديمي والدعم الفني لمنصة الوعي بقضايا البيئة للمرحلة الثانوية بكلية التربية جامعة عين شمس.',
+  description: 'قنوات التواصل المعتمدة مع فريق الإشراف الأكاديمي والدعم الفني لمنصة الوعي بقضايا البيئة للمرحلة الثانوية بكلية الدراسات العليا والبحوث البيئية جامعة عين شمس.',
 };
 
 export default function ContactUsPage() {
@@ -22,7 +22,7 @@ export default function ContactUsPage() {
             <div className="flex flex-wrap items-center gap-2">
               <Badge className="bg-asu-gold/20 text-asu-gold-light border border-asu-gold/40 text-[11px] sm:text-xs px-3 py-1 font-bold">
                 <Sparkles className="w-3.5 h-3.5 ml-1.5 inline text-asu-gold-light" />
-                جامعة عين شمس • كلية التربية
+                جامعة عين شمس • كلية الدراسات العليا والبحوث البيئية
               </Badge>
               <span className="text-[11px] text-slate-300 font-medium">
                 قسم المناهج وطرق التدريس
@@ -59,7 +59,7 @@ export default function ContactUsPage() {
                 />
               </div>
               <p className="font-extrabold text-xs sm:text-sm text-white">جامعة عين شمس</p>
-              <p className="text-[11px] text-asu-gold-light mt-0.5 font-bold">كلية التربية</p>
+              <p className="text-[11px] text-asu-gold-light mt-0.5 font-bold">كلية الدراسات العليا والبحوث البيئية</p>
               <div className="mt-2.5 pt-2.5 border-t border-white/15 w-full">
                 <span className="text-[10px] text-slate-200">الإشراف والمتابعة البحثية المستمرة</span>
               </div>

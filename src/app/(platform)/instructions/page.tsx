@@ -17,7 +17,7 @@ import {
 
 export const metadata = {
   title: 'التعليمات | منصة الوعي بقضايا البيئة للمرحلة الثانوية • جامعة عين شمس',
-  description: 'تعليمات وإرشادات بيئة التعلم التفاعلية - كلية التربية جامعة عين شمس',
+  description: 'تعليمات وإرشادات بيئة التعلم التفاعلية - كلية الدراسات العليا والبحوث البيئية جامعة عين شمس',
 };
 
 export default function InstructionsPage() {
@@ -66,7 +66,7 @@ export default function InstructionsPage() {
         <div className="flex flex-wrap items-center gap-2 mb-2">
           <Badge variant="gold" className="text-xs px-3 py-1 font-bold">
             <Sparkles className="w-3.5 h-3.5 ml-1.5 inline text-asu-gold-dark" />
-            جامعة عين شمس • كلية التربية
+            جامعة عين شمس • كلية الدراسات العليا والبحوث البيئية
           </Badge>
           <span className="text-xs text-slate-500 font-medium">قسم المناهج وطرق التدريس</span>
         </div>

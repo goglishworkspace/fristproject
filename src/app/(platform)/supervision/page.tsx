@@ -1,6 +1,6 @@
 export const metadata = {
   title: 'الإعداد والإشراف | منصة الوعي بقضايا البيئة للمرحلة الثانوية • جامعة عين شمس',
-  description: 'فريق الإعداد والإشراف العلمي - كلية التربية جامعة عين شمس',
+  description: 'فريق الإعداد والإشراف العلمي - كلية الدراسات العليا والبحوث البيئية جامعة عين شمس',
 };
 
 // رابط الصورة المعتمدة للإعداد والإشراف من Cloudinary
@@ -33,7 +33,7 @@ export default function SupervisionPage() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={SUPERVISION_IMAGE_SRC}
-              alt="الإعداد والإشراف - جامعة عين شمس • كلية التربية"
+              alt="الإعداد والإشراف - جامعة عين شمس • كلية الدراسات العليا والبحوث البيئية"
               className="w-full h-auto max-h-[88vh] object-contain rounded-xl transition-transform duration-500 hover:scale-[1.006]"
               loading="eager"
             />
