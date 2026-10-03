@@ -3,7 +3,6 @@ import { Badge } from '@/components/ui/badge';
 import { ContactForm } from '@/components/contact/contact-form';
 import {
   Sparkles,
-  Clock,
   HelpCircle,
 } from 'lucide-react';
 import { ASU_LOGO_URL } from '@/lib/constants/branding';
@@ -48,10 +47,6 @@ export default function ContactUsPage() {
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-emerald-500/20 border border-emerald-400/30 text-emerald-200 font-bold backdrop-blur-xs">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping inline-block" />
                 <span>فريق الإشراف والدعم متاح للرد على استفساراتكم</span>
-              </div>
-              <div className="inline-flex items-center gap-1.5 text-slate-300 text-xs">
-                <Clock className="w-4 h-4 text-asu-gold-light" />
-                <span>المواعيد: الأحد - الخميس | 9:00 ص - 3:00 م</span>
               </div>
             </div>
           </div>
