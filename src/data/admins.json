@@ -1,0 +1,112 @@
+[
+  {
+    "id": "admin-01",
+    "username": "admin1",
+    "password": "Admin@Env2026#01",
+    "fullName": "د. المشرف الأكاديمي 1 (كلية الدراسات العليا والبحوث البيئية)",
+    "phone": "01000000001",
+    "role": "admin",
+    "isProfileCompleted": true,
+    "isBanned": false,
+    "createdAt": "2026-10-03T20:00:00.000Z"
+  },
+  {
+    "id": "admin-02",
+    "username": "admin2",
+    "password": "Admin@Env2026#02",
+    "fullName": "د. المشرف الأكاديمي 2 (كلية الدراسات العليا والبحوث البيئية)",
+    "phone": "01000000002",
+    "role": "admin",
+    "isProfileCompleted": true,
+    "isBanned": false,
+    "createdAt": "2026-10-03T20:00:00.000Z"
+  },
+  {
+    "id": "admin-03",
+    "username": "admin3",
+    "password": "Admin@Env2026#03",
+    "fullName": "د. المشرف الأكاديمي 3 (كلية الدراسات العليا والبحوث البيئية)",
+    "phone": "01000000003",
+    "role": "admin",
+    "isProfileCompleted": true,
+    "isBanned": false,
+    "createdAt": "2026-10-03T20:00:00.000Z"
+  },
+  {
+    "id": "admin-04",
+    "username": "admin4",
+    "password": "Admin@Env2026#04",
+    "fullName": "د. المشرف التعليمي 1 (كلية الدراسات العليا والبحوث البيئية)",
+    "phone": "01000000004",
+    "role": "admin",
+    "isProfileCompleted": true,
+    "isBanned": false,
+    "createdAt": "2026-10-03T20:00:00.000Z"
+  },
+  {
+    "id": "admin-05",
+    "username": "admin5",
+    "password": "Admin@Env2026#05",
+    "fullName": "د. المشرف التعليمي 2 (كلية الدراسات العليا والبحوث البيئية)",
+    "phone": "01000000005",
+    "role": "admin",
+    "isProfileCompleted": true,
+    "isBanned": false,
+    "createdAt": "2026-10-03T20:00:00.000Z"
+  },
+  {
+    "id": "admin-06",
+    "username": "admin6",
+    "password": "Admin@Env2026#06",
+    "fullName": "د. المشرف التعليمي 3 (كلية الدراسات العليا والبحوث البيئية)",
+    "phone": "01000000006",
+    "role": "admin",
+    "isProfileCompleted": true,
+    "isBanned": false,
+    "createdAt": "2026-10-03T20:00:00.000Z"
+  },
+  {
+    "id": "admin-07",
+    "username": "admin7",
+    "password": "Admin@Env2026#07",
+    "fullName": "أ. منسق الأنشطة والتقييم 1 (كلية الدراسات العليا والبحوث البيئية)",
+    "phone": "01000000007",
+    "role": "admin",
+    "isProfileCompleted": true,
+    "isBanned": false,
+    "createdAt": "2026-10-03T20:00:00.000Z"
+  },
+  {
+    "id": "admin-08",
+    "username": "admin8",
+    "password": "Admin@Env2026#08",
+    "fullName": "أ. منسق الأنشطة والتقييم 2 (كلية الدراسات العليا والبحوث البيئية)",
+    "phone": "01000000008",
+    "role": "admin",
+    "isProfileCompleted": true,
+    "isBanned": false,
+    "createdAt": "2026-10-03T20:00:00.000Z"
+  },
+  {
+    "id": "admin-09",
+    "username": "admin9",
+    "password": "Admin@Env2026#09",
+    "fullName": "أ. مسؤول الدعم الفني 1 (كلية الدراسات العليا والبحوث البيئية)",
+    "phone": "01000000009",
+    "role": "admin",
+    "isProfileCompleted": true,
+    "isBanned": false,
+    "createdAt": "2026-10-03T20:00:00.000Z"
+  },
+  {
+    "id": "admin-10",
+    "username": "admin10",
+    "password": "Admin@Env2026#10",
+    "fullName": "أ. مسؤول الدعم الفني 2 (كلية الدراسات العليا والبحوث البيئية)",
+    "phone": "01000000010",
+    "role": "admin",
+    "isProfileCompleted": true,
+    "isBanned": false,
+    "createdAt": "2026-10-03T20:00:00.000Z"
+  }
+]
