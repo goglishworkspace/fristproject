@@ -62,6 +62,32 @@ export const DEFAULT_PRE_TEST_INSTRUCTIONS: ExamInstructionsData = {
   ],
 };
 
+export const DEFAULT_POST_TEST_INSTRUCTIONS: ExamInstructionsData = {
+  title: 'تعليمات الاختبار البعدي',
+  salutation: 'عزيزي الطالب / الطالبة',
+  intro: 'اقرأ التعليمات التالية بعناية قبل أن تبدأ في الإجابة عن الاختبار البعدي النهائي.',
+  purpose: 'وُضع هذا الاختبار لقياس مدى نمو الوعي بقضايا البيئة والتفكير المكاني لديك بعد دراسة الموديولات التعليمية المقررة.',
+  rules: [
+    'يتكون الاختبار من (60) سؤالًا من نوع الاختيار من متعدد، ويتبع كل سؤال أربعة بدائل محتملة، أحدها فقط صحيح، ومشار إليها بالأحرف (أ، ب، ج، د) اقرأ السؤال جيدًا، ثم اختر إجابة واحدة فقط من بين البدائل المتاحة.',
+    'كما يتضمن الاختبار (40) عبارة من نوع الصواب والخطأ. اقرأ كل عبارة بعناية، ثم حدد ما إذا كانت صوابًا أم خطأ.',
+  ],
+  note: 'أجب عن جميع الأسئلة، ولا تترك أي سؤال دون إجابة.',
+  sections: [
+    {
+      id: 'mc',
+      title: 'أولًا: أسئلة الاختيار من متعدد',
+      description: 'يتكون من (60) سؤالًا، لكل سؤال 4 بدائل محتملة يمثل أحدها الإجابة الصحيحة.',
+      count: 60,
+    },
+    {
+      id: 'tf',
+      title: 'ثانيًا: حدد الصواب والخطأ للأسئلة التالية',
+      description: 'يتضمن (40) عبارة لتحديد ما إذا كانت العبارة صوابًا أم خطأ.',
+      count: 40,
+    },
+  ],
+};
+
 interface ExamRunnerProps {
   examType: ExamType;
   examTitle: string;
@@ -69,6 +95,7 @@ interface ExamRunnerProps {
   onCompleteRedirectUrl?: string;
   passingScorePercent?: number;
   instructions?: ExamInstructionsData | boolean;
+  questionsPerPage?: number;
 }
 
 const OPTION_LETTERS = ['أ', 'ب', 'ج', 'د', 'هـ', 'و'];
@@ -80,8 +107,9 @@ export function ExamRunner({
   onCompleteRedirectUrl,
   passingScorePercent = 50,
   instructions,
+  questionsPerPage = 10,
 }: ExamRunnerProps) {
-  // التحقق من تفعيل شاشة التعليمات (تلقائياً للاختبار القبلي أو عند تمرير instructions)
+  // التحقق من تفعيل شاشة التعليمات (تلقائياً للاختبار القبلي والبعدي أو عند تمرير instructions)
   const activeInstructions: ExamInstructionsData | null =
     instructions === false
       ? null
@@ -89,28 +117,37 @@ export function ExamRunner({
       ? instructions
       : examType === 'pre_test'
       ? DEFAULT_PRE_TEST_INSTRUCTIONS
+      : examType === 'post_test'
+      ? DEFAULT_POST_TEST_INSTRUCTIONS
       : null;
 
   const [hasStarted, setHasStarted] = useState<boolean>(!activeInstructions);
   const [showInstructionsModal, setShowInstructionsModal] = useState<boolean>(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [pageIndex, setPageIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [result, setResult] = useState<{ score: number; total: number } | null>(null);
 
-  // مرجع للتمرير التلقائي لرقم السؤال النشط في شريط الأرقام العلوي
-  const activeQuestionBtnRef = useRef<HTMLButtonElement | null>(null);
+  const pageSize = questionsPerPage || 10;
+  const totalQ = questions?.length || 0;
+  const totalPages = Math.ceil(totalQ / pageSize) || 1;
+  const startIndex = pageIndex * pageSize;
+  const endIndex = Math.min(startIndex + pageSize, totalQ);
+  const pageQuestions = questions?.slice(startIndex, endIndex) || [];
+
+  // مرجع للتمرير التلقائي لرقم الصفحة النشطة في شريط التابات العلوي
+  const activePageBtnRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
-    if (activeQuestionBtnRef.current) {
-      activeQuestionBtnRef.current.scrollIntoView({
+    if (activePageBtnRef.current) {
+      activePageBtnRef.current.scrollIntoView({
         behavior: 'smooth',
         inline: 'center',
         block: 'nearest',
       });
     }
-  }, [currentIndex]);
+  }, [pageIndex]);
 
   if (!questions || questions.length === 0) {
     return (
@@ -124,73 +161,95 @@ export function ExamRunner({
     );
   }
 
-  const currentQ = questions[currentIndex];
-  const totalQ = questions.length;
   const answeredCount = Object.keys(answers).length;
   const progressPercent = Math.round((answeredCount / totalQ) * 100);
 
-  // اختيار خيار السؤال - نقي ومباشر ومضبوط للمس في شاشات الموبايل
-  const handleSelectOption = (optionIndex: number) => {
+  // اختيار خيار السؤال
+  const handleSelectOption = (questionId: string, optionIndex: number) => {
     setErrorMessage(null);
     setAnswers((prev) => ({
       ...prev,
-      [currentQ.id]: optionIndex,
+      [questionId]: optionIndex,
     }));
   };
 
-  // دالة القفز التلقائي إلى أول سؤال لم تتم الإجابة عليه
+  // دالة القفز التلقائي إلى أول سؤال لم تتم الإجابة عليه في الاختبار
   const jumpToFirstUnanswered = () => {
     const unansweredIndex = questions.findIndex((q) => answers[q.id] === undefined);
     if (unansweredIndex !== -1) {
-      setCurrentIndex(unansweredIndex);
+      const targetPage = Math.floor(unansweredIndex / pageSize);
+      const qNumber = unansweredIndex + 1;
+      setPageIndex(targetPage);
       setErrorMessage(
-        `تم نقلك إلى أول سؤال غير مُجاب (السؤال رقم ${unansweredIndex + 1})، يرجى اختياره للمتابعة.`
+        `تم نقلك إلى أول سؤال غير مُجاب (السؤال رقم ${qNumber} في الصفحة ${targetPage + 1})، يرجى اختياره للمتابعة.`
       );
-      if (typeof window !== 'undefined') {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
+      setTimeout(() => {
+        const el = document.getElementById(`question-${qNumber}`);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else if (typeof window !== 'undefined') {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      }, 150);
     }
   };
 
-  const handleNext = () => {
-    // شرط تربوي: منع التخطي دون اختيار إجابة للسؤال الحالي
-    if (answers[currentQ.id] === undefined) {
+  // الانتقال للصفحة التالية مع شرط تربوي صارم بعدم ترك أي سؤال بالصفحة الحالية
+  const handleNextPage = () => {
+    const unansweredOnPage = pageQuestions.filter((q) => answers[q.id] === undefined);
+    if (unansweredOnPage.length > 0) {
+      const firstMissing = unansweredOnPage[0];
+      const qNumber = questions.findIndex((q) => q.id === firstMissing.id) + 1;
       setErrorMessage(
-        `يرجى اختيار إجابة للسؤال الحالي (السؤال رقم ${currentIndex + 1}) أولاً قبل الانتقال للسؤال التالي.`
+        `يرجى الإجابة عن جميع أسئلة هذه الصفحة أولاً قبل الانتقال للصفحة التالية (السؤال رقم ${qNumber} لم تتم الإجابة عليه بعد).`
       );
+      setTimeout(() => {
+        const el = document.getElementById(`question-${qNumber}`);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
       return;
     }
 
     setErrorMessage(null);
-    if (currentIndex < totalQ - 1) {
-      setCurrentIndex((prev) => prev + 1);
+    if (pageIndex < totalPages - 1) {
+      setPageIndex((prev) => prev + 1);
       if (typeof window !== 'undefined') {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     }
   };
 
-  const handlePrev = () => {
+  // الانتقال للصفحة السابقة
+  const handlePrevPage = () => {
     setErrorMessage(null);
-    if (currentIndex > 0) {
-      setCurrentIndex((prev) => prev - 1);
+    if (pageIndex > 0) {
+      setPageIndex((prev) => prev - 1);
       if (typeof window !== 'undefined') {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     }
   };
 
+  // تسليم الاختبار مع تحقق صارم من إجابة كافة الأسئلة الـ 100
   const handleSubmit = async () => {
-    // شرط صارم: لا يمكن تسليم الاختبار نهائياً إلا بعد الإجابة على جميع الأسئلة
     const unansweredIndex = questions.findIndex((q) => answers[q.id] === undefined);
     if (unansweredIndex !== -1) {
-      setCurrentIndex(unansweredIndex);
+      const targetPage = Math.floor(unansweredIndex / pageSize);
+      const qNumber = unansweredIndex + 1;
+      setPageIndex(targetPage);
       setErrorMessage(
-        `تنبيه هام: لا يمكنك تسليم الاختبار حتى تجيب على جميع الأسئلة! متبقي ${totalQ - answeredCount} أسئلة غير مُجابة. تم نقلك تلقائياً إلى السؤال رقم (${unansweredIndex + 1}) الذي لم تتم الإجابة عليه بعد.`
+        `تنبيه هام: لا يمكنك تسليم الاختبار حتى تجيب على جميع الأسئلة! متبقي ${totalQ - answeredCount} أسئلة غير مُجابة. تم نقلك تلقائياً إلى السؤال رقم (${qNumber}) في الصفحة (${targetPage + 1}) الذي لم تتم الإجابة عليه بعد.`
       );
-      if (typeof window !== 'undefined') {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
+      setTimeout(() => {
+        const el = document.getElementById(`question-${qNumber}`);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else if (typeof window !== 'undefined') {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      }, 150);
       return;
     }
 
@@ -425,20 +484,18 @@ export function ExamRunner({
     );
   }
 
-  const isTrueFalseQuestion =
-    currentQ.question_type === 'true_false' ||
-    (currentQ.options.length === 2 &&
-      (currentQ.options[0] === 'صح' || currentQ.options[0] === 'صواب'));
-
   return (
     <div className="max-w-3xl mx-auto space-y-4 sm:space-y-6 relative z-10 pointer-events-auto">
-      {/* هيدر الاختبار والتقدم */}
+      {/* هيدر الاختبار والتقدم ورقم الصفحة */}
       <div className="bg-white p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-xs space-y-3">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h2 className="text-base sm:text-lg font-black text-asu-navy">{examTitle}</h2>
             <p className="text-xs text-slate-500 mt-0.5">
-              السؤال <span className="font-bold text-slate-700">{currentIndex + 1}</span> من أصل <span className="font-bold text-slate-700">{totalQ}</span>
+              الصفحة <span className="font-bold text-slate-700">{pageIndex + 1}</span> من أصل <span className="font-bold text-slate-700">{totalPages}</span>
+              {' • '}
+              الأسئلة من <span className="font-bold text-slate-700">{startIndex + 1}</span> إلى <span className="font-bold text-slate-700">{endIndex}</span>
+              {' '}(إجمالي {totalQ} سؤالاً)
             </p>
           </div>
           <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
@@ -491,34 +548,51 @@ export function ExamRunner({
           </div>
         )}
 
-        {/* شريط أرقام الأسئلة والتنقل السريع للهواتف والكمبيوتر */}
+        {/* شريط تابات الصفحات والتنقل السريع (10 أسئلة في كل صفحة) */}
         <div className="pt-2 border-t border-slate-100 flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 scroll-smooth no-scrollbar">
-          {questions.map((q, idx) => {
-            const isAnswered = answers[q.id] !== undefined;
-            const isCurrent = idx === currentIndex;
+          {Array.from({ length: totalPages }).map((_, pIdx) => {
+            const pageStart = pIdx * pageSize;
+            const pageEnd = Math.min(pageStart + pageSize, totalQ);
+            const pQuestions = questions.slice(pageStart, pageEnd);
+            const pAnswered = pQuestions.filter((q) => answers[q.id] !== undefined).length;
+            const isPageComplete = pAnswered === pQuestions.length;
+            const isCurrentPage = pIdx === pageIndex;
+
             return (
               <button
-                key={q.id}
-                ref={isCurrent ? activeQuestionBtnRef : null}
+                key={pIdx}
+                ref={isCurrentPage ? activePageBtnRef : null}
                 type="button"
                 onClick={() => {
-                  setCurrentIndex(idx);
+                  setPageIndex(pIdx);
+                  setErrorMessage(null);
                   if (typeof window !== 'undefined') {
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }
                 }}
-                className={`min-w-9 h-9 sm:min-w-10 sm:h-10 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-0.5 cursor-pointer touch-manipulation transition-colors active:scale-95 ${
-                  isCurrent
+                className={`px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl font-bold text-xs flex items-center gap-1.5 cursor-pointer touch-manipulation transition-all whitespace-nowrap shrink-0 active:scale-95 ${
+                  isCurrentPage
                     ? 'bg-asu-navy text-white shadow-md ring-2 ring-asu-gold'
-                    : isAnswered
-                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-300 font-bold'
-                    : 'bg-slate-50 text-slate-600 border border-slate-200 hover:bg-slate-100 active:bg-slate-200'
+                    : isPageComplete
+                    ? 'bg-emerald-50 text-emerald-800 border border-emerald-300'
+                    : 'bg-slate-50 text-slate-700 border border-slate-200 hover:bg-slate-100'
                 }`}
-                title={`الانتقال للسؤال رقم ${idx + 1}`}
+                title={`الصفحة ${pIdx + 1}: الأسئلة (${pageStart + 1} - ${pageEnd})`}
               >
-                <span className="pointer-events-none">{idx + 1}</span>
-                {isAnswered && !isCurrent && (
-                  <span className="text-[10px] text-emerald-600 font-bold pointer-events-none">✓</span>
+                <span>الصفحة {pIdx + 1}</span>
+                <span
+                  className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono ${
+                    isCurrentPage
+                      ? 'bg-white/20 text-white'
+                      : isPageComplete
+                      ? 'bg-emerald-200 text-emerald-900 font-bold'
+                      : 'bg-slate-200 text-slate-600'
+                  }`}
+                >
+                  {pAnswered}/{pQuestions.length}
+                </span>
+                {isPageComplete && !isCurrentPage && (
+                  <span className="text-emerald-600 text-xs font-black">✓</span>
                 )}
               </button>
             );
@@ -527,7 +601,7 @@ export function ExamRunner({
       </div>
 
       {errorMessage && (
-        <div className="p-4 rounded-2xl bg-amber-50 border-2 border-amber-300 text-amber-950 text-xs sm:text-sm font-bold flex items-center gap-3 shadow-md">
+        <div className="p-4 rounded-2xl bg-amber-50 border-2 border-amber-300 text-amber-950 text-xs sm:text-sm font-bold flex items-center gap-3 shadow-md sticky top-20 z-30">
           <div className="w-8 h-8 rounded-xl bg-amber-200/80 text-amber-800 flex items-center justify-center shrink-0">
             <AlertCircle className="w-5 h-5 text-amber-700" />
           </div>
@@ -535,188 +609,241 @@ export function ExamRunner({
         </div>
       )}
 
-      {/* بطاقة السؤال الحالي */}
-      <Card className="shadow-lg border-slate-200/90 bg-white rounded-2xl sm:rounded-3xl overflow-hidden">
-        <CardHeader className="pb-4 border-b border-slate-100 bg-slate-50/40">
-          <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
-            <div className="flex items-center gap-2 text-asu-navy text-xs font-bold">
-              <HelpCircle className="w-4 h-4 text-asu-gold-dark" />
-              <span>السؤال رقم {currentIndex + 1} من {totalQ}</span>
-            </div>
-            {isTrueFalseQuestion ? (
-              <Badge variant="gold" className="text-[10px] sm:text-xs gap-1.5 px-3 py-1 font-black bg-amber-100 text-amber-950 border border-amber-300 shadow-2xs">
-                <ToggleLeft className="w-3.5 h-3.5 text-amber-700" />
-                <span>ثانيًا: حدد الصواب والخطأ للأسئلة التالية</span>
-              </Badge>
-            ) : (
-              <Badge variant="outline" className="text-[10px] sm:text-xs gap-1.5 px-3 py-1 font-black bg-asu-navy/10 text-asu-navy border border-asu-navy/25 shadow-2xs">
-                <span className="w-2 h-2 rounded-full bg-asu-navy inline-block" />
-                <span>أولًا: أسئلة الاختيار من متعدد</span>
-              </Badge>
-            )}
-          </div>
-          <CardTitle className="text-base sm:text-lg font-black text-slate-900 leading-relaxed pt-1 text-right">
-            {currentQ.question_text}
-          </CardTitle>
-        </CardHeader>
+      {/* قائمة الـ 10 أسئلة الخاصة بالصفحة الحالية */}
+      <div className="space-y-6">
+        {pageQuestions.map((q, qLocalIdx) => {
+          const globalIdx = startIndex + qLocalIdx;
+          const qNumber = globalIdx + 1;
+          const isSelected = answers[q.id] !== undefined;
+          const isTrueFalseQuestion =
+            q.question_type === 'true_false' ||
+            (q.options.length === 2 && (q.options[0] === 'صح' || q.options[0] === 'صواب'));
 
-        <CardContent className="pt-6 pb-6">
-          {isTrueFalseQuestion ? (
-            /* أزرار صح وخطأ - أزرار تفاعلية نقية ومريحة على الموبايل */
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-              {/* خيار صح */}
-              <button
-                type="button"
-                onClick={() => handleSelectOption(0)}
-                className={`w-full min-h-[100px] p-4 sm:p-5 rounded-2xl border-2 flex flex-col items-center justify-center gap-2.5 cursor-pointer touch-manipulation text-center transition-all active:scale-[0.98] ${
-                  answers[currentQ.id] === 0
-                    ? 'border-emerald-600 bg-emerald-50 text-emerald-950 font-black shadow-lg ring-2 ring-emerald-500/30'
-                    : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50 active:bg-slate-100 text-slate-700'
-                }`}
-              >
-                <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center shadow-xs pointer-events-none ${
-                  answers[currentQ.id] === 0 ? 'bg-emerald-600 text-white' : 'bg-emerald-100 text-emerald-700'
-                }`}>
-                  <CheckCircle2 className="w-7 h-7 sm:w-8 sm:h-8" />
-                </div>
-                <div className="space-y-1 pointer-events-none">
-                  <span className="text-base sm:text-lg font-black block">صح (صواب)</span>
-                  {answers[currentQ.id] === 0 ? (
-                    <span className="text-xs bg-emerald-600 text-white px-3 py-1 rounded-full font-bold inline-flex items-center gap-1 shadow-xs">
-                      <CheckCircle2 className="w-3.5 h-3.5" />
-                      <span>✓ إجابتك المختارة</span>
+          return (
+            <Card
+              key={q.id}
+              id={`question-${qNumber}`}
+              className={`scroll-mt-24 shadow-md bg-white rounded-2xl sm:rounded-3xl overflow-hidden border-2 transition-all ${
+                isSelected
+                  ? 'border-slate-200 hover:border-slate-300'
+                  : 'border-amber-200/80 bg-amber-50/15'
+              }`}
+            >
+              <CardHeader className="pb-4 border-b border-slate-100 bg-slate-50/40">
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+                  <div className="flex items-center gap-2 text-asu-navy text-xs font-bold">
+                    <HelpCircle className="w-4 h-4 text-asu-gold-dark" />
+                    <span>السؤال رقم {qNumber} من {totalQ}</span>
+                    <span className="text-slate-400 font-normal">
+                      (صفحة {pageIndex + 1})
                     </span>
-                  ) : (
-                    <span className="text-xs text-slate-400 font-medium">اضغط لتحديد الإجابة</span>
-                  )}
-                </div>
-              </button>
+                  </div>
 
-              {/* خيار خطأ */}
-              <button
-                type="button"
-                onClick={() => handleSelectOption(1)}
-                className={`w-full min-h-[100px] p-4 sm:p-5 rounded-2xl border-2 flex flex-col items-center justify-center gap-2.5 cursor-pointer touch-manipulation text-center transition-all active:scale-[0.98] ${
-                  answers[currentQ.id] === 1
-                    ? 'border-rose-600 bg-rose-50 text-rose-950 font-black shadow-lg ring-2 ring-rose-500/30'
-                    : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50 active:bg-slate-100 text-slate-700'
-                }`}
-              >
-                <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center shadow-xs pointer-events-none ${
-                  answers[currentQ.id] === 1 ? 'bg-rose-600 text-white' : 'bg-rose-100 text-rose-700'
-                }`}>
-                  <XCircle className="w-7 h-7 sm:w-8 sm:h-8" />
+                  <div className="flex items-center gap-2">
+                    {/* شارة حالة الإجابة */}
+                    {isSelected ? (
+                      <Badge variant="success" className="text-[10px] sm:text-xs gap-1 px-2.5 py-0.5 font-bold">
+                        <CheckCircle2 className="w-3 h-3" />
+                        <span>تمت الإجابة</span>
+                      </Badge>
+                    ) : (
+                      <Badge variant="outline" className="text-[10px] sm:text-xs px-2.5 py-0.5 border-amber-300 text-amber-800 bg-amber-50 font-bold">
+                        <span>مطلوب إجابته</span>
+                      </Badge>
+                    )}
+
+                    {/* تصنيف القسم الخاص بالسؤال بالصيغة المطلوبة تماماً */}
+                    {isTrueFalseQuestion ? (
+                      <Badge variant="gold" className="text-[10px] sm:text-xs gap-1.5 px-3 py-1 font-black bg-amber-100 text-amber-950 border border-amber-300 shadow-2xs">
+                        <ToggleLeft className="w-3.5 h-3.5 text-amber-700" />
+                        <span>ثانيًا: حدد الصواب والخطأ للأسئلة التالية</span>
+                      </Badge>
+                    ) : (
+                      <Badge variant="outline" className="text-[10px] sm:text-xs gap-1.5 px-3 py-1 font-black bg-asu-navy/10 text-asu-navy border border-asu-navy/25 shadow-2xs">
+                        <span className="w-2 h-2 rounded-full bg-asu-navy inline-block" />
+                        <span>أولًا: أسئلة الاختيار من متعدد</span>
+                      </Badge>
+                    )}
+                  </div>
                 </div>
-                <div className="space-y-1 pointer-events-none">
-                  <span className="text-base sm:text-lg font-black block">خطأ</span>
-                  {answers[currentQ.id] === 1 ? (
-                    <span className="text-xs bg-rose-600 text-white px-3 py-1 rounded-full font-bold inline-flex items-center gap-1 shadow-xs">
-                      <CheckCircle2 className="w-3.5 h-3.5" />
-                      <span>✓ إجابتك المختارة</span>
-                    </span>
-                  ) : (
-                    <span className="text-xs text-slate-400 font-medium">اضغط لتحديد الإجابة</span>
-                  )}
-                </div>
-              </button>
-            </div>
-          ) : (
-            /* أزرار الاختيار من متعدد - أزرار تفاعلية نقية تستجيب فوراً للمس على الموبايل */
-            <div className="space-y-3">
-              {currentQ.options.map((option, idx) => {
-                const isSelected = answers[currentQ.id] === idx;
-                const letter = OPTION_LETTERS[idx] || `${idx + 1}`;
-                return (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => handleSelectOption(idx)}
-                    className={`w-full text-right min-h-[52px] p-3.5 sm:p-4 rounded-2xl border-2 flex items-center justify-between gap-3 cursor-pointer touch-manipulation transition-all active:scale-[0.99] ${
-                      isSelected
-                        ? 'border-asu-navy bg-asu-navy-50/90 text-asu-navy font-black ring-2 ring-asu-navy/20 shadow-md'
-                        : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50 active:bg-slate-100 text-slate-800'
-                    }`}
-                  >
-                    <div className="flex items-center gap-3 min-w-0 flex-1 pointer-events-none">
-                      <span
-                        className={`w-7 h-7 sm:w-8 sm:h-8 rounded-xl flex items-center justify-center text-xs sm:text-sm font-black shrink-0 ${
-                          isSelected
-                            ? 'bg-asu-navy text-white shadow-xs'
-                            : 'bg-slate-100 text-slate-600 border border-slate-200'
+
+                <CardTitle className="text-base sm:text-lg font-black text-slate-900 leading-relaxed pt-1 text-right">
+                  {q.question_text}
+                </CardTitle>
+              </CardHeader>
+
+              <CardContent className="pt-6 pb-6">
+                {isTrueFalseQuestion ? (
+                  /* أزرار صح وخطأ - أزرار تفاعلية نقية ومريحة على الموبايل */
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                    {/* خيار صح */}
+                    <button
+                      type="button"
+                      onClick={() => handleSelectOption(q.id, 0)}
+                      className={`w-full min-h-[90px] p-4 sm:p-5 rounded-2xl border-2 flex flex-col items-center justify-center gap-2 cursor-pointer touch-manipulation text-center transition-all active:scale-[0.98] ${
+                        answers[q.id] === 0
+                          ? 'border-emerald-600 bg-emerald-50 text-emerald-950 font-black shadow-md ring-2 ring-emerald-500/30'
+                          : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50 active:bg-slate-100 text-slate-700'
+                      }`}
+                    >
+                      <div
+                        className={`w-10 h-10 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center shadow-xs pointer-events-none ${
+                          answers[q.id] === 0 ? 'bg-emerald-600 text-white' : 'bg-emerald-100 text-emerald-700'
                         }`}
                       >
-                        {letter}
-                      </span>
-                      <span className="text-xs sm:text-sm md:text-base leading-relaxed break-words text-right flex-1 font-medium">
-                        {option}
-                      </span>
-                    </div>
+                        <CheckCircle2 className="w-6 h-6" />
+                      </div>
+                      <div className="space-y-0.5 pointer-events-none">
+                        <span className="text-base sm:text-lg font-black block">صح (صواب)</span>
+                        {answers[q.id] === 0 ? (
+                          <span className="text-[11px] bg-emerald-600 text-white px-2.5 py-0.5 rounded-full font-bold inline-flex items-center gap-1 shadow-xs">
+                            <CheckCircle2 className="w-3 h-3" />
+                            <span>✓ إجابتك المختارة</span>
+                          </span>
+                        ) : (
+                          <span className="text-[11px] text-slate-400 font-medium">اضغط لتحديد الإجابة</span>
+                        )}
+                      </div>
+                    </button>
 
-                    <div className="shrink-0 flex items-center gap-2 pointer-events-none">
-                      {isSelected ? (
-                        <span className="inline-flex items-center gap-1 text-xs bg-asu-navy text-white px-2.5 py-1 rounded-full font-bold shadow-xs">
-                          <CheckCircle2 className="w-3.5 h-3.5" />
-                          <span className="hidden sm:inline">تم الاختيار</span>
-                        </span>
-                      ) : (
-                        <span className="w-5 h-5 rounded-full border-2 border-slate-300 bg-white block" />
-                      )}
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          )}
-        </CardContent>
+                    {/* خيار خطأ */}
+                    <button
+                      type="button"
+                      onClick={() => handleSelectOption(q.id, 1)}
+                      className={`w-full min-h-[90px] p-4 sm:p-5 rounded-2xl border-2 flex flex-col items-center justify-center gap-2 cursor-pointer touch-manipulation text-center transition-all active:scale-[0.98] ${
+                        answers[q.id] === 1
+                          ? 'border-rose-600 bg-rose-50 text-rose-950 font-black shadow-md ring-2 ring-rose-500/30'
+                          : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50 active:bg-slate-100 text-slate-700'
+                      }`}
+                    >
+                      <div
+                        className={`w-10 h-10 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center shadow-xs pointer-events-none ${
+                          answers[q.id] === 1 ? 'bg-rose-600 text-white' : 'bg-rose-100 text-rose-700'
+                        }`}
+                      >
+                        <XCircle className="w-6 h-6" />
+                      </div>
+                      <div className="space-y-0.5 pointer-events-none">
+                        <span className="text-base sm:text-lg font-black block">خطأ</span>
+                        {answers[q.id] === 1 ? (
+                          <span className="text-[11px] bg-rose-600 text-white px-2.5 py-0.5 rounded-full font-bold inline-flex items-center gap-1 shadow-xs">
+                            <CheckCircle2 className="w-3 h-3" />
+                            <span>✓ إجابتك المختارة</span>
+                          </span>
+                        ) : (
+                          <span className="text-[11px] text-slate-400 font-medium">اضغط لتحديد الإجابة</span>
+                        )}
+                      </div>
+                    </button>
+                  </div>
+                ) : (
+                  /* أزرار الاختيار من متعدد - أزرار تفاعلية نقية تستجيب فوراً للمس على الموبايل */
+                  <div className="space-y-2.5">
+                    {q.options.map((option, optIdx) => {
+                      const isOptSelected = answers[q.id] === optIdx;
+                      const letter = OPTION_LETTERS[optIdx] || `${optIdx + 1}`;
+                      return (
+                        <button
+                          key={optIdx}
+                          type="button"
+                          onClick={() => handleSelectOption(q.id, optIdx)}
+                          className={`w-full text-right min-h-[50px] p-3 sm:p-3.5 rounded-2xl border-2 flex items-center justify-between gap-3 cursor-pointer touch-manipulation transition-all active:scale-[0.99] ${
+                            isOptSelected
+                              ? 'border-asu-navy bg-asu-navy-50/90 text-asu-navy font-black ring-2 ring-asu-navy/20 shadow-xs'
+                              : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50 active:bg-slate-100 text-slate-800'
+                          }`}
+                        >
+                          <div className="flex items-center gap-3 min-w-0 flex-1 pointer-events-none">
+                            <span
+                              className={`w-7 h-7 sm:w-8 sm:h-8 rounded-xl flex items-center justify-center text-xs sm:text-sm font-black shrink-0 ${
+                                isOptSelected
+                                  ? 'bg-asu-navy text-white shadow-xs'
+                                  : 'bg-slate-100 text-slate-600 border border-slate-200'
+                              }`}
+                            >
+                              {letter}
+                            </span>
+                            <span className="text-xs sm:text-sm md:text-base leading-relaxed break-words text-right flex-1 font-medium">
+                              {option}
+                            </span>
+                          </div>
 
-        <CardFooter className="flex items-center justify-between p-4 sm:p-5 border-t border-slate-100 bg-slate-50/50 gap-2">
+                          <div className="shrink-0 flex items-center gap-2 pointer-events-none">
+                            {isOptSelected ? (
+                              <span className="inline-flex items-center gap-1 text-xs bg-asu-navy text-white px-2.5 py-1 rounded-full font-bold shadow-xs">
+                                <CheckCircle2 className="w-3.5 h-3.5" />
+                                <span className="hidden sm:inline">تم الاختيار</span>
+                              </span>
+                            ) : (
+                              <span className="w-5 h-5 rounded-full border-2 border-slate-300 bg-white block" />
+                            )}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
+
+      {/* شريط التحكم السفلي بالصفحة والتنقل والتسليم (Fixed / Sticky Footer) */}
+      <div className="bg-white p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-md flex flex-wrap items-center justify-between gap-3 sticky bottom-4 z-20 backdrop-blur-md bg-white/95">
+        <button
+          type="button"
+          onClick={handlePrevPage}
+          disabled={pageIndex === 0 || isSubmitting}
+          className="h-12 px-5 sm:px-6 rounded-2xl border border-slate-300 bg-white hover:bg-slate-50 active:bg-slate-100 text-slate-700 flex items-center justify-center gap-1.5 font-bold text-sm sm:text-base cursor-pointer touch-manipulation shadow-2xs disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          <ArrowRight className="w-4 h-4 ml-1 pointer-events-none" />
+          <span className="pointer-events-none">الصفحة السابقة</span>
+        </button>
+
+        <div className="text-center font-bold text-xs sm:text-sm text-slate-700">
+          <span>الصفحة {pageIndex + 1} من {totalPages}</span>
+          <span className="block text-[11px] text-slate-400 font-normal">
+            الأسئلة من {startIndex + 1} إلى {endIndex}
+          </span>
+        </div>
+
+        {pageIndex < totalPages - 1 ? (
           <button
             type="button"
-            onClick={handlePrev}
-            disabled={currentIndex === 0 || isSubmitting}
-            className="h-12 px-5 rounded-2xl border border-slate-300 bg-white hover:bg-slate-50 active:bg-slate-100 text-slate-700 flex items-center justify-center gap-1.5 font-bold text-sm sm:text-base cursor-pointer touch-manipulation shadow-2xs disabled:opacity-40 disabled:cursor-not-allowed"
+            onClick={handleNextPage}
+            disabled={isSubmitting}
+            className="h-12 px-6 sm:px-8 rounded-2xl bg-asu-navy hover:bg-asu-navy-dark active:bg-asu-navy-dark text-white flex items-center justify-center gap-2 font-black text-sm sm:text-base cursor-pointer touch-manipulation shadow-lg shadow-asu-navy/25"
           >
-            <ArrowRight className="w-4 h-4 ml-1 pointer-events-none" />
-            <span className="pointer-events-none">السابق</span>
+            <span className="pointer-events-none">الانتقال للصفحة التالية</span>
+            <ArrowLeft className="w-4 h-4 mr-1 pointer-events-none" />
           </button>
-
-          {currentIndex < totalQ - 1 ? (
-            <button
-              type="button"
-              onClick={handleNext}
-              disabled={isSubmitting}
-              className="h-12 px-6 sm:px-8 rounded-2xl bg-asu-navy hover:bg-asu-navy-dark active:bg-asu-navy-dark text-white flex items-center justify-center gap-2 font-black text-sm sm:text-base cursor-pointer touch-manipulation shadow-lg shadow-asu-navy/25 disabled:opacity-50"
-            >
-              <span className="pointer-events-none">التالي</span>
-              <ArrowLeft className="w-4 h-4 mr-1 pointer-events-none" />
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={handleSubmit}
-              disabled={isSubmitting}
-              className={`h-12 px-6 sm:px-8 rounded-2xl text-white flex items-center justify-center gap-2 font-black text-sm sm:text-base cursor-pointer touch-manipulation shadow-lg transition-all ${
-                answeredCount < totalQ
-                  ? 'bg-amber-600 hover:bg-amber-700 shadow-amber-600/25'
-                  : 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-600/25'
-              } disabled:opacity-50`}
-            >
-              {isSubmitting ? (
-                <span className="pointer-events-none">جاري التسليم...</span>
-              ) : (
-                <div className="flex items-center gap-2 pointer-events-none">
-                  <Send className="w-4 h-4 ml-1" />
-                  <span>
-                    {answeredCount < totalQ
-                      ? `تسليم الاختبار (متبقي ${totalQ - answeredCount} أسئلة)`
-                      : 'تسليم الاختبار النهائي'}
-                  </span>
-                </div>
-              )}
-            </button>
-          )}
-        </CardFooter>
-      </Card>
+        ) : (
+          <button
+            type="button"
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+            className={`h-12 px-6 sm:px-8 rounded-2xl text-white flex items-center justify-center gap-2 font-black text-sm sm:text-base cursor-pointer touch-manipulation shadow-lg transition-all ${
+              answeredCount < totalQ
+                ? 'bg-amber-600 hover:bg-amber-700 shadow-amber-600/25'
+                : 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-600/25'
+            } disabled:opacity-50`}
+          >
+            {isSubmitting ? (
+              <span className="pointer-events-none">جاري التسليم...</span>
+            ) : (
+              <div className="flex items-center gap-2 pointer-events-none">
+                <Send className="w-4 h-4 ml-1" />
+                <span>
+                  {answeredCount < totalQ
+                    ? `تسليم الاختبار (متبقي ${totalQ - answeredCount} أسئلة)`
+                    : 'تسليم الاختبار النهائي'}
+                </span>
+              </div>
+            )}
+          </button>
+        )}
+      </div>
 
       {/* نافذة عرض التعليمات المنبثقة أثناء سير الاختبار */}
       {showInstructionsModal && activeInstructions && (
