@@ -1,10 +1,6 @@
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ContactForm } from '@/components/contact/contact-form';
-import {
-  Sparkles,
-  HelpCircle,
-} from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import { ASU_LOGO_URL } from '@/lib/constants/branding';
 
 export const metadata = {
@@ -75,81 +71,6 @@ export default function ContactUsPage() {
       {/* 2. نموذج إرسال الاستفسار والدعم الفني المباشر */}
       <section id="contact-form-section" className="max-w-3xl mx-auto w-full">
         <ContactForm />
-      </section>
-
-      {/* 4. قسم الأسئلة الشائعة الأكاديمية والتقنية (Royal FAQ Section) */}
-      <section className="space-y-4 pt-4 border-t border-slate-200">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-asu-navy-50 text-asu-navy flex items-center justify-center border border-asu-navy/20">
-            <HelpCircle className="w-4 h-4 text-asu-navy" />
-          </div>
-          <div>
-            <h2 className="text-lg sm:text-xl font-black text-asu-navy">
-              الأسئلة الشائعة والإجابات الفورية
-            </h2>
-            <p className="text-xs text-slate-500">
-              إجابات سريعة ومباشرة على أكثر الاستفسارات تكراراً من الطلاب والباحثين
-            </p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Card className="border-slate-200/80 bg-white shadow-2xs hover:border-asu-gold/40 transition-colors">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-black text-asu-navy flex items-center gap-2">
-                <span className="w-6 h-6 rounded-full bg-asu-navy-50 text-asu-navy text-xs font-bold flex items-center justify-center shrink-0">
-                  1
-                </span>
-                <span>كيف أحصل على كود الطالب وكلمة المرور الخاصة بي؟</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="text-xs text-slate-600 leading-relaxed">
-              يتم تسليم كود الطالب الأكاديمي (مثل 2026101) من خلال المشرف الأكاديمي أو إدارة البحث بكلية التربية، وتكون كلمة المرور الموحدة الافتراضية مسجلة وموثقة في كشف المجموعات التجريبية.
-            </CardContent>
-          </Card>
-
-          <Card className="border-slate-200/80 bg-white shadow-2xs hover:border-asu-gold/40 transition-colors">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-black text-asu-navy flex items-center gap-2">
-                <span className="w-6 h-6 rounded-full bg-asu-navy-50 text-asu-navy text-xs font-bold flex items-center justify-center shrink-0">
-                  2
-                </span>
-                <span>هل يمكنني إعادة أداء الاختبار القبلي بعد إنهائه؟</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="text-xs text-slate-600 leading-relaxed">
-              وفق المعايير المنهجية للبحث الأكاديمي، يُسمح بأداء الاختبار القبلي لمرة واحدة فقط لتشخيص المستوى الأولي، وبعدها ينتقل الطالب مباشرة لدراسة الوحدات والموديولات التعليمية.
-            </CardContent>
-          </Card>
-
-          <Card className="border-slate-200/80 bg-white shadow-2xs hover:border-asu-gold/40 transition-colors">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-black text-asu-navy flex items-center gap-2">
-                <span className="w-6 h-6 rounded-full bg-asu-navy-50 text-asu-navy text-xs font-bold flex items-center justify-center shrink-0">
-                  3
-                </span>
-                <span>ماذا أفعل إذا انقطع الاتصال بالإنترنت أثناء حل الاختبار؟</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="text-xs text-slate-600 leading-relaxed">
-              النظام يحتفظ بالإجابات محلياً على المتصفح أثناء التفاعل، ولكن يُنصح بضمان استقرار الشبكة قبل الضغط على زر «تسليم وإنهاء الاختبار نهائياً» لضمان حفظ النتيجة في السجل.
-            </CardContent>
-          </Card>
-
-          <Card className="border-slate-200/80 bg-white shadow-2xs hover:border-asu-gold/40 transition-colors">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-black text-asu-navy flex items-center gap-2">
-                <span className="w-6 h-6 rounded-full bg-asu-navy-50 text-asu-navy text-xs font-bold flex items-center justify-center shrink-0">
-                  4
-                </span>
-                <span>كيف يتأكد المشرف من استكمال دراسة كافة الموديولات؟</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="text-xs text-slate-600 leading-relaxed">
-              تحتوي لوحة تحكم المشرف (`/admin/dashboard`) على نظام رصد فوري لنسب إنجاز كل طالب لكل موديول على حدة، وتاريخ تسليم الاختبار القبلي والبعدي لحساب الفروق الإحصائية.
-            </CardContent>
-          </Card>
-        </div>
       </section>
     </div>
   );
