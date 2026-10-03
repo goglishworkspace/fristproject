@@ -4,3 +4,5 @@
  */
 export const ASU_LOGO_URL =
   'https://res.cloudinary.com/makcnu5x/image/upload/v1790087479/4ae8e797-056b-41f8-b6bc-cbaf053ce387.jpg';
+
+export const PLATFORM_NAME = 'منصة الوعي بقضايا البيئة للمرحلة الثانوية';

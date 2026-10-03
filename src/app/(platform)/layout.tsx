@@ -79,7 +79,7 @@ export default async function PlatformLayout({
           <div className="space-y-0.5">
             <p className="font-black text-asu-navy text-base sm:text-lg">جامعة عين شمس</p>
             <p className="text-xs sm:text-sm text-slate-500 font-semibold">
-              كلية التربية • منصة بيئتي التعليمية التفاعلية
+              كلية التربية • منصة الوعي بقضايا البيئة للمرحلة الثانوية
             </p>
           </div>
 

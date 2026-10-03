@@ -67,8 +67,8 @@ export function Navbar({ user }: NavbarProps) {
           {/* نصوص الهوية والكلية */}
           <div className="text-right">
             <div className="flex items-center gap-1.5">
-              <span className="font-extrabold text-asu-navy text-xs sm:text-base leading-tight">
-                منصة بيئتي التعليمية
+              <span className="font-extrabold text-asu-navy text-xs sm:text-sm md:text-base leading-tight">
+                منصة الوعي بقضايا البيئة للمرحلة الثانوية
               </span>
               <span className="hidden md:inline-block px-1.5 py-0.5 rounded text-[10px] font-bold bg-asu-gold/15 text-asu-gold-dark border border-asu-gold/30">
                 جامعة عين شمس

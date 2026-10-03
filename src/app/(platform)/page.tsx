@@ -24,7 +24,7 @@ export default async function PlatformHomePage() {
 
   return (
     <div className="space-y-8 md:space-y-10 pb-6">
-      {/* 1. قسم البانر التعريفي الرئيسي (Hero Section) لمنصة بيئتي التعليمية التفاعلية */}
+      {/* 1. قسم البانر التعريفي الرئيسي (Hero Section) لمنصة الوعي بقضايا البيئة للمرحلة الثانوية */}
       <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-asu-navy-dark via-asu-navy to-[#1c2c6d] text-white p-5 sm:p-8 md:p-12 shadow-2xl border border-asu-gold/20">
         {/* خلفيات ضوئية جمالية مستوحاة من ألوان الشعار */}
         <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/3 w-80 h-80 sm:w-96 sm:h-96 bg-asu-gold/10 rounded-full blur-3xl pointer-events-none" />
@@ -53,7 +53,7 @@ export default async function PlatformHomePage() {
             )}
 
             <h1 className="text-2xl sm:text-3xl md:text-5xl font-black tracking-tight leading-tight sm:leading-tight text-white">
-              منصة <span className="text-asu-gold-light">بيئتي</span> التعليمية التفاعلية
+              منصة <span className="text-asu-gold-light">الوعي بقضايا البيئة</span> للمرحلة الثانوية
             </h1>
 
             <p className="text-slate-200 text-xs sm:text-sm md:text-base leading-relaxed max-w-2xl font-normal">

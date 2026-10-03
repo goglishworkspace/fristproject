@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Target, CheckCircle2, Sparkles, ArrowLeft, GraduationCap } from 'lucide-react';
 
 export const metadata = {
-  title: 'الأهداف العامة | منصة بيئتي التعليمية • جامعة عين شمس',
+  title: 'الأهداف العامة | منصة الوعي بقضايا البيئة للمرحلة الثانوية • جامعة عين شمس',
   description: 'الأهداف العامة للبرنامج التعليمي - كلية التربية جامعة عين شمس',
 };
 

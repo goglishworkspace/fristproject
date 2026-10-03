@@ -10,7 +10,7 @@ import { AdminDashboardTabs } from '@/components/admin/admin-dashboard-tabs';
 import { ASU_LOGO_URL } from '@/lib/constants/branding';
 
 export const metadata = {
-  title: 'لوحة التحكم والمشرف الأكاديمي | منصة بيئتي التعليمية • جامعة عين شمس',
+  title: 'لوحة التحكم والمشرف الأكاديمي | منصة الوعي بقضايا البيئة للمرحلة الثانوية • جامعة عين شمس',
   description: 'إدارة حسابات الطلاب، وتوزيع الأكواد، وبنك الأسئلة، والموديولات والمكتبة الإثرائية',
 };
 

@@ -1191,7 +1191,7 @@ export function StudentAnswersModal({
         {/* 4. فوتر النافذة المنبثقة (ثابت) */}
         <div className="shrink-0 p-4 border-t border-slate-200 bg-slate-50 flex items-center justify-between">
           <span className="text-xs text-slate-500 hidden sm:inline-block">
-            منصة بيئتي التعليمية • لوحة المشرف الأكاديمي
+            منصة الوعي بقضايا البيئة للمرحلة الثانوية • لوحة المشرف الأكاديمي
           </span>
           <Button variant="outline" size="md" onClick={onClose} className="text-xs font-bold px-6">
             إغلاق النافذة
