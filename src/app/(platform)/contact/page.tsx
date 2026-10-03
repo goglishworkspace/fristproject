@@ -2,15 +2,9 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ContactForm } from '@/components/contact/contact-form';
 import {
-  Mail,
-  Building2,
-  GraduationCap,
   Sparkles,
-  ShieldCheck,
   Clock,
-  ExternalLink,
   HelpCircle,
-  Compass,
 } from 'lucide-react';
 import { ASU_LOGO_URL } from '@/lib/constants/branding';
 
@@ -83,120 +77,7 @@ export default function ContactUsPage() {
         </div>
       </section>
 
-      {/* 2. بطاقات قنوات التواصل الرسمية الأربع (Royal Contact Hub) */}
-      <section className="space-y-4">
-        <div className="flex items-center justify-between border-b border-slate-200/80 pb-3">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-asu-navy-50 text-asu-navy flex items-center justify-center border border-asu-navy/20">
-              <Compass className="w-4 h-4 text-asu-navy" />
-            </div>
-            <div>
-              <h2 className="text-lg sm:text-xl font-black text-asu-navy">
-                قنوات التواصل والاعتماد الأكاديمي
-              </h2>
-              <p className="text-xs text-slate-500">
-                اختر القناة المناسبة لاستفسارك للحصول على أسرع استجابة
-              </p>
-            </div>
-          </div>
-          <Badge variant="gold" className="text-xs px-3 py-1 hidden sm:inline-flex">
-            قنوات رسمية معتمدة
-          </Badge>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-          {/* القناة 1: الإشراف الأكاديمي */}
-          <div className="group rounded-2xl bg-white border border-slate-200/90 p-5 shadow-xs hover:shadow-md hover:border-asu-gold/50 transition-all flex flex-col justify-between space-y-4">
-            <div className="space-y-3">
-              <div className="w-12 h-12 rounded-2xl bg-asu-navy-50 text-asu-navy flex items-center justify-center border border-asu-navy/15 group-hover:scale-105 transition-transform">
-                <GraduationCap className="w-6 h-6 text-asu-navy" />
-              </div>
-              <div>
-                <span className="text-[10px] font-extrabold text-asu-navy bg-asu-navy-50 px-2 py-0.5 rounded-md inline-block mb-1">
-                  أكاديمي وبحثي
-                </span>
-                <h3 className="text-base font-black text-slate-900">
-                  الإشراف الأكاديمي
-                </h3>
-                <p className="text-xs text-slate-500 leading-relaxed mt-1">
-                  قسم المناهج وطرق التدريس بكلية التربية لمتابعة محتوى الوحدات والتقييمات.
-                </p>
-              </div>
-            </div>
-            <div className="pt-2 border-t border-slate-100">
-              <a
-                href="mailto:education@asu.edu.eg"
-                className="inline-flex items-center gap-1.5 text-xs font-bold text-asu-navy hover:text-asu-gold transition-colors"
-              >
-                <Mail className="w-3.5 h-3.5" />
-                <span className="font-mono text-[11px]">education@asu.edu.eg</span>
-              </a>
-            </div>
-          </div>
-
-          {/* القناة 2: الدعم الفني والتقني */}
-          <div className="group rounded-2xl bg-white border border-slate-200/90 p-5 shadow-xs hover:shadow-md hover:border-asu-gold/50 transition-all flex flex-col justify-between space-y-4">
-            <div className="space-y-3">
-              <div className="w-12 h-12 rounded-2xl bg-asu-gold-50 text-asu-gold-dark flex items-center justify-center border border-asu-gold/30 group-hover:scale-105 transition-transform">
-                <ShieldCheck className="w-6 h-6 text-asu-gold-dark" />
-              </div>
-              <div>
-                <span className="text-[10px] font-extrabold text-asu-gold-dark bg-asu-gold-50 px-2 py-0.5 rounded-md inline-block mb-1">
-                  تقني ومنظومة
-                </span>
-                <h3 className="text-base font-black text-slate-900">
-                  الدعم الفني للمنصة
-                </h3>
-                <p className="text-xs text-slate-500 leading-relaxed mt-1">
-                  حل مشكلات الحسابات وكود الطالب، وتسجيل الاختبارات والتوافق مع الأجهزة.
-                </p>
-              </div>
-            </div>
-            <div className="pt-2 border-t border-slate-100">
-              <a
-                href="mailto:support@asu.edu.eg"
-                className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-700 hover:text-asu-navy transition-colors"
-              >
-                <Mail className="w-3.5 h-3.5 text-slate-400" />
-                <span className="font-mono text-[11px]">support@faculty.local</span>
-              </a>
-            </div>
-          </div>
-
-          {/* القناة 3: المقر الجامعي والزيارات */}
-          <div className="group rounded-2xl bg-white border border-slate-200/90 p-5 shadow-xs hover:shadow-md hover:border-asu-gold/50 transition-all flex flex-col justify-between space-y-4">
-            <div className="space-y-3">
-              <div className="w-12 h-12 rounded-2xl bg-asu-green-50 text-asu-green flex items-center justify-center border border-asu-green/20 group-hover:scale-105 transition-transform">
-                <Building2 className="w-6 h-6 text-asu-green" />
-              </div>
-              <div>
-                <span className="text-[10px] font-extrabold text-asu-green bg-asu-green-50 px-2 py-0.5 rounded-md inline-block mb-1">
-                  المقر الأكاديمي
-                </span>
-                <h3 className="text-base font-black text-slate-900">
-                  كلية التربية - روكسي
-                </h3>
-                <p className="text-xs text-slate-500 leading-relaxed mt-1">
-                  مصر الجديدة، القاهرة • جامعة عين شمس، مبنى كلية التربية، قسم المناهج.
-                </p>
-              </div>
-            </div>
-            <div className="pt-2 border-t border-slate-100">
-              <a
-                href="https://maps.google.com/?q=Ain+Shams+University+Faculty+of+Education"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1 text-xs font-bold text-asu-green hover:underline"
-              >
-                <span>الموقع على الخريطة</span>
-                <ExternalLink className="w-3.5 h-3.5" />
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 3. نموذج إرسال الاستفسار والدعم الفني المباشر */}
+      {/* 2. نموذج إرسال الاستفسار والدعم الفني المباشر */}
       <section id="contact-form-section" className="max-w-3xl mx-auto w-full">
         <ContactForm />
       </section>
