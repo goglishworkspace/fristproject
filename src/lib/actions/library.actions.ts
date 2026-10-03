@@ -40,6 +40,15 @@ export async function extractYouTubeId(url: string): Promise<string | null> {
 
 // جلب قائمة الفيديوهات
 export async function getLibraryVideos(): Promise<LibraryVideo[]> {
+  // قراءة الفيديوهات الافتراضية من ملف JSON دائماً كمرجع مضمون
+  let fallbackVideos: LibraryVideo[] = [];
+  try {
+    const fileContent = await fs.readFile(DATA_FILE_PATH, 'utf-8');
+    fallbackVideos = JSON.parse(fileContent);
+  } catch (err) {
+    console.error('Error reading fallback library videos:', err);
+  }
+
   if (isLiveSupabaseConfigured()) {
     try {
       const supabase = await createClient();
@@ -48,7 +57,7 @@ export async function getLibraryVideos(): Promise<LibraryVideo[]> {
         .select('*')
         .order('added_at', { ascending: false });
 
-      if (!error && data) {
+      if (!error && data && data.length > 0) {
         return data.map((item) => ({
           id: item.id,
           title: item.title,
@@ -60,18 +69,33 @@ export async function getLibraryVideos(): Promise<LibraryVideo[]> {
           addedAt: item.added_at,
         }));
       }
+
+      // إذا كانت قاعدة بيانات Supabase متصلة ولكن جدول library_videos فارغ،
+      // نقوم تلقائياً بتغذية الجدول بالـ 16 فيديو لضمان ظهورها وتزامنها فوراً!
+      if (!error && data && data.length === 0 && fallbackVideos.length > 0) {
+        try {
+          const insertRows = fallbackVideos.map((v) => ({
+            id: v.id,
+            title: v.title,
+            description: v.description,
+            youtube_url: v.youtubeUrl,
+            youtube_id: v.youtubeId,
+            category: v.category,
+            duration: v.duration,
+            added_at: v.addedAt,
+          }));
+          await supabase.from('library_videos').upsert(insertRows, { onConflict: 'id' });
+        } catch (seedErr) {
+          console.warn('Auto-seed to Supabase library_videos warning:', seedErr);
+        }
+        return fallbackVideos;
+      }
     } catch (err) {
       console.warn('Supabase getLibraryVideos failed, falling back to JSON:', err);
     }
   }
 
-  try {
-    const data = await fs.readFile(DATA_FILE_PATH, 'utf-8');
-    return JSON.parse(data);
-  } catch (error) {
-    console.error('Error reading library videos:', error);
-    return [];
-  }
+  return fallbackVideos;
 }
 
 // إضافة فيديو يوتيوب جديد من لوحة تحكم المشرف
