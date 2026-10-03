@@ -83,12 +83,7 @@ export default async function PlatformLayout({
             </p>
           </div>
 
-          {/* 3. نبذة المنصة */}
-          <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
-            مشروع بحثي تربوي معتمد لتطوير منظومة التعلم التفاعلي والتقويم التشخيصي والبعدي.
-          </p>
-
-          {/* 4. الروابط السريعة في المنتصف */}
+          {/* 3. الروابط السريعة في المنتصف */}
           <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-4 text-xs font-bold text-asu-navy pt-1">
             <a href="/instructions" className="hover:text-asu-gold transition-colors">التعليمات</a>
             <span className="text-slate-300">•</span>
