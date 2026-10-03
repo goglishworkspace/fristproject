@@ -262,10 +262,13 @@ export async function submitExamAction(
   const { recordExamResultAction, recordModuleCompletionAction } = await import('@/lib/actions/student.actions');
   await recordExamResultAction(studentIdentifier, examType, calculatedScore, totalQuestions, answers);
 
-  // إذا كان اختبار موديول، نسجل إتمام الموديول للتقدم الأكاديمي
+  // إذا كان اختبار موديول، يُسجل إتمام الموديول للتقدم الأكاديمي فقط إذا حقق الطالب 7 درجات على الأقل
   if (examType.startsWith('module_')) {
     const modId = examType.replace('module_', '');
-    await recordModuleCompletionAction(studentIdentifier, modId);
+    const MODULE_PASSING_SCORE = 7;
+    if (calculatedScore >= MODULE_PASSING_SCORE) {
+      await recordModuleCompletionAction(studentIdentifier, modId);
+    }
   }
 
   // 3. تخزين في Supabase إذا كانت متصلة

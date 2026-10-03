@@ -45,7 +45,7 @@ export function ModuleQuizBox({
   const [retrying, setRetrying] = useState(false);
 
   const hasScore = existingScore !== null && existingScore !== undefined;
-  const isPassing = hasScore && (existingScore / (totalQuestions || 1)) >= 0.5;
+  const isPassing = hasScore && existingScore >= 7;
 
   if (questions.length === 0) {
     return null; // لا توجد أسئلة مضافة بعد من لوحة التحكم لهذا الموديول
@@ -65,13 +65,15 @@ export function ModuleQuizBox({
                   التقويم البنائي للوحدة {moduleOrder}
                 </Badge>
                 {hasScore ? (
-                  <Badge variant={isPassing ? 'success' : 'warning'} className="gap-1 text-[10px] sm:text-xs">
+                  <Badge variant={isPassing ? 'success' : 'danger'} className="gap-1 text-[10px] sm:text-xs">
                     <CheckCircle2 className="w-3 h-3" />
-                    <span>الدرجة: {existingScore} / {totalQuestions}</span>
+                    <span>
+                      {isPassing ? `ناجح: ${existingScore} / ${totalQuestions}` : `لم يجتز (المطلوب 7): ${existingScore} / ${totalQuestions}`}
+                    </span>
                   </Badge>
                 ) : (
                   <Badge variant="outline" className="text-[10px] sm:text-xs text-slate-500">
-                    {questions.length} أسئلة تقويمية
+                    {questions.length} أسئلة تقويمية (النجاح من 7)
                   </Badge>
                 )}
               </div>
@@ -119,15 +121,17 @@ export function ModuleQuizBox({
             <div className="space-y-1 text-right">
               <p className="text-xs sm:text-sm font-bold text-slate-800">
                 {hasScore
-                  ? `لقد اجتزت هذا الاختبار بنتيجة ${existingScore} من ${totalQuestions}. يمكنك المتابعة أو إعادة الاختبار لتحسين تحصيلك.`
-                  : 'لقد أتممت دراسة محتوى وسلايدات الوحدة، أجب عن أسئلة هذا الاختبار للتأكد من فهمك واستيعابك للهدف التعليمي.'}
+                  ? isPassing
+                    ? `لقد اجتزت هذا الاختبار بنتيجة ${existingScore} من ${totalQuestions}. يمكنك المتابعة أو إعادة الاختبار لتحسين تحصيلك.`
+                    : `حصلت على ${existingScore} من ${totalQuestions}، ولم تبلغ درجة الاجتياز المطلوبة (7 درجات). يجب إعادة الاختبار أو مراجعة الموديول أولاً.`
+                  : 'لقد أتممت دراسة محتوى وسلايدات الوحدة، أجب عن أسئلة هذا الاختبار للتأكد من فهمك واستيعابك للهدف التعليمي (يلزم 7 درجات للاجتياز).'}
               </p>
               <p className="text-xs text-slate-500">
                 يحتوي الاختبار على {questions.length} أسئلة متنوعة (اختيار من متعدد وصواب أو خطأ).
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto shrink-0">
-              {hasScore && nextModuleUrl && (
+              {hasScore && isPassing && nextModuleUrl && (
                 <Button
                   type="button"
                   onClick={() => {
@@ -143,11 +147,17 @@ export function ModuleQuizBox({
               <Button
                 type="button"
                 onClick={() => setIsOpen(true)}
-                variant={hasScore ? 'outline' : 'gold'}
+                variant={hasScore ? (isPassing ? 'outline' : 'gold') : 'gold'}
                 className="w-full sm:w-auto shrink-0 font-black text-xs gap-1.5 shadow-md cursor-pointer"
               >
                 <Sparkles className="w-3.5 h-3.5" />
-                <span>{hasScore ? 'مراجعة أو إعادة الاختبار' : 'بدء أداء الاختبار الآن'}</span>
+                <span>
+                  {hasScore
+                    ? isPassing
+                      ? 'مراجعة أو تحسين النتيجة'
+                      : 'إعادة الاختبار الآن'
+                    : 'بدء أداء الاختبار الآن'}
+                </span>
               </Button>
             </div>
           </div>
@@ -158,7 +168,8 @@ export function ModuleQuizBox({
               examTitle={`اختبار نهاية ${moduleTitle}`}
               questions={questions}
               onCompleteRedirectUrl={nextModuleUrl}
-              passingScorePercent={50}
+              passingScorePercent={70}
+              onReviewSlides={onBackToSlides}
             />
           </div>
         )}

@@ -18,6 +18,8 @@ import {
   Sparkles,
   Target,
   X,
+  RotateCcw,
+  Presentation,
 } from 'lucide-react';
 import type { Question, ExamType } from '@/lib/types/database';
 
@@ -96,6 +98,7 @@ interface ExamRunnerProps {
   passingScorePercent?: number;
   instructions?: ExamInstructionsData | boolean;
   questionsPerPage?: number;
+  onReviewSlides?: () => void;
 }
 
 const OPTION_LETTERS = ['أ', 'ب', 'ج', 'د', 'هـ', 'و'];
@@ -108,6 +111,7 @@ export function ExamRunner({
   passingScorePercent = 50,
   instructions,
   questionsPerPage = 10,
+  onReviewSlides,
 }: ExamRunnerProps) {
   // التحقق من تفعيل شاشة التعليمات (تلقائياً للاختبار القبلي والبعدي أو عند تمرير instructions)
   const activeInstructions: ExamInstructionsData | null =
@@ -273,15 +277,17 @@ export function ExamRunner({
   // شاشة ظهور النتيجة بعد التسليم
   if (result) {
     const isPreTest = examType === 'pre_test';
-    const isPassing = (result.score / (result.total || 1)) >= (passingScorePercent / 100);
     const isModuleExam = examType.startsWith('module_');
+    const isPassing = isModuleExam
+      ? result.score >= 7
+      : (result.score / (result.total || 1)) >= (passingScorePercent / 100);
 
     const defaultNextUrl = onCompleteRedirectUrl || (isPreTest ? '/modules' : '/');
 
     return (
       <Card className="max-w-xl mx-auto text-center p-6 sm:p-8 shadow-2xl border border-asu-gold/40 bg-white">
         <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-inner ${
-          isPreTest || isPassing ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-700'
+          isPreTest || isPassing ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600'
         }`}>
           {isPreTest || isPassing ? (
             <CheckCircle2 className="w-10 h-10 sm:w-12 sm:h-12" />
@@ -289,51 +295,94 @@ export function ExamRunner({
             <AlertCircle className="w-10 h-10 sm:w-12 sm:h-12" />
           )}
         </div>
-        <Badge variant={isPreTest || isPassing ? 'success' : 'warning'} className="mb-2 text-xs px-3 py-1">
-          {isPreTest ? 'تم تسليم الاختبار القبلي بنجاح' : isPassing ? 'تم اجتياز الاختبار بنجاح' : 'تم تسليم الاختبار'}
+        <Badge variant={isPreTest || isPassing ? 'success' : 'danger'} className="mb-2 text-xs px-3 py-1">
+          {isPreTest
+            ? 'تم تسليم الاختبار القبلي بنجاح'
+            : isPassing
+            ? 'تم اجتياز الاختبار بنجاح'
+            : 'لم يتم اجتياز الاختبار (المطلوب 7 من 10 على الأقل)'}
         </Badge>
         <CardTitle className="text-xl sm:text-2xl font-black text-asu-navy">
           {isPreTest
             ? 'شكراً لك، تم تسجيل إجاباتك بنجاح!'
             : isPassing
-            ? 'شكراً لك، تم رصد نتيجتك بنجاح!'
-            : 'تم رصد درجتك في سجل الاختبارات'}
+            ? 'مبارك! تم اجتياز الاختبار بنجاح'
+            : 'عذراً، لم تصل إلى درجة الاجتياز المطلوبة'}
         </CardTitle>
 
         {/* لا تظهر نتيجة الدرجة إطلاقاً في الاختبار القبلي */}
         {!isPreTest && (
           <div className="my-6 p-6 rounded-2xl bg-slate-50 border border-slate-100 shadow-2xs">
             <span className="text-xs sm:text-sm text-slate-500 block mb-1 font-bold">الدرجة المحصلة</span>
-            <span className={`text-4xl sm:text-5xl font-black font-mono ${isPassing ? 'text-emerald-600' : 'text-amber-600'}`}>
+            <span className={`text-4xl sm:text-5xl font-black font-mono ${isPassing ? 'text-emerald-600' : 'text-rose-600'}`}>
               {result.score} <span className="text-xl sm:text-2xl text-slate-400 font-normal">/ {result.total}</span>
             </span>
+            {isModuleExam && !isPassing && (
+              <p className="text-xs text-rose-600 font-bold mt-2">
+                درجة النجاح المقررة هي 7 من 10 على الأقل للانتقال للمرحلة التالية.
+              </p>
+            )}
           </div>
         )}
 
         <p className="text-xs sm:text-sm text-slate-600 my-6 leading-relaxed">
           {isPreTest
             ? 'تم حفظ إجاباتك في سجلك بنجاح، وفُتحت لك الموديولات التعليمية للبدء في دراستها الآن.'
-            : isModuleExam
-            ? 'تم حفظ نتيجة اختبار الوحدة في سجلك الأكاديمي، يمكنك الآن المتابعة والانتقال للمرحلة التالية.'
-            : 'لقد أتممت متطلبات البرنامج التدريبي بالكامل، ويمكنك الآن مراجعة مسارك ونتيجتك النهائية.'}
+            : isModuleExam && isPassing
+            ? 'تم حفظ نتيجة اختبار الوحدة بنجاح، يمكنك الآن المتابعة والانتقال للمرحلة التالية.'
+            : isModuleExam && !isPassing
+            ? 'يلزم الحصول على 7 درجات على الأقل لاجتياز الوحدة. يمكنك مراجعة الشرائح التعليمية للوحدة أولاً ثم إعادة الاختبار.'
+            : isPassing
+            ? 'لقد أتممت متطلبات البرنامج التدريبي بالكامل، ويمكنك الآن مراجعة مسارك ونتيجتك النهائية.'
+            : 'يمكنك إعادة المحاولة للحصول على الدرجة المطلوبة.'}
         </p>
 
-        <Button
-          onClick={() => {
-            window.location.href = defaultNextUrl;
-          }}
-          className="w-full h-12 text-sm sm:text-base font-black bg-gradient-to-r from-asu-navy to-asu-navy-light gap-2 shadow-lg cursor-pointer"
-          size="lg"
-        >
-          <span>
-            {isModuleExam
-              ? 'المتابعة والانتقال للخطوة التالية'
-              : isPreTest
-              ? 'الانتقال للموديولات الدراسية'
-              : 'العودة للرئيسية'}
-          </span>
-          <ArrowLeft className="w-4 h-4 mr-1" />
-        </Button>
+        {isPassing || isPreTest ? (
+          <Button
+            onClick={() => {
+              window.location.href = defaultNextUrl;
+            }}
+            className="w-full h-12 text-sm sm:text-base font-black bg-gradient-to-r from-asu-navy to-asu-navy-light gap-2 shadow-lg cursor-pointer"
+            size="lg"
+          >
+            <span>
+              {isModuleExam
+                ? 'المتابعة والانتقال للخطوة التالية'
+                : isPreTest
+                ? 'الانتقال للموديولات الدراسية'
+                : 'العودة للرئيسية'}
+            </span>
+            <ArrowLeft className="w-4 h-4 mr-1" />
+          </Button>
+        ) : (
+          <div className="flex flex-col sm:flex-row items-center gap-3 w-full">
+            <Button
+              onClick={() => {
+                setResult(null);
+                setAnswers({});
+                setPageIndex(0);
+                setErrorMessage(null);
+              }}
+              className="w-full sm:flex-1 h-12 text-xs sm:text-sm font-black bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white gap-2 shadow-lg cursor-pointer"
+              size="lg"
+            >
+              <RotateCcw className="w-4 h-4" />
+              <span>إعادة الاختبار الآن</span>
+            </Button>
+            {onReviewSlides && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onReviewSlides}
+                className="w-full sm:flex-1 h-12 text-xs sm:text-sm font-black border-asu-navy text-asu-navy hover:bg-asu-navy/5 gap-2 cursor-pointer"
+                size="lg"
+              >
+                <Presentation className="w-4 h-4 text-asu-gold-dark" />
+                <span>مراجعة محتوى وسلايدات الموديول</span>
+              </Button>
+            )}
+          </div>
+        )}
       </Card>
     );
   }

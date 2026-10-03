@@ -225,7 +225,7 @@ export function ModuleFlowManager({
                   : currentStage === 'quiz'
                   ? 'bg-asu-gold text-slate-950 font-black'
                   : hasQuizCompleted
-                  ? 'bg-emerald-100 text-emerald-700'
+                  ? (quizResult && quizResult.score >= 7 ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700 font-bold')
                   : 'bg-slate-200 text-slate-600'
               }`}
             >
@@ -237,7 +237,7 @@ export function ModuleFlowManager({
               ) : currentStage === 'quiz' ? (
                 'الحالية'
               ) : hasQuizCompleted ? (
-                `${quizResult.score}/${quizResult.total}`
+                quizResult && quizResult.score >= 7 ? `${quizResult.score}/${quizResult.total} (ناجح)` : `${quizResult?.score}/${quizResult?.total} (إعادة)`
               ) : (
                 'متاح'
               )}
