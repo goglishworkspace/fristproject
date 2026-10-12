@@ -120,6 +120,7 @@ export interface Question {
   id: string;
   exam_type: ExamType;
   question_type?: QuestionType; // 'multiple_choice' | 'true_false'
+  context_text?: string; // الفقرة / الموقف البيئي التمهيدي المنفصل
   question_text: string;
   options: string[];
   correct_option_index?: number;

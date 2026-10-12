@@ -86,6 +86,7 @@ export default async function PreSpatialTestPage() {
     id: q.id,
     exam_type: 'pre_spatial_test',
     question_type: q.question_type || 'multiple_choice',
+    context_text: q.context_text,
     question_text: q.question_text,
     options: q.options,
     order_index: q.order_index,
