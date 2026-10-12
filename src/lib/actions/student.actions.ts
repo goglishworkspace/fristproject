@@ -649,12 +649,30 @@ export async function recordExamResultAction(
       if (students[studentIdx].status === 'not_started') {
         students[studentIdx].status = 'in_progress';
       }
+    } else if (examType === 'pre_spatial_test' || (examType === 'spatial_test' && students[studentIdx].spatialPreScore === null)) {
+      students[studentIdx].spatialPreScore = score;
+      if (answers) {
+        students[studentIdx].spatialPreTestAnswers = answers;
+      }
+      if (students[studentIdx].status === 'not_started') {
+        students[studentIdx].status = 'in_progress';
+      }
     } else if (examType === 'post_test') {
       students[studentIdx].postScore = score;
       if (answers) {
         students[studentIdx].postTestAnswers = answers;
       }
-      students[studentIdx].status = 'completed';
+      if (students[studentIdx].spatialPostScore !== null && students[studentIdx].spatialPostScore !== undefined) {
+        students[studentIdx].status = 'completed';
+      }
+    } else if (examType === 'post_spatial_test' || examType === 'spatial_test') {
+      students[studentIdx].spatialPostScore = score;
+      if (answers) {
+        students[studentIdx].spatialPostTestAnswers = answers;
+      }
+      if (students[studentIdx].postScore !== null && students[studentIdx].postScore !== undefined) {
+        students[studentIdx].status = 'completed';
+      }
     } else if (examType.startsWith('module_')) {
       const modId = examType.replace('module_', '');
       if (!students[studentIdx].moduleQuizScores) {
@@ -689,7 +707,9 @@ export async function recordExamResultAction(
 
     revalidatePath('/');
     revalidatePath('/pre-test');
+    revalidatePath('/pre-test/spatial');
     revalidatePath('/post-test');
+    revalidatePath('/post-test/spatial');
     revalidatePath('/modules');
     revalidatePath('/admin/dashboard');
 
@@ -824,8 +844,12 @@ export interface StudentProgressData {
   phone: string | null;
   preTestCompleted: boolean;
   preScore: number | null;
+  spatialPreTestCompleted: boolean;
+  spatialPreScore: number | null;
   postTestCompleted: boolean;
   postScore: number | null;
+  spatialPostTestCompleted: boolean;
+  spatialPostScore: number | null;
   currentModuleIndex: number; // 0, 1, 2...
   completedModulesCount: number;
   totalModulesCount: number;
@@ -850,8 +874,12 @@ export async function getStudentProgressAction(): Promise<StudentProgressData> {
     phone: null,
     preTestCompleted: false,
     preScore: null,
+    spatialPreTestCompleted: false,
+    spatialPreScore: null,
     postTestCompleted: false,
     postScore: null,
+    spatialPostTestCompleted: false,
+    spatialPostScore: null,
     currentModuleIndex: 0,
     completedModulesCount: 0,
     totalModulesCount: totalModules,
@@ -885,7 +913,9 @@ export async function getStudentProgressAction(): Promise<StudentProgressData> {
       role: 'admin',
       fullName: 'د. المشرف الأكاديمي',
       preTestCompleted: true,
+      spatialPreTestCompleted: true,
       postTestCompleted: true,
+      spatialPostTestCompleted: true,
       currentModuleIndex: totalModules,
       completedModulesCount: totalModules,
       isAllModulesCompleted: true,
@@ -917,8 +947,10 @@ export async function getStudentProgressAction(): Promise<StudentProgressData> {
   );
 
   if (student) {
-    const preCompleted = student.preScore !== null;
-    const postCompleted = student.postScore !== null;
+    const preCompleted = student.preScore !== null && student.preScore !== undefined;
+    const spatialPreCompleted = student.spatialPreScore !== null && student.spatialPreScore !== undefined;
+    const postCompleted = student.postScore !== null && student.postScore !== undefined;
+    const spatialPostCompleted = student.spatialPostScore !== null && student.spatialPostScore !== undefined;
     const completedModules = parseInt(student.moduleProgress?.split('/')[0] || '0', 10);
     const allModulesDone = completedModules >= totalModules;
 
@@ -931,14 +963,18 @@ export async function getStudentProgressAction(): Promise<StudentProgressData> {
       phone: student.phone || '',
       preTestCompleted: preCompleted,
       preScore: student.preScore,
+      spatialPreTestCompleted: spatialPreCompleted,
+      spatialPreScore: student.spatialPreScore ?? null,
       postTestCompleted: postCompleted,
       postScore: student.postScore,
+      spatialPostTestCompleted: spatialPostCompleted,
+      spatialPostScore: student.spatialPostScore ?? null,
       currentModuleIndex: completedModules,
       completedModulesCount: completedModules,
       totalModulesCount: totalModules,
       moduleProgress: student.moduleProgress || `0/${totalModules}`,
       isAllModulesCompleted: allModulesDone,
-      isFullyCompleted: postCompleted || student.status === 'completed',
+      isFullyCompleted: (postCompleted && spatialPostCompleted) || student.status === 'completed',
       isBanned: student.isBanned,
       isProfileCompleted: student.isProfileCompleted,
     };
@@ -965,8 +1001,12 @@ export async function getStudentProgressAction(): Promise<StudentProgressData> {
           phone: '',
           preTestCompleted: !!progress.pre_test_completed,
           preScore: null,
+          spatialPreTestCompleted: !!(progress as any).spatial_pre_test_completed,
+          spatialPreScore: null,
           postTestCompleted: !!progress.post_test_completed,
           postScore: null,
+          spatialPostTestCompleted: !!(progress as any).spatial_post_test_completed,
+          spatialPostScore: null,
           currentModuleIndex: completedModules,
           completedModulesCount: completedModules,
           totalModulesCount: totalModules,

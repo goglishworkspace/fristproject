@@ -35,8 +35,30 @@ async function saveQuestionsList(questions: QuestionWithAnswer[]): Promise<boole
   }
 }
 
+const SPATIAL_QUESTIONS_FILE_PATH = path.join(process.cwd(), 'src', 'data', 'spatial-questions.json');
+
+// قراءة أسئلة اختبار التفكير المكاني
+export async function getSpatialQuestionsAction(): Promise<QuestionWithAnswer[]> {
+  try {
+    const data = await fs.readFile(SPATIAL_QUESTIONS_FILE_PATH, 'utf-8');
+    const questions: QuestionWithAnswer[] = JSON.parse(data);
+    return questions.sort((a, b) => a.order_index - b.order_index);
+  } catch (err) {
+    console.error('Error reading spatial-questions.json:', err);
+    return [];
+  }
+}
+
 // 2. جلب أسئلة اختبار معين (الاختبار القبلي والبعدي موحدان ويشتركان في نفس الأسئلة تماماً)
 export async function getExamQuestionsAction(examType?: ExamType): Promise<QuestionWithAnswer[]> {
+  if (
+    examType === 'spatial_test' ||
+    examType === 'pre_spatial_test' ||
+    examType === 'post_spatial_test'
+  ) {
+    return getSpatialQuestionsAction();
+  }
+
   const all = await getAllQuestionsAction();
   if (!examType) return all;
 

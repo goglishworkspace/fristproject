@@ -90,6 +90,31 @@ export const DEFAULT_POST_TEST_INSTRUCTIONS: ExamInstructionsData = {
   ],
 };
 
+export const DEFAULT_SPATIAL_TEST_INSTRUCTIONS: ExamInstructionsData = {
+  title: 'تعليمات اختبار مهارات التفكير المكاني',
+  salutation: 'عزيزي الطالب',
+  intro: 'يهدف هذا الاختبار إلى قياس بعض مهارات التفكير المكاني لديك، من خلال مجموعة من المواقف والمشكلات البيئية المرتبطة بحياتك اليومية، والتي تتطلب منك التفكير في مواقع الظواهر البيئية، والعلاقات المكانية بينها، وتحليل المعلومات المتاحة، والمقارنة بين الأماكن، واختيار الحلول المناسبة للمشكلات البيئية.',
+  purpose: 'قياس مهارات التفكير المكاني في فهم المواقع والاتجاهات والمسافات والعلاقات بين الظواهر البيئية.',
+  rules: [
+    'يتكون الاختبار من (36) سؤالًا من نوع الاختيار من متعدد، ويتضمن كل سؤال أربعة بدائل للإجابة (أ، ب، ج، د)، يوجد من بينها بديل واحد صحيح.',
+    'اقرأ كل سؤال والموقف البيئي المرتبط به قراءة متأنية، وحاول فهم المعلومات الواردة فيه قبل اختيار الإجابة.',
+    'فكّر في المواقع والاتجاهات والمسافات والعلاقات المكانية الواردة في كل موقف، واستفد من جميع المعطيات المتاحة للوصول إلى الإجابة الصحيحة.',
+    'اختر الإجابة التي تراها الأكثر دقة وملاءمة للموقف.',
+    'أجب عن جميع الأسئلة، ولا تترك أي سؤال دون إجابة.',
+    'لا تتسرع في الإجابة، وراجع اختياراتك جيدًا قبل تسليم الاختبار.',
+    'التزم بالزمن المحدد للاختبار.',
+  ],
+  note: 'تذكّر: لا تعتمد الإجابة عن أسئلة هذا الاختبار على الحفظ، بل تتطلب فهم المواقف البيئية، والتفكير في العلاقات بين الأماكن والظواهر، واستخدام المعلومات المتاحة للوصول إلى الإجابة الأنسب.',
+  sections: [
+    {
+      id: 'spatial_mc',
+      title: 'أسئلة الاختيار من متعدد للمواقف البيئية والمكانية',
+      description: 'يتكون من (36) موقفاً بيئياً لقياس مهارات التفكير المكاني بدقة.',
+      count: 36,
+    },
+  ],
+};
+
 interface ExamRunnerProps {
   examType: ExamType;
   examTitle: string;
@@ -123,6 +148,8 @@ export function ExamRunner({
       ? DEFAULT_PRE_TEST_INSTRUCTIONS
       : examType === 'post_test'
       ? DEFAULT_POST_TEST_INSTRUCTIONS
+      : examType === 'spatial_test' || examType === 'pre_spatial_test' || examType === 'post_spatial_test'
+      ? DEFAULT_SPATIAL_TEST_INSTRUCTIONS
       : null;
 
   const [hasStarted, setHasStarted] = useState<boolean>(!activeInstructions);
@@ -276,13 +303,21 @@ export function ExamRunner({
 
   // شاشة ظهور النتيجة بعد التسليم
   if (result) {
-    const isPreTest = examType === 'pre_test';
+    const isPreTest = examType === 'pre_test' || examType === 'pre_spatial_test';
     const isModuleExam = examType.startsWith('module_');
     const isPassing = isModuleExam
       ? result.score >= 7
       : (result.score / (result.total || 1)) >= (passingScorePercent / 100);
 
-    const defaultNextUrl = onCompleteRedirectUrl || (isPreTest ? '/modules' : '/');
+    const defaultNextUrl =
+      onCompleteRedirectUrl ||
+      (examType === 'pre_test'
+        ? '/pre-test/spatial'
+        : examType === 'pre_spatial_test'
+        ? '/modules'
+        : examType === 'post_test'
+        ? '/post-test/spatial'
+        : '/');
 
     return (
       <Card className="max-w-xl mx-auto text-center p-6 sm:p-8 shadow-2xl border border-asu-gold/40 bg-white">
@@ -326,14 +361,18 @@ export function ExamRunner({
         )}
 
         <p className="text-xs sm:text-sm text-slate-600 my-6 leading-relaxed">
-          {isPreTest
-            ? 'تم حفظ إجاباتك في سجلك بنجاح، وفُتحت لك الموديولات التعليمية للبدء في دراستها الآن.'
+          {examType === 'pre_test'
+            ? 'تم حفظ إجاباتك في الاختبار القبلي الأول بنجاح! يرجى المتابعة الآن لأداء اختبار مهارات التفكير المكاني قبلياً.'
+            : examType === 'pre_spatial_test'
+            ? 'رائع جداً! تم حفظ إجاباتك في كلا الاختبارين القبليين بنجاح، وفُتحت لك الآن الموديولات والدعامات التعليمية للبدء في دراستها.'
             : isModuleExam && isPassing
             ? 'تم حفظ نتيجة اختبار الوحدة بنجاح، يمكنك الآن المتابعة والانتقال للمرحلة التالية.'
             : isModuleExam && !isPassing
             ? 'يلزم الحصول على 7 درجات على الأقل لاجتياز الوحدة. يمكنك مراجعة الشرائح التعليمية للوحدة أولاً ثم إعادة الاختبار.'
+            : examType === 'post_test'
+            ? 'تم رصد نتيجتك في الاختبار البعدي الأول، يرجى الانتقال لاختبار مهارات التفكير المكاني البعدي لاستكمال متطلبات البرنامج.'
             : isPassing
-            ? 'لقد أتممت متطلبات البرنامج التدريبي بالكامل، ويمكنك الآن مراجعة مسارك ونتيجتك النهائية.'
+            ? 'لقد أتممت متطلبات البرنامج التعليمي بالكامل، ويمكنك الآن مراجعة مسارك ونتيجتك النهائية.'
             : 'يمكنك إعادة المحاولة للحصول على الدرجة المطلوبة.'}
         </p>
 
@@ -348,8 +387,12 @@ export function ExamRunner({
             <span>
               {isModuleExam
                 ? 'المتابعة والانتقال للخطوة التالية'
-                : isPreTest
-                ? 'الانتقال للموديولات الدراسية'
+                : examType === 'pre_test'
+                ? 'الانتقال لاختبار التفكير المكاني القبلي'
+                : examType === 'pre_spatial_test'
+                ? 'الانتقال لدراسة الموديولات (الدعامات التعليمية)'
+                : examType === 'post_test'
+                ? 'الانتقال لاختبار التفكير المكاني البعدي'
                 : 'العودة للرئيسية'}
             </span>
             <ArrowLeft className="w-4 h-4 mr-1" />

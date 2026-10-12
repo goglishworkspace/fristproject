@@ -1,6 +1,12 @@
 export type UserRole = 'admin' | 'student';
 
-export type ExamType = 'pre_test' | 'post_test' | `module_${string}`;
+export type ExamType =
+  | 'pre_test'
+  | 'post_test'
+  | 'pre_spatial_test'
+  | 'post_spatial_test'
+  | 'spatial_test'
+  | `module_${string}`;
 
 export interface UserProfile {
   id: string;
@@ -38,6 +44,10 @@ export interface StudentAccount {
   postScore: number | null;
   preTestAnswers?: Record<string, number>;
   postTestAnswers?: Record<string, number>;
+  spatialPreScore?: number | null;
+  spatialPostScore?: number | null;
+  spatialPreTestAnswers?: Record<string, number>;
+  spatialPostTestAnswers?: Record<string, number>;
   moduleQuizScores?: Record<string, ModuleQuizResult>; // e.g. { "module-1": { score: 5, total: 5, completedAt: "..." } }
   activitySubmissions?: Record<string, StudentActivitySubmission>;
   moduleProgress: string; // '0/2', '1/2', etc.

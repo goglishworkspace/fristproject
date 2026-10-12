@@ -55,16 +55,28 @@ export default async function PreTestPage() {
           </div>
 
           <p className="text-xs text-slate-500 leading-relaxed max-w-md mx-auto">
-            تم رصد نتيجتك بنجاح ولا يمكن إعادة أداء الاختبار القبلي مرة أخرى حفاظاً على دقة القياس العلمي للبرنامج. يمكنك المتابعة لدراسة الموديولات المقررة.
+            تم رصد إجاباتك في الاختبار القبلي الأول بنجاح ولا يمكن إعادته حفاظاً على دقة القياس العلمي.
+            {!progress.spatialPreTestCompleted
+              ? ' يرجى الانتقال الآن لأداء اختبار مهارات التفكير المكاني القبلي.'
+              : ' يمكنك الآن المتابعة لدراسة الموديولات التعليمية المقررة.'}
           </p>
 
           <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
-            <Link href="/modules" className="w-full sm:w-auto">
-              <Button size="lg" className="w-full sm:w-auto gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold">
-                <span>الانتقال لدراسة الموديولات</span>
-                <ArrowLeft className="w-4 h-4 mr-1" />
-              </Button>
-            </Link>
+            {!progress.spatialPreTestCompleted ? (
+              <Link href="/pre-test/spatial" className="w-full sm:w-auto">
+                <Button size="lg" className="w-full sm:w-auto gap-2 bg-asu-navy hover:bg-asu-navy-light text-white font-bold">
+                  <span>الانتقال لاختبار التفكير المكاني القبلي</span>
+                  <ArrowLeft className="w-4 h-4 mr-1" />
+                </Button>
+              </Link>
+            ) : (
+              <Link href="/modules" className="w-full sm:w-auto">
+                <Button size="lg" className="w-full sm:w-auto gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold">
+                  <span>الانتقال لدراسة الموديولات</span>
+                  <ArrowLeft className="w-4 h-4 mr-1" />
+                </Button>
+              </Link>
+            )}
             <Link href="/" className="w-full sm:w-auto">
               <Button variant="outline" size="lg" className="w-full sm:w-auto border-slate-200 text-slate-700">
                 العودة للرئيسية

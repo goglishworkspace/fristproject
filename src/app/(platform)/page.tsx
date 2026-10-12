@@ -142,7 +142,18 @@ export default async function PlatformHomePage() {
                         size="lg"
                         className="w-full sm:w-auto gap-2 shadow-lg shadow-asu-gold/20 font-extrabold"
                       >
-                        <span>بدء الاختبار القبلي الآن</span>
+                        <span>بدء اختبار الوعي البيئي (قبلي)</span>
+                        <ArrowLeft className="w-4 h-4 mr-1" />
+                      </Button>
+                    </Link>
+                  ) : !progress.spatialPreTestCompleted ? (
+                    <Link href="/pre-test/spatial" className="w-full sm:w-auto">
+                      <Button
+                        variant="gold"
+                        size="lg"
+                        className="w-full sm:w-auto gap-2 shadow-lg shadow-asu-gold/20 font-extrabold"
+                      >
+                        <span>بدء اختبار التفكير المكاني (قبلي)</span>
                         <ArrowLeft className="w-4 h-4 mr-1" />
                       </Button>
                     </Link>
@@ -154,7 +165,7 @@ export default async function PlatformHomePage() {
                         className="w-full sm:w-auto gap-2 shadow-lg shadow-asu-gold/20 font-extrabold"
                       >
                         <BookOpen className="w-4 h-4 ml-1" />
-                        <span>متابعة دراسة الموديولات</span>
+                        <span>متابعة دراسة الموديولات (الدعامات)</span>
                         <ArrowLeft className="w-4 h-4 mr-1" />
                       </Button>
                     </Link>
@@ -166,19 +177,31 @@ export default async function PlatformHomePage() {
                         className="w-full sm:w-auto gap-2 shadow-lg shadow-asu-gold/20 font-extrabold"
                       >
                         <Award className="w-4 h-4 ml-1" />
-                        <span>بدء الاختبار البعدي النهائي</span>
+                        <span>بدء اختبار الوعي البيئي (بعدي)</span>
                         <ArrowLeft className="w-4 h-4 mr-1" />
                       </Button>
                     </Link>
-                  ) : (
-                    <Link href="/post-test" className="w-full sm:w-auto">
+                  ) : !progress.spatialPostTestCompleted ? (
+                    <Link href="/post-test/spatial" className="w-full sm:w-auto">
                       <Button
                         variant="gold"
                         size="lg"
                         className="w-full sm:w-auto gap-2 shadow-lg shadow-asu-gold/20 font-extrabold"
                       >
                         <Award className="w-4 h-4 ml-1" />
-                        <span>عرض تقرير الإنجاز النهائي</span>
+                        <span>بدء اختبار التفكير المكاني (بعدي)</span>
+                        <ArrowLeft className="w-4 h-4 mr-1" />
+                      </Button>
+                    </Link>
+                  ) : (
+                    <Link href="/post-test/spatial" className="w-full sm:w-auto">
+                      <Button
+                        variant="gold"
+                        size="lg"
+                        className="w-full sm:w-auto gap-2 shadow-lg shadow-asu-gold/20 font-extrabold"
+                      >
+                        <Award className="w-4 h-4 ml-1" />
+                        <span>عرض النتائج والشهادة النهائية</span>
                         <ArrowLeft className="w-4 h-4 mr-1" />
                       </Button>
                     </Link>

@@ -505,8 +505,10 @@ export function StudentManager({ initialStudents, allQuestions = [], modules = [
                 <th className="py-3.5 px-4">كلمة المرور</th>
                 <th className="py-3.5 px-4">الاسم الكامل للطالب</th>
                 <th className="py-3.5 px-4">رقم الهاتف</th>
-                <th className="py-3.5 px-4 text-center">التقييم القبلي</th>
-                <th className="py-3.5 px-4 text-center">التقييم البعدي</th>
+                <th className="py-3.5 px-4 text-center">الوعي البيئي (قبلي)</th>
+                <th className="py-3.5 px-4 text-center">التفكير المكاني (قبلي)</th>
+                <th className="py-3.5 px-4 text-center">الوعي البيئي (بعدي)</th>
+                <th className="py-3.5 px-4 text-center">التفكير المكاني (بعدي)</th>
                 <th className="py-3.5 px-4 text-center">حالة الحساب</th>
                 <th className="py-3.5 px-4 text-center">الإجراءات</th>
               </tr>
@@ -514,7 +516,7 @@ export function StudentManager({ initialStudents, allQuestions = [], modules = [
             <tbody className="divide-y divide-slate-100">
               {paginatedStudents.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="py-12 text-center text-slate-400">
+                  <td colSpan={10} className="py-12 text-center text-slate-400">
                     لا يوجد طلاب مطابقين لنتائج البحث أو الفلتر
                   </td>
                 </tr>
@@ -590,7 +592,7 @@ export function StudentManager({ initialStudents, allQuestions = [], modules = [
                         )}
                       </td>
 
-                      {/* درجات القبلي والبعدي */}
+                      {/* درجات الوعي والتفكير المكاني قبلي وبعدي */}
                       <td className="py-3.5 px-4 text-center">
                         {student.preScore !== null ? (
                           <span className="inline-block px-2 py-0.5 rounded-md bg-slate-100 font-bold text-slate-800">
@@ -601,9 +603,27 @@ export function StudentManager({ initialStudents, allQuestions = [], modules = [
                         )}
                       </td>
                       <td className="py-3.5 px-4 text-center">
+                        {student.spatialPreScore !== null && student.spatialPreScore !== undefined ? (
+                          <span className="inline-block px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 font-bold border border-indigo-200">
+                            {student.spatialPreScore} / 36
+                          </span>
+                        ) : (
+                          <span className="text-slate-300">---</span>
+                        )}
+                      </td>
+                      <td className="py-3.5 px-4 text-center">
                         {student.postScore !== null ? (
                           <span className="inline-block px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 font-bold border border-emerald-200">
                             {student.postScore} / {postQuestionsCount}
+                          </span>
+                        ) : (
+                          <span className="text-slate-300">---</span>
+                        )}
+                      </td>
+                      <td className="py-3.5 px-4 text-center">
+                        {student.spatialPostScore !== null && student.spatialPostScore !== undefined ? (
+                          <span className="inline-block px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 font-bold border border-emerald-200">
+                            {student.spatialPostScore} / 36
                           </span>
                         ) : (
                           <span className="text-slate-300">---</span>

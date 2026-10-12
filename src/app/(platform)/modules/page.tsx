@@ -36,9 +36,13 @@ export default async function ModulesListPage() {
     redirect('/complete-profile');
   }
 
-  // 2. التحقق من أداء الاختبار القبلي
+  // 2. التحقق من أداء الاختبار القبلي (الوعي البيئي + التفكير المكاني)
   if (!progress.preTestCompleted && progress.role !== 'admin') {
     redirect('/pre-test');
+  }
+
+  if (!progress.spatialPreTestCompleted && progress.role !== 'admin') {
+    redirect('/pre-test/spatial');
   }
 
   const currentModuleIdx = progress.currentModuleIndex;
