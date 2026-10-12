@@ -759,13 +759,13 @@ export function ExamRunner({
                   </div>
                 </div>
 
-                <div className="pt-2 text-right space-y-2.5">
+                <div className="pt-2 text-right space-y-3">
                   {q.context_text ? (
                     <>
-                      <p className="text-sm sm:text-base text-slate-700 leading-relaxed font-normal">
+                      <p className="text-base sm:text-lg text-slate-800 leading-relaxed font-medium">
                         {q.context_text}
                       </p>
-                      <CardTitle className="text-base sm:text-lg font-black text-slate-900 leading-relaxed pt-1">
+                      <CardTitle className="text-lg sm:text-xl font-black text-slate-900 leading-relaxed pt-1.5 text-asu-navy">
                         {q.question_text}
                       </CardTitle>
                     </>
