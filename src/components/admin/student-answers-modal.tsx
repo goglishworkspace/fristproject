@@ -223,9 +223,19 @@ export function StudentAnswersModal({
     'module-4': 'الموديول الرابع',
   };
 
-  // أسئلة الاختبار الموحد (القبلي والبعدي)
+  // أسئلة الاختبار الموحد (الوعي البيئي)
   const unifiedQuestions = allQuestions
     .filter((q) => q.exam_type === 'pre_test' || q.exam_type === 'post_test')
+    .sort((a, b) => a.order_index - b.order_index);
+
+  // أسئلة التفكير المكاني
+  const spatialQuestions = allQuestions
+    .filter(
+      (q) =>
+        q.exam_type === 'spatial_test' ||
+        q.exam_type === 'pre_spatial_test' ||
+        q.exam_type === 'post_spatial_test'
+    )
     .sort((a, b) => a.order_index - b.order_index);
 
   const preQuestions = unifiedQuestions;
@@ -233,6 +243,8 @@ export function StudentAnswersModal({
 
   const preAnswers = student.preTestAnswers || {};
   const postAnswers = student.postTestAnswers || {};
+  const spatialPreAnswers = student.spatialPreTestAnswers || {};
+  const spatialPostAnswers = student.spatialPostTestAnswers || {};
   const activitySubmissions = student.activitySubmissions || {};
   const moduleQuizScores = student.moduleQuizScores || {};
 
@@ -253,7 +265,7 @@ export function StudentAnswersModal({
     });
   };
 
-  // إحصائيات الإجابات للاختبار القبلي
+  // إحصائيات الإجابات للاختبار القبلي (الوعي البيئي)
   const preCorrectCount = preQuestions.filter(
     (q) => preAnswers[q.id] !== undefined && preAnswers[q.id] === q.correct_option_index
   ).length;
@@ -262,7 +274,16 @@ export function StudentAnswersModal({
   ).length;
   const preUnansweredCount = preQuestions.length - preCorrectCount - preWrongCount;
 
-  // إحصائيات الإجابات للاختبار البعدي
+  // إحصائيات التفكير المكاني القبلي
+  const spatialPreCorrectCount = spatialQuestions.filter(
+    (q) => spatialPreAnswers[q.id] !== undefined && spatialPreAnswers[q.id] === q.correct_option_index
+  ).length;
+  const spatialPreWrongCount = spatialQuestions.filter(
+    (q) => spatialPreAnswers[q.id] !== undefined && spatialPreAnswers[q.id] !== q.correct_option_index
+  ).length;
+  const spatialPreUnansweredCount = spatialQuestions.length - spatialPreCorrectCount - spatialPreWrongCount;
+
+  // إحصائيات الإجابات للاختبار البعدي (الوعي البيئي)
   const postCorrectCount = postQuestions.filter(
     (q) => postAnswers[q.id] !== undefined && postAnswers[q.id] === q.correct_option_index
   ).length;
@@ -270,6 +291,15 @@ export function StudentAnswersModal({
     (q) => postAnswers[q.id] !== undefined && postAnswers[q.id] !== q.correct_option_index
   ).length;
   const postUnansweredCount = postQuestions.length - postCorrectCount - postWrongCount;
+
+  // إحصائيات التفكير المكاني البعدي
+  const spatialPostCorrectCount = spatialQuestions.filter(
+    (q) => spatialPostAnswers[q.id] !== undefined && spatialPostAnswers[q.id] === q.correct_option_index
+  ).length;
+  const spatialPostWrongCount = spatialQuestions.filter(
+    (q) => spatialPostAnswers[q.id] !== undefined && spatialPostAnswers[q.id] !== q.correct_option_index
+  ).length;
+  const spatialPostUnansweredCount = spatialQuestions.length - spatialPostCorrectCount - spatialPostWrongCount;
 
   return (
     <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 select-none animate-in fade-in duration-200">
@@ -315,7 +345,7 @@ export function StudentAnswersModal({
         <div className="shrink-0 bg-slate-100/90 border-b border-slate-200 p-2.5 sm:p-3 overflow-x-auto scrollbar-thin">
           <div className="flex items-center gap-2 min-w-max">
             
-            {/* تبويب الاختبار القبلي */}
+            {/* تبويب الاختبار القبلي الأول: الوعي البيئي */}
             <button
               type="button"
               onClick={() => {
@@ -329,7 +359,7 @@ export function StudentAnswersModal({
               }`}
             >
               <Award className={`w-4 h-4 ${activeTab === 'pre' ? 'text-asu-gold-light' : 'text-slate-500'}`} />
-              <span>الاختبار القبلي</span>
+              <span>الوعي البيئي (قبلي)</span>
               <span
                 className={`px-2 py-0.5 rounded-full text-[11px] font-mono font-bold ${
                   activeTab === 'pre'
@@ -340,6 +370,36 @@ export function StudentAnswersModal({
                 }`}
               >
                 {student.preScore !== null ? `${student.preScore}/${preQuestions.length}` : 'لم يؤدَ'}
+              </span>
+            </button>
+
+            {/* تبويب الاختبار القبلي الثاني: التفكير المكاني */}
+            <button
+              type="button"
+              onClick={() => {
+                setActiveTab('spatial_pre');
+                setFilterStatus('all');
+              }}
+              className={`px-3.5 py-2 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center gap-2 whitespace-nowrap shrink-0 cursor-pointer shadow-2xs ${
+                activeTab === 'spatial_pre'
+                  ? 'bg-indigo-700 text-white shadow-md ring-2 ring-indigo-400 font-black'
+                  : 'bg-white text-slate-700 hover:bg-indigo-50 hover:text-indigo-900 border border-slate-200/90'
+              }`}
+            >
+              <Award className={`w-4 h-4 ${activeTab === 'spatial_pre' ? 'text-amber-300' : 'text-indigo-600'}`} />
+              <span>التفكير المكاني (قبلي)</span>
+              <span
+                className={`px-2 py-0.5 rounded-full text-[11px] font-mono font-bold ${
+                  activeTab === 'spatial_pre'
+                    ? 'bg-white/20 text-white'
+                    : student.spatialPreScore !== null && student.spatialPreScore !== undefined
+                    ? 'bg-indigo-100 text-indigo-800'
+                    : 'bg-slate-100 text-slate-600'
+                }`}
+              >
+                {student.spatialPreScore !== null && student.spatialPreScore !== undefined
+                  ? `${student.spatialPreScore}/${spatialQuestions.length}`
+                  : 'لم يؤدَ'}
               </span>
             </button>
 
@@ -383,7 +443,7 @@ export function StudentAnswersModal({
               );
             })}
 
-            {/* تبويب الاختبار البعدي */}
+            {/* تبويب الاختبار البعدي الأول: الوعي البيئي */}
             <button
               type="button"
               onClick={() => {
@@ -397,7 +457,7 @@ export function StudentAnswersModal({
               }`}
             >
               <TrendingUp className={`w-4 h-4 ${activeTab === 'post' ? 'text-asu-gold-light' : 'text-emerald-600'}`} />
-              <span>الاختبار البعدي</span>
+              <span>الوعي البيئي (بعدي)</span>
               <span
                 className={`px-2 py-0.5 rounded-full text-[11px] font-mono font-bold ${
                   activeTab === 'post'
@@ -408,6 +468,36 @@ export function StudentAnswersModal({
                 }`}
               >
                 {student.postScore !== null ? `${student.postScore}/${postQuestions.length}` : 'لم يؤدَ'}
+              </span>
+            </button>
+
+            {/* تبويب الاختبار البعدي الثاني: التفكير المكاني */}
+            <button
+              type="button"
+              onClick={() => {
+                setActiveTab('spatial_post');
+                setFilterStatus('all');
+              }}
+              className={`px-3.5 py-2 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center gap-2 whitespace-nowrap shrink-0 cursor-pointer shadow-2xs ${
+                activeTab === 'spatial_post'
+                  ? 'bg-emerald-700 text-white shadow-md ring-2 ring-emerald-400 font-black'
+                  : 'bg-white text-slate-700 hover:bg-emerald-50 hover:text-emerald-900 border border-slate-200/90'
+              }`}
+            >
+              <TrendingUp className={`w-4 h-4 ${activeTab === 'spatial_post' ? 'text-amber-300' : 'text-emerald-600'}`} />
+              <span>التفكير المكاني (بعدي)</span>
+              <span
+                className={`px-2 py-0.5 rounded-full text-[11px] font-mono font-bold ${
+                  activeTab === 'spatial_post'
+                    ? 'bg-white/20 text-white'
+                    : student.spatialPostScore !== null && student.spatialPostScore !== undefined
+                    ? 'bg-emerald-100 text-emerald-800'
+                    : 'bg-slate-100 text-slate-600'
+                }`}
+              >
+                {student.spatialPostScore !== null && student.spatialPostScore !== undefined
+                  ? `${student.spatialPostScore}/${spatialQuestions.length}`
+                  : 'لم يؤدَ'}
               </span>
             </button>
 
@@ -1030,6 +1120,414 @@ export function StudentAnswersModal({
                                   </span>
                                 )}
                               </div>
+                              <h5 className="font-bold text-xs sm:text-sm text-slate-900 leading-snug">
+                                {q.question_text}
+                              </h5>
+                            </div>
+
+                            {hasAnswered ? (
+                              isCorrect ? (
+                                <Badge variant="success" className="gap-1 shrink-0 text-[10px]">
+                                  <CheckCircle2 className="w-3 h-3" />
+                                  <span>صحيحة (+1)</span>
+                                </Badge>
+                              ) : (
+                                <Badge variant="danger" className="gap-1 shrink-0 text-[10px]">
+                                  <XCircle className="w-3 h-3" />
+                                  <span>خاطئة (0)</span>
+                                </Badge>
+                              )
+                            ) : (
+                              <Badge variant="outline" className="text-[10px] shrink-0">
+                                لم يُجب
+                              </Badge>
+                            )}
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                            {q.options.map((opt, optIdx) => {
+                              const isStudentChoice = selectedIdx === optIdx;
+                              const isTheCorrectChoice = q.correct_option_index === optIdx;
+
+                              let style = 'bg-white border-slate-200 text-slate-700';
+                              if (isTheCorrectChoice) {
+                                style = 'bg-emerald-100 border-emerald-400 text-emerald-950 font-bold';
+                              }
+                              if (isStudentChoice && !isTheCorrectChoice) {
+                                style = 'bg-rose-100 border-rose-300 text-rose-950 line-through';
+                              }
+
+                              return (
+                                <div
+                                  key={optIdx}
+                                  className={`p-2.5 rounded-xl border text-xs flex items-center justify-between gap-2 ${style}`}
+                                >
+                                  <span>{opt}</span>
+                                  {isStudentChoice && (
+                                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-black/10 shrink-0">
+                                      خيار الطالب
+                                    </span>
+                                  )}
+                                  {isTheCorrectChoice && (
+                                    <span className="text-[10px] font-bold text-emerald-800 shrink-0">
+                                      ✓ الإجابة الصحيحة
+                                    </span>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+
+          {/* ======================================================== */}
+          {/* تبويب: اختبار التفكير المكاني (القبلي)                     */}
+          {/* ======================================================== */}
+          {activeTab === 'spatial_pre' && (
+            <div className="space-y-4">
+              {student.spatialPreScore === null || student.spatialPreScore === undefined ? (
+                <div className="text-center py-16 bg-white rounded-2xl border border-dashed border-slate-300">
+                  <HelpCircle className="w-12 h-12 mx-auto mb-3 text-slate-300" />
+                  <h4 className="text-base font-bold text-slate-700">لم يؤدِ الطالب اختبار التفكير المكاني القبلي بعد</h4>
+                  <p className="text-xs text-slate-400 mt-1">
+                    سيظهر تقرير تفصيلي بكل سؤال وموقف بيئي وإجابة الطالب فور قيامه بإنهاء الاختبار القبلي الثاني.
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <div className="p-5 rounded-2xl bg-white border border-indigo-200 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="space-y-1">
+                      <span className="text-xs text-indigo-800 font-bold block">
+                        نتيجة اختبار مهارات التفكير المكاني (التقييم القبلي)
+                      </span>
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-3xl font-black text-indigo-700 font-mono">
+                          {student.spatialPreScore}
+                        </span>
+                        <span className="text-sm font-bold text-slate-500 font-mono">
+                          من أصل {spatialQuestions.length} سؤالاً
+                        </span>
+                        <Badge variant="outline" className="text-xs font-bold font-mono mr-2 border-indigo-300 bg-indigo-50 text-indigo-800">
+                          النسبة: {Math.round(((student.spatialPreScore || 0) / (spatialQuestions.length || 1)) * 100)}%
+                        </Badge>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <div className="px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs font-bold text-emerald-800 flex items-center gap-1.5">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                        <span>صحيحة: {spatialPreCorrectCount}</span>
+                      </div>
+                      <div className="px-3 py-1.5 rounded-xl bg-rose-50 border border-rose-200 text-xs font-bold text-rose-800 flex items-center gap-1.5">
+                        <XCircle className="w-4 h-4 text-rose-600" />
+                        <span>خاطئة: {spatialPreWrongCount}</span>
+                      </div>
+                      {spatialPreUnansweredCount > 0 && (
+                        <div className="px-3 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                          <AlertCircle className="w-4 h-4 text-slate-400" />
+                          <span>لم يُجب: {spatialPreUnansweredCount}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* أزرار الفلترة */}
+                  <div className="flex items-center gap-2 pt-1 flex-wrap">
+                    <span className="text-xs font-bold text-slate-500 flex items-center gap-1">
+                      <Filter className="w-3.5 h-3.5" /> تصفية الأسئلة:
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setFilterStatus('all')}
+                      className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                        filterStatus === 'all'
+                          ? 'bg-indigo-700 text-white shadow-2xs'
+                          : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
+                      }`}
+                    >
+                      الكل ({spatialQuestions.length})
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setFilterStatus('correct')}
+                      className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                        filterStatus === 'correct'
+                          ? 'bg-emerald-600 text-white shadow-2xs'
+                          : 'bg-white text-emerald-700 border border-emerald-200 hover:bg-emerald-50'
+                      }`}
+                    >
+                      الصحيحة فقط ({spatialPreCorrectCount})
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setFilterStatus('wrong')}
+                      className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                        filterStatus === 'wrong'
+                          ? 'bg-rose-600 text-white shadow-2xs'
+                          : 'bg-white text-rose-700 border border-rose-200 hover:bg-rose-50'
+                      }`}
+                    >
+                      الخاطئة فقط ({spatialPreWrongCount})
+                    </button>
+                    {spatialPreUnansweredCount > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => setFilterStatus('unanswered')}
+                        className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                          filterStatus === 'unanswered'
+                            ? 'bg-slate-700 text-white shadow-2xs'
+                            : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
+                        }`}
+                      >
+                        لم يُجب ({spatialPreUnansweredCount})
+                      </button>
+                    )}
+                  </div>
+
+                  {/* قائمة أسئلة التفكير المكاني القبلي */}
+                  <div className="space-y-3">
+                    {filterQuestions(spatialQuestions, spatialPreAnswers).map((q, idx) => {
+                      const selectedIdx = spatialPreAnswers[q.id];
+                      const hasAnswered = selectedIdx !== undefined;
+                      const isCorrect = hasAnswered && selectedIdx === q.correct_option_index;
+
+                      return (
+                        <div
+                          key={q.id}
+                          className={`p-4 rounded-2xl border transition-all ${
+                            isCorrect
+                              ? 'bg-emerald-50/30 border-emerald-200'
+                              : hasAnswered
+                              ? 'bg-rose-50/30 border-rose-200'
+                              : 'bg-white border-slate-200'
+                          }`}
+                        >
+                          <div className="flex items-start justify-between gap-3 mb-2.5">
+                            <div className="space-y-1.5 flex-1">
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="font-mono text-slate-500 text-xs font-bold">
+                                  س{q.order_index || idx + 1}
+                                </span>
+                                <span className="text-[10px] bg-indigo-50 text-indigo-700 border border-indigo-200 px-2 py-0.5 rounded-md font-bold">
+                                  تفكير مكاني
+                                </span>
+                              </div>
+                              {q.context_text && (
+                                <p className="text-xs sm:text-sm text-slate-800 font-medium leading-relaxed bg-slate-50 p-2.5 rounded-xl border border-slate-200/60">
+                                  {q.context_text}
+                                </p>
+                              )}
+                              <h5 className="font-bold text-xs sm:text-sm text-slate-900 leading-snug">
+                                {q.question_text}
+                              </h5>
+                            </div>
+
+                            {hasAnswered ? (
+                              isCorrect ? (
+                                <Badge variant="success" className="gap-1 shrink-0 text-[10px]">
+                                  <CheckCircle2 className="w-3 h-3" />
+                                  <span>صحيحة (+1)</span>
+                                </Badge>
+                              ) : (
+                                <Badge variant="danger" className="gap-1 shrink-0 text-[10px]">
+                                  <XCircle className="w-3 h-3" />
+                                  <span>خاطئة (0)</span>
+                                </Badge>
+                              )
+                            ) : (
+                              <Badge variant="outline" className="text-[10px] shrink-0">
+                                لم يُجب
+                              </Badge>
+                            )}
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                            {q.options.map((opt, optIdx) => {
+                              const isStudentChoice = selectedIdx === optIdx;
+                              const isTheCorrectChoice = q.correct_option_index === optIdx;
+
+                              let style = 'bg-white border-slate-200 text-slate-700';
+                              if (isTheCorrectChoice) {
+                                style = 'bg-emerald-100 border-emerald-400 text-emerald-950 font-bold shadow-2xs';
+                              }
+                              if (isStudentChoice && !isTheCorrectChoice) {
+                                style = 'bg-rose-100 border-rose-300 text-rose-950 line-through';
+                              }
+
+                              return (
+                                <div
+                                  key={optIdx}
+                                  className={`p-2.5 rounded-xl border text-xs flex items-center justify-between gap-2 ${style}`}
+                                >
+                                  <span>{opt}</span>
+                                  {isStudentChoice && (
+                                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-black/10 shrink-0">
+                                      خيار الطالب
+                                    </span>
+                                  )}
+                                  {isTheCorrectChoice && (
+                                    <span className="text-[10px] font-bold text-emerald-800 shrink-0">
+                                      ✓ الإجابة الصحيحة
+                                    </span>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+
+          {/* ======================================================== */}
+          {/* تبويب: اختبار التفكير المكاني (البعدي)                     */}
+          {/* ======================================================== */}
+          {activeTab === 'spatial_post' && (
+            <div className="space-y-4">
+              {student.spatialPostScore === null || student.spatialPostScore === undefined ? (
+                <div className="text-center py-16 bg-white rounded-2xl border border-dashed border-slate-300">
+                  <HelpCircle className="w-12 h-12 mx-auto mb-3 text-slate-300" />
+                  <h4 className="text-base font-bold text-slate-700">لم يؤدِ الطالب اختبار التفكير المكاني البعدي بعد</h4>
+                  <p className="text-xs text-slate-400 mt-1">
+                    يتاح الاختبار بعد إنهاء الموديولات التعليمية والاختبار البعدي الأول.
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <div className="p-5 rounded-2xl bg-white border border-emerald-200 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="space-y-1">
+                      <span className="text-xs text-emerald-800 font-bold block">
+                        نتيجة اختبار مهارات التفكير المكاني (التقييم البعدي النهائي)
+                      </span>
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-3xl font-black text-emerald-700 font-mono">
+                          {student.spatialPostScore}
+                        </span>
+                        <span className="text-sm font-bold text-slate-500 font-mono">
+                          من أصل {spatialQuestions.length} سؤالاً
+                        </span>
+                        <Badge variant="success" className="text-xs font-bold font-mono mr-2">
+                          النسبة: {Math.round(((student.spatialPostScore || 0) / (spatialQuestions.length || 1)) * 100)}%
+                        </Badge>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 flex-wrap">
+                      {student.spatialPreScore !== null && student.spatialPreScore !== undefined && (
+                        <div className="px-3.5 py-2 rounded-xl bg-asu-navy text-white text-xs font-bold flex items-center gap-2 shadow-xs">
+                          <TrendingUp className="w-4 h-4 text-asu-gold-light" />
+                          <span>
+                            نمو المهارة: +{(student.spatialPostScore || 0) - (student.spatialPreScore || 0)} درجات
+                          </span>
+                        </div>
+                      )}
+                      <div className="px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs font-bold text-emerald-800 flex items-center gap-1.5">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                        <span>صحيحة: {spatialPostCorrectCount}</span>
+                      </div>
+                      <div className="px-3 py-1.5 rounded-xl bg-rose-50 border border-rose-200 text-xs font-bold text-rose-800 flex items-center gap-1.5">
+                        <XCircle className="w-4 h-4 text-rose-600" />
+                        <span>خاطئة: {spatialPostWrongCount}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* أزرار الفلترة */}
+                  <div className="flex items-center gap-2 pt-1 flex-wrap">
+                    <span className="text-xs font-bold text-slate-500 flex items-center gap-1">
+                      <Filter className="w-3.5 h-3.5" /> تصفية الأسئلة:
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setFilterStatus('all')}
+                      className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                        filterStatus === 'all'
+                          ? 'bg-asu-navy text-white shadow-2xs'
+                          : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
+                      }`}
+                    >
+                      الكل ({spatialQuestions.length})
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setFilterStatus('correct')}
+                      className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                        filterStatus === 'correct'
+                          ? 'bg-emerald-600 text-white shadow-2xs'
+                          : 'bg-white text-emerald-700 border border-emerald-200 hover:bg-emerald-50'
+                      }`}
+                    >
+                      الصحيحة فقط ({spatialPostCorrectCount})
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setFilterStatus('wrong')}
+                      className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                        filterStatus === 'wrong'
+                          ? 'bg-rose-600 text-white shadow-2xs'
+                          : 'bg-white text-rose-700 border border-rose-200 hover:bg-rose-50'
+                      }`}
+                    >
+                      الخاطئة فقط ({spatialPostWrongCount})
+                    </button>
+                    {spatialPostUnansweredCount > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => setFilterStatus('unanswered')}
+                        className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                          filterStatus === 'unanswered'
+                            ? 'bg-slate-700 text-white shadow-2xs'
+                            : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
+                        }`}
+                      >
+                        لم يُجب ({spatialPostUnansweredCount})
+                      </button>
+                    )}
+                  </div>
+
+                  {/* قائمة أسئلة التفكير المكاني البعدي */}
+                  <div className="space-y-3">
+                    {filterQuestions(spatialQuestions, spatialPostAnswers).map((q, idx) => {
+                      const selectedIdx = spatialPostAnswers[q.id];
+                      const hasAnswered = selectedIdx !== undefined;
+                      const isCorrect = hasAnswered && selectedIdx === q.correct_option_index;
+
+                      return (
+                        <div
+                          key={q.id}
+                          className={`p-4 rounded-2xl border transition-all ${
+                            isCorrect
+                              ? 'bg-emerald-50/30 border-emerald-200'
+                              : hasAnswered
+                              ? 'bg-rose-50/30 border-rose-200'
+                              : 'bg-white border-slate-200'
+                          }`}
+                        >
+                          <div className="flex items-start justify-between gap-3 mb-2.5">
+                            <div className="space-y-1.5 flex-1">
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="font-mono text-slate-500 text-xs font-bold">
+                                  س{q.order_index || idx + 1}
+                                </span>
+                                <span className="text-[10px] bg-emerald-50 text-emerald-800 border border-emerald-200 px-2 py-0.5 rounded-md font-bold">
+                                  تفكير مكاني
+                                </span>
+                              </div>
+                              {q.context_text && (
+                                <p className="text-xs sm:text-sm text-slate-800 font-medium leading-relaxed bg-slate-50 p-2.5 rounded-xl border border-slate-200/60">
+                                  {q.context_text}
+                                </p>
+                              )}
                               <h5 className="font-bold text-xs sm:text-sm text-slate-900 leading-snug">
                                 {q.question_text}
                               </h5>

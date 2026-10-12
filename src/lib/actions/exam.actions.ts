@@ -12,14 +12,19 @@ import { assertAdmin } from '@/lib/auth/session';
 
 const QUESTIONS_FILE_PATH = path.join(process.cwd(), 'src', 'data', 'exam-questions.json');
 
-// 1. قراءة جميع الأسئلة من بنك الأسئلة الدائم
+// 1. قراءة جميع الأسئلة من بنك الأسئلة الدائم (بما فيها أسئلة التفكير المكاني)
 export async function getAllQuestionsAction(): Promise<QuestionWithAnswer[]> {
   try {
-    const data = await fs.readFile(QUESTIONS_FILE_PATH, 'utf-8');
-    const questions: QuestionWithAnswer[] = JSON.parse(data);
-    return questions.sort((a, b) => a.order_index - b.order_index);
+    const [generalData, spatialData] = await Promise.all([
+      fs.readFile(QUESTIONS_FILE_PATH, 'utf-8').catch(() => '[]'),
+      fs.readFile(SPATIAL_QUESTIONS_FILE_PATH, 'utf-8').catch(() => '[]'),
+    ]);
+    const generalQuestions: QuestionWithAnswer[] = JSON.parse(generalData);
+    const spatialQuestions: QuestionWithAnswer[] = JSON.parse(spatialData);
+    const combined = [...generalQuestions, ...spatialQuestions];
+    return combined.sort((a, b) => a.order_index - b.order_index);
   } catch (err) {
-    console.error('Error reading exam-questions.json:', err);
+    console.error('Error reading questions:', err);
     return [];
   }
 }
