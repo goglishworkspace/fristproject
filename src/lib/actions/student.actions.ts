@@ -616,10 +616,27 @@ export async function completeStudentProfileAction(data: {
     if (isLiveSupabaseConfigured()) {
       try {
         const supabase = await createClient();
-        await supabase
+        const basePayload = {
+          full_name: cleanName,
+          phone: cleanPhone,
+          password: cleanPassword,
+          is_profile_completed: true,
+          updated_at: new Date().toISOString(),
+        };
+
+        const dbAccount = mapStudentToDbAccount(students[studentIdx]);
+        const { error: fullUpdateErr } = await supabase
           .from('accounts')
-          .update(mapStudentToDbAccount(students[studentIdx]))
+          .update(dbAccount)
           .eq('id', students[studentIdx].id);
+
+        if (fullUpdateErr) {
+          console.warn('Initial Supabase completeStudentProfile update failed, trying safe base payload:', fullUpdateErr);
+          await supabase
+            .from('accounts')
+            .update(basePayload)
+            .eq('id', students[studentIdx].id);
+        }
       } catch (e) {
         console.warn('Supabase completeStudentProfile error:', e);
       }
@@ -661,7 +678,7 @@ export async function completeStudentProfileAction(data: {
     revalidatePath('/modules');
     revalidatePath('/admin/dashboard');
 
-    return { success: true, redirectTo: '/' };
+    return { success: true, redirectTo: '/pre-test' };
   } catch {
     return { success: false, error: 'حدث خطأ أثناء حفظ البيانات، يرجى المحاولة مجدداً' };
   }
@@ -1057,9 +1074,14 @@ export async function getStudentProgressAction(): Promise<StudentProgressData> {
   let cookiePre = false;
   let cookiePreScore: number | null = null;
 
+  let cookieProfileCompleted = false;
+
   if (demoCookie?.value) {
     try {
       const parsed = JSON.parse(demoCookie.value);
+      if (parsed.is_profile_completed === true) {
+        cookieProfileCompleted = true;
+      }
       if (parsed.spatial_pre_completed || parsed.spatial_pre_score !== undefined) {
         cookieSpatialPre = true;
         cookieSpatialScore = parsed.spatial_pre_score ?? null;
@@ -1080,6 +1102,11 @@ export async function getStudentProgressAction(): Promise<StudentProgressData> {
     const spatialPostCompleted = student.spatialPostScore !== null && student.spatialPostScore !== undefined;
     const completedModules = parseInt(student.moduleProgress?.split('/')[0] || '0', 10);
     const allModulesDone = completedModules >= totalModules;
+
+    const isProfileCompleted =
+      student.isProfileCompleted ||
+      cookieProfileCompleted ||
+      (!!student.fullName && student.fullName !== `طالب (${student.username})`);
 
     return {
       isLoggedIn: true,
@@ -1103,7 +1130,7 @@ export async function getStudentProgressAction(): Promise<StudentProgressData> {
       isAllModulesCompleted: allModulesDone,
       isFullyCompleted: (postCompleted && spatialPostCompleted) || student.status === 'completed',
       isBanned: student.isBanned,
-      isProfileCompleted: student.isProfileCompleted,
+      isProfileCompleted: isProfileCompleted,
     };
   }
 
