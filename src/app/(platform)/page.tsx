@@ -142,7 +142,7 @@ export default async function PlatformHomePage() {
                         size="lg"
                         className="w-full sm:w-auto gap-2 shadow-lg shadow-asu-gold/20 font-extrabold"
                       >
-                        <span>بدء اختبار الوعي البيئي (قبلي)</span>
+                        <span>بدء اختبار الوعي بقضايا البيئة (قبلي)</span>
                         <ArrowLeft className="w-4 h-4 mr-1" />
                       </Button>
                     </Link>
@@ -177,7 +177,7 @@ export default async function PlatformHomePage() {
                         className="w-full sm:w-auto gap-2 shadow-lg shadow-asu-gold/20 font-extrabold"
                       >
                         <Award className="w-4 h-4 ml-1" />
-                        <span>بدء اختبار الوعي البيئي (بعدي)</span>
+                        <span>بدء اختبار الوعي بقضايا البيئة (بعدي)</span>
                         <ArrowLeft className="w-4 h-4 mr-1" />
                       </Button>
                     </Link>

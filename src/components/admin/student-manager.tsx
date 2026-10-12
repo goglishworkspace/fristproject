@@ -505,9 +505,9 @@ export function StudentManager({ initialStudents, allQuestions = [], modules = [
                 <th className="py-3.5 px-4">كلمة المرور</th>
                 <th className="py-3.5 px-4">الاسم الكامل للطالب</th>
                 <th className="py-3.5 px-4">رقم الهاتف</th>
-                <th className="py-3.5 px-4 text-center">الوعي البيئي (قبلي)</th>
+                <th className="py-3.5 px-4 text-center">الوعي بقضايا البيئة (قبلي)</th>
                 <th className="py-3.5 px-4 text-center">التفكير المكاني (قبلي)</th>
-                <th className="py-3.5 px-4 text-center">الوعي البيئي (بعدي)</th>
+                <th className="py-3.5 px-4 text-center">الوعي بقضايا البيئة (بعدي)</th>
                 <th className="py-3.5 px-4 text-center">التفكير المكاني (بعدي)</th>
                 <th className="py-3.5 px-4 text-center">حالة الحساب</th>
                 <th className="py-3.5 px-4 text-center">الإجراءات</th>

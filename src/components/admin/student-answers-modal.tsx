@@ -345,7 +345,7 @@ export function StudentAnswersModal({
         <div className="shrink-0 bg-slate-100/90 border-b border-slate-200 p-2.5 sm:p-3 overflow-x-auto scrollbar-thin">
           <div className="flex items-center gap-2 min-w-max">
             
-            {/* تبويب الاختبار القبلي الأول: الوعي البيئي */}
+            {/* تبويب الاختبار القبلي الأول: الوعي بقضايا البيئة */}
             <button
               type="button"
               onClick={() => {
@@ -359,7 +359,7 @@ export function StudentAnswersModal({
               }`}
             >
               <Award className={`w-4 h-4 ${activeTab === 'pre' ? 'text-asu-gold-light' : 'text-slate-500'}`} />
-              <span>الوعي البيئي (قبلي)</span>
+              <span>الوعي بقضايا البيئة (قبلي)</span>
               <span
                 className={`px-2 py-0.5 rounded-full text-[11px] font-mono font-bold ${
                   activeTab === 'pre'
@@ -443,7 +443,7 @@ export function StudentAnswersModal({
               );
             })}
 
-            {/* تبويب الاختبار البعدي الأول: الوعي البيئي */}
+            {/* تبويب الاختبار البعدي الأول: الوعي بقضايا البيئة */}
             <button
               type="button"
               onClick={() => {
@@ -457,7 +457,7 @@ export function StudentAnswersModal({
               }`}
             >
               <TrendingUp className={`w-4 h-4 ${activeTab === 'post' ? 'text-asu-gold-light' : 'text-emerald-600'}`} />
-              <span>الوعي البيئي (بعدي)</span>
+              <span>الوعي بقضايا البيئة (بعدي)</span>
               <span
                 className={`px-2 py-0.5 rounded-full text-[11px] font-mono font-bold ${
                   activeTab === 'post'
