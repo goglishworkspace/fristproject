@@ -759,23 +759,22 @@ export function ExamRunner({
                   </div>
                 </div>
 
-                {/* فقرة الموقف البيئي التمهيدي المنفصل إن وُجدت */}
-                {q.context_text && (
-                  <div className="my-2 p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-slate-50 via-indigo-50/40 to-slate-50 border border-indigo-200/70 text-right shadow-2xs">
-                    <div className="flex items-center gap-1.5 text-indigo-900 font-extrabold text-[11px] sm:text-xs mb-1.5">
-                      <Sparkles className="w-3.5 h-3.5 text-asu-gold-dark" />
-                      <span>الموقف البيئي / الحالة الدراسية:</span>
-                    </div>
-                    <p className="text-xs sm:text-sm text-slate-800 leading-relaxed font-medium">
-                      {q.context_text}
-                    </p>
-                  </div>
-                )}
-
-                <CardTitle className="text-base sm:text-lg font-black text-slate-900 leading-relaxed pt-1 text-right flex items-start gap-2">
-                  <span className="text-asu-gold-dark text-base sm:text-lg font-black shrink-0">◀</span>
-                  <span>{q.question_text}</span>
-                </CardTitle>
+                <div className="pt-2 text-right space-y-2.5">
+                  {q.context_text ? (
+                    <>
+                      <p className="text-sm sm:text-base text-slate-700 leading-relaxed font-normal">
+                        {q.context_text}
+                      </p>
+                      <CardTitle className="text-base sm:text-lg font-black text-slate-900 leading-relaxed pt-1">
+                        {q.question_text}
+                      </CardTitle>
+                    </>
+                  ) : (
+                    <CardTitle className="text-base sm:text-lg font-black text-slate-900 leading-relaxed">
+                      {q.question_text}
+                    </CardTitle>
+                  )}
+                </div>
               </CardHeader>
 
               <CardContent className="pt-6 pb-6">
