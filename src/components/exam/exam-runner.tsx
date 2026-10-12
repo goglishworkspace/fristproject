@@ -39,13 +39,15 @@ export interface ExamInstructionsData {
 }
 
 export const DEFAULT_PRE_TEST_INSTRUCTIONS: ExamInstructionsData = {
-  title: 'تعليمات الاختبار',
-  salutation: 'عزيزي الطالب / الطالبة',
-  intro: 'اقرأ التعليمات التالية بعناية قبل أن تبدأ في الإجابة عن الاختبار.',
-  purpose: 'وُضع هذا الاختبار لقياس مستوى الوعي بقضايا البيئة لديك، ومدى فهمك للمفاهيم والقضايا والمشكلات البيئية وطرق التعامل معها.',
+  title: 'تعليمات المرحلة القبلية: اختبار الوعي بقضايا البيئة (الاختبار الأول)',
+  salutation: 'عزيزي الطالب / عزيزتي الطالبة',
+  intro: 'تتضمن مرحلة القياس القبلي اختبارين أساسيين: أولهما هذا الاختبار (اختبار الوعي بقضايا البيئة)، ويليه مباشرة (اختبار مهارات التفكير المكاني). يرجى قراءة التعليمات بعناية قبل البدء.',
+  purpose: 'وُضع هذا الاختبار لقياس مستوى الوعي بقضايا البيئة لديك قبل دراسة الموديولات والدعامات التعليمية، ويليه اختبار التفكير المكاني.',
   rules: [
-    'يتكون الاختبار من (60) سؤالًا من نوع الاختيار من متعدد، ويتبع كل سؤال أربعة بدائل محتملة، أحدها فقط صحيح، ومشار إليها بالأحرف (أ، ب، ج، د) اقرأ السؤال جيدًا، ثم اختر إجابة واحدة فقط من بين البدائل المتاحة.',
-    'كما يتضمن الاختبار (40) عبارة من نوع الصواب والخطأ. اقرأ كل عبارة بعناية، ثم حدد ما إذا كانت صوابًا أم خطأ.',
+    'تتكون مرحلة القياس القبلي من اختبارين متتاليين: (1) اختبار الوعي بقضايا البيئة (حالي)، ثم (2) اختبار مهارات التفكير المكاني.',
+    'يتكون هذا الاختبار من (60) سؤالًا اختيار من متعدد، يتبع كل سؤال أربعة بدائل (أ، ب، ج، د)، وبديل واحد فقط صحيح.',
+    'كما يتضمن الاختبار (40) عبارة من نوع الصواب والخطأ لتحديد صحة كل عبارة.',
+    'عند انتهائك من هذا الاختبار، ستنتقل مباشرة لأداء اختبار مهارات التفكير المكاني لتكتمل مرحلة القياس القبلي وتُفتح لك الوحدات التعليمية.',
   ],
   note: 'أجب عن جميع الأسئلة، ولا تترك أي سؤال دون إجابة.',
   sections: [
@@ -466,6 +468,41 @@ export function ExamRunner({
           </div>
 
           <CardContent className="p-5 sm:p-8 space-y-6">
+            {/* إشعار خريطة المسار القبلي: يوضح وجود اختبارين قبليين */}
+            {examType === 'pre_test' && (
+              <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-amber-50 via-amber-50/70 to-slate-50 border-2 border-asu-gold/50 shadow-xs space-y-3">
+                <div className="flex items-center gap-2 text-asu-navy font-black text-sm sm:text-base">
+                  <div className="w-8 h-8 rounded-xl bg-asu-gold/20 text-asu-gold-dark flex items-center justify-center shrink-0">
+                    <Sparkles className="w-4.5 h-4.5 text-asu-gold-dark" />
+                  </div>
+                  <span>تنبيه هام للطلاب: مرحلة القياس القبلي تنقسم إلى اختبارين</span>
+                </div>
+                <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+                  لضمان دقة القياس الأكاديمي، ستقوم بأداء اختبارين متتاليين قبل البدء في الموديولات:
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+                  <div className="p-3 rounded-xl bg-white border-2 border-asu-navy/30 shadow-2xs flex items-center gap-2.5">
+                    <span className="w-6 h-6 rounded-lg bg-asu-navy text-white text-xs font-black flex items-center justify-center shrink-0">
+                      1
+                    </span>
+                    <div>
+                      <span className="block text-xs font-black text-asu-navy">الاختبار الأول (الحالي)</span>
+                      <span className="text-[11px] text-slate-500 font-bold">اختبار الوعي بقضايا البيئة</span>
+                    </div>
+                  </div>
+                  <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-600 flex items-center gap-2.5">
+                    <span className="w-6 h-6 rounded-lg bg-slate-200 text-slate-700 text-xs font-black flex items-center justify-center shrink-0">
+                      2
+                    </span>
+                    <div>
+                      <span className="block text-xs font-black text-slate-700">الاختبار الثاني (التالي)</span>
+                      <span className="text-[11px] text-slate-500">اختبار مهارات التفكير المكاني (36 موقفاً)</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* هدف الاختبار */}
             {activeInstructions.purpose && (
               <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200/90 space-y-2">
