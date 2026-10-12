@@ -80,8 +80,8 @@ function mapStudentToDbAccount(s: StudentAccount): any {
   const safeActivitySubmissions = {
     ...(s.activitySubmissions || {}),
     _spatialMeta: {
-      spatialPreScore: s.spatialPreScore,
-      spatialPostScore: s.spatialPostScore,
+      spatialPreScore: s.spatialPreScore ?? null,
+      spatialPostScore: s.spatialPostScore ?? null,
       spatialPreTestAnswers: s.spatialPreTestAnswers || {},
       spatialPostTestAnswers: s.spatialPostTestAnswers || {},
       updatedAt: new Date().toISOString(),
@@ -96,14 +96,10 @@ function mapStudentToDbAccount(s: StudentAccount): any {
     phone: s.phone,
     is_profile_completed: s.isProfileCompleted,
     is_banned: s.isBanned,
-    pre_score: s.preScore,
-    post_score: s.postScore,
-    spatial_pre_score: s.spatialPreScore,
-    spatial_post_score: s.spatialPostScore,
+    pre_score: s.preScore ?? null,
+    post_score: s.postScore ?? null,
     pre_test_answers: s.preTestAnswers || {},
     post_test_answers: s.postTestAnswers || {},
-    spatial_pre_test_answers: s.spatialPreTestAnswers || {},
-    spatial_post_test_answers: s.spatialPostTestAnswers || {},
     module_quiz_scores: s.moduleQuizScores || {},
     activity_submissions: safeActivitySubmissions,
     module_progress: s.moduleProgress,
@@ -515,10 +511,14 @@ export async function resetStudentToFreshAction(
     students[studentIdx].isBanned = false;
     students[studentIdx].preScore = null;
     students[studentIdx].postScore = null;
+    students[studentIdx].spatialPreScore = null;
+    students[studentIdx].spatialPostScore = null;
     students[studentIdx].moduleProgress = '0/2';
     students[studentIdx].status = 'not_started';
     students[studentIdx].preTestAnswers = {};
     students[studentIdx].postTestAnswers = {};
+    students[studentIdx].spatialPreTestAnswers = {};
+    students[studentIdx].spatialPostTestAnswers = {};
     students[studentIdx].moduleQuizScores = {};
     students[studentIdx].activitySubmissions = {};
     delete students[studentIdx].updatedAt;
@@ -799,12 +799,18 @@ export async function recordExamResultAction(
           parsed.id === students[studentIdx].id ||
           parsed.student_id === students[studentIdx].username
         ) {
+          const hasSpatialPre =
+            students[studentIdx].spatialPreScore !== null &&
+            students[studentIdx].spatialPreScore !== undefined;
+          const hasPre =
+            students[studentIdx].preScore !== null &&
+            students[studentIdx].preScore !== undefined;
           const sessionData = {
             ...parsed,
-            spatial_pre_completed: students[studentIdx].spatialPreScore !== null,
-            spatial_pre_score: students[studentIdx].spatialPreScore,
-            pre_completed: students[studentIdx].preScore !== null,
-            pre_score: students[studentIdx].preScore,
+            spatial_pre_completed: hasSpatialPre,
+            spatial_pre_score: hasSpatialPre ? students[studentIdx].spatialPreScore : null,
+            pre_completed: hasPre,
+            pre_score: hasPre ? students[studentIdx].preScore : null,
           };
           const { signSessionPayload } = await import('@/lib/auth/session');
           const signature = signSessionPayload(sessionData);
@@ -1082,13 +1088,19 @@ export async function getStudentProgressAction(): Promise<StudentProgressData> {
       if (parsed.is_profile_completed === true) {
         cookieProfileCompleted = true;
       }
-      if (parsed.spatial_pre_completed || parsed.spatial_pre_score !== undefined) {
+      if (
+        parsed.spatial_pre_completed === true &&
+        typeof parsed.spatial_pre_score === 'number'
+      ) {
         cookieSpatialPre = true;
-        cookieSpatialScore = parsed.spatial_pre_score ?? null;
+        cookieSpatialScore = parsed.spatial_pre_score;
       }
-      if (parsed.pre_completed || parsed.pre_score !== undefined) {
+      if (
+        parsed.pre_completed === true &&
+        typeof parsed.pre_score === 'number'
+      ) {
         cookiePre = true;
-        cookiePreScore = parsed.pre_score ?? null;
+        cookiePreScore = parsed.pre_score;
       }
     } catch {}
   }
