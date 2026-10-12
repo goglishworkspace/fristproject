@@ -319,6 +319,19 @@ export async function submitExamAction(
           },
           { onConflict: 'student_id' }
         );
+      } else if (examType === 'pre_spatial_test') {
+        try {
+          await supabase.from('student_progress').upsert(
+            {
+              student_id: currentUserId,
+              spatial_pre_test_completed: true,
+              updated_at: new Date().toISOString(),
+            },
+            { onConflict: 'student_id' }
+          );
+        } catch {
+          // Ignore if column spatial_pre_test_completed does not exist
+        }
       } else if (examType === 'post_test') {
         await supabase.from('student_progress').upsert(
           {
@@ -328,6 +341,19 @@ export async function submitExamAction(
           },
           { onConflict: 'student_id' }
         );
+      } else if (examType === 'post_spatial_test' || examType === 'spatial_test') {
+        try {
+          await supabase.from('student_progress').upsert(
+            {
+              student_id: currentUserId,
+              spatial_post_test_completed: true,
+              updated_at: new Date().toISOString(),
+            },
+            { onConflict: 'student_id' }
+          );
+        } catch {
+          // Ignore if column spatial_post_test_completed does not exist
+        }
       } else if (examType.startsWith('module_')) {
         const modId = examType.replace('module_', '');
         const { getModulesListAction } = await import('@/lib/actions/module.actions');

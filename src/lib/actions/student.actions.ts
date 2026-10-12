@@ -23,6 +23,33 @@ function generateRandomPassword(length = 6): string {
 
 // دالة مساعدة لتحويل سجل Supabase إلى StudentAccount
 function mapDbAccountToStudent(row: any): StudentAccount {
+  const activitySubmissions = row.activity_submissions || {};
+  const metaSpatial = activitySubmissions._spatialMeta || {};
+
+  const spatialPreScore =
+    row.spatial_pre_score !== null && row.spatial_pre_score !== undefined
+      ? Number(row.spatial_pre_score)
+      : metaSpatial.spatialPreScore !== null && metaSpatial.spatialPreScore !== undefined
+      ? Number(metaSpatial.spatialPreScore)
+      : null;
+
+  const spatialPostScore =
+    row.spatial_post_score !== null && row.spatial_post_score !== undefined
+      ? Number(row.spatial_post_score)
+      : metaSpatial.spatialPostScore !== null && metaSpatial.spatialPostScore !== undefined
+      ? Number(metaSpatial.spatialPostScore)
+      : null;
+
+  const spatialPreTestAnswers =
+    row.spatial_pre_test_answers && Object.keys(row.spatial_pre_test_answers).length > 0
+      ? row.spatial_pre_test_answers
+      : metaSpatial.spatialPreTestAnswers || {};
+
+  const spatialPostTestAnswers =
+    row.spatial_post_test_answers && Object.keys(row.spatial_post_test_answers).length > 0
+      ? row.spatial_post_test_answers
+      : metaSpatial.spatialPostTestAnswers || {};
+
   return {
     id: row.id,
     username: row.username,
@@ -33,14 +60,14 @@ function mapDbAccountToStudent(row: any): StudentAccount {
     isBanned: !!row.is_banned,
     preScore: row.pre_score !== null && row.pre_score !== undefined ? Number(row.pre_score) : null,
     postScore: row.post_score !== null && row.post_score !== undefined ? Number(row.post_score) : null,
-    spatialPreScore: row.spatial_pre_score !== null && row.spatial_pre_score !== undefined ? Number(row.spatial_pre_score) : null,
-    spatialPostScore: row.spatial_post_score !== null && row.spatial_post_score !== undefined ? Number(row.spatial_post_score) : null,
+    spatialPreScore,
+    spatialPostScore,
     preTestAnswers: row.pre_test_answers || {},
     postTestAnswers: row.post_test_answers || {},
-    spatialPreTestAnswers: row.spatial_pre_test_answers || {},
-    spatialPostTestAnswers: row.spatial_post_test_answers || {},
+    spatialPreTestAnswers,
+    spatialPostTestAnswers,
     moduleQuizScores: row.module_quiz_scores || {},
-    activitySubmissions: row.activity_submissions || {},
+    activitySubmissions: activitySubmissions,
     moduleProgress: row.module_progress || '0/2',
     status: row.status || 'not_started',
     createdAt: row.created_at || new Date().toISOString(),
@@ -48,8 +75,19 @@ function mapDbAccountToStudent(row: any): StudentAccount {
   };
 }
 
-// دالة مساعدة لتحويل StudentAccount إلى سجل Supabase
+// دالة مساعدة لتحويل StudentAccount إلى سجل Supabase مع تضمين البيانات في activity_submissions كطبقة أمان
 function mapStudentToDbAccount(s: StudentAccount): any {
+  const safeActivitySubmissions = {
+    ...(s.activitySubmissions || {}),
+    _spatialMeta: {
+      spatialPreScore: s.spatialPreScore,
+      spatialPostScore: s.spatialPostScore,
+      spatialPreTestAnswers: s.spatialPreTestAnswers || {},
+      spatialPostTestAnswers: s.spatialPostTestAnswers || {},
+      updatedAt: new Date().toISOString(),
+    },
+  };
+
   return {
     id: s.id,
     username: s.username,
@@ -67,7 +105,7 @@ function mapStudentToDbAccount(s: StudentAccount): any {
     spatial_pre_test_answers: s.spatialPreTestAnswers || {},
     spatial_post_test_answers: s.spatialPostTestAnswers || {},
     module_quiz_scores: s.moduleQuizScores || {},
-    activity_submissions: s.activitySubmissions || {},
+    activity_submissions: safeActivitySubmissions,
     module_progress: s.moduleProgress,
     status: s.status,
     updated_at: new Date().toISOString(),
@@ -702,16 +740,76 @@ export async function recordExamResultAction(
     if (isLiveSupabaseConfigured()) {
       try {
         const supabase = await createClient();
-        await supabase
+        const dbPayload = mapStudentToDbAccount(students[studentIdx]);
+        const { error: updateErr } = await supabase
           .from('accounts')
-          .update(mapStudentToDbAccount(students[studentIdx]))
+          .update(dbPayload)
           .eq('id', students[studentIdx].id);
+
+        if (updateErr) {
+          console.warn('Initial Supabase accounts update warning, trying fallback without spatial columns:', updateErr);
+          // إذا كان جدول accounts في Supabase لا يحتوي على أعمدة التفكير المكاني، نحدث الأعمدة الأساسية مع activity_submissions الحاوية للـ _spatialMeta
+          const fallbackPayload: any = {
+            pre_score: students[studentIdx].preScore,
+            post_score: students[studentIdx].postScore,
+            pre_test_answers: students[studentIdx].preTestAnswers || {},
+            post_test_answers: students[studentIdx].postTestAnswers || {},
+            module_quiz_scores: students[studentIdx].moduleQuizScores || {},
+            activity_submissions: dbPayload.activity_submissions,
+            module_progress: students[studentIdx].moduleProgress,
+            status: students[studentIdx].status,
+            updated_at: new Date().toISOString(),
+          };
+          await supabase
+            .from('accounts')
+            .update(fallbackPayload)
+            .eq('id', students[studentIdx].id);
+        }
       } catch (e) {
         console.warn('Supabase recordExamResult error:', e);
       }
     }
 
     await saveStudentsList(students);
+
+    // تحديث فوري لكوكيز الجلسة dev_demo_user لضمان عدم حجب الطالب عن الموديولات نهائياً
+    try {
+      const cookieStore = await cookies();
+      const existingCookie = cookieStore.get('dev_demo_user');
+      if (existingCookie?.value) {
+        const parsed = JSON.parse(existingCookie.value);
+        if (
+          parsed.id === students[studentIdx].id ||
+          parsed.student_id === students[studentIdx].username
+        ) {
+          const sessionData = {
+            ...parsed,
+            spatial_pre_completed: students[studentIdx].spatialPreScore !== null,
+            spatial_pre_score: students[studentIdx].spatialPreScore,
+            pre_completed: students[studentIdx].preScore !== null,
+            pre_score: students[studentIdx].preScore,
+          };
+          const { signSessionPayload } = await import('@/lib/auth/session');
+          const signature = signSessionPayload(sessionData);
+          cookieStore.set(
+            'dev_demo_user',
+            JSON.stringify({
+              ...sessionData,
+              signature,
+            }),
+            {
+              path: '/',
+              maxAge: 86400 * 30,
+              sameSite: 'lax',
+              httpOnly: true,
+              secure: process.env.NODE_ENV === 'production',
+            }
+          );
+        }
+      }
+    } catch (cookieErr) {
+      console.warn('Could not update session cookie after exam record:', cookieErr);
+    }
 
     revalidatePath('/');
     revalidatePath('/pre-test');
@@ -947,16 +1045,37 @@ export async function getStudentProgressAction(): Promise<StudentProgressData> {
     return defaultState;
   }
 
-  // 1. البحث في سجل الطلاب المعتمد (students.json) أولاً
+  // 1. البحث في سجل الطلاب المعتمد أولاً
   const students = await getStudentsListAction();
   const cleanId = currentUserId.trim().toLowerCase();
   const student = students.find(
     (s) => s.id.toLowerCase() === cleanId || s.username.toLowerCase() === cleanId
   );
 
+  let cookieSpatialPre = false;
+  let cookieSpatialScore: number | null = null;
+  let cookiePre = false;
+  let cookiePreScore: number | null = null;
+
+  if (demoCookie?.value) {
+    try {
+      const parsed = JSON.parse(demoCookie.value);
+      if (parsed.spatial_pre_completed || parsed.spatial_pre_score !== undefined) {
+        cookieSpatialPre = true;
+        cookieSpatialScore = parsed.spatial_pre_score ?? null;
+      }
+      if (parsed.pre_completed || parsed.pre_score !== undefined) {
+        cookiePre = true;
+        cookiePreScore = parsed.pre_score ?? null;
+      }
+    } catch {}
+  }
+
   if (student) {
-    const preCompleted = student.preScore !== null && student.preScore !== undefined;
-    const spatialPreCompleted = student.spatialPreScore !== null && student.spatialPreScore !== undefined;
+    const preCompleted =
+      cookiePre || (student.preScore !== null && student.preScore !== undefined);
+    const spatialPreCompleted =
+      cookieSpatialPre || (student.spatialPreScore !== null && student.spatialPreScore !== undefined);
     const postCompleted = student.postScore !== null && student.postScore !== undefined;
     const spatialPostCompleted = student.spatialPostScore !== null && student.spatialPostScore !== undefined;
     const completedModules = parseInt(student.moduleProgress?.split('/')[0] || '0', 10);
@@ -970,9 +1089,9 @@ export async function getStudentProgressAction(): Promise<StudentProgressData> {
       fullName: student.fullName || `طالب (${student.username})`,
       phone: student.phone || '',
       preTestCompleted: preCompleted,
-      preScore: student.preScore,
+      preScore: student.preScore ?? cookiePreScore,
       spatialPreTestCompleted: spatialPreCompleted,
-      spatialPreScore: student.spatialPreScore ?? null,
+      spatialPreScore: student.spatialPreScore ?? cookieSpatialScore,
       postTestCompleted: postCompleted,
       postScore: student.postScore,
       spatialPostTestCompleted: spatialPostCompleted,
