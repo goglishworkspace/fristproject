@@ -352,7 +352,7 @@ export function ModuleAdminManager({ initialModules }: ModuleAdminManagerProps) 
         <div>
           <h3 className="text-lg sm:text-xl font-black text-asu-navy flex items-center gap-2">
             <BookOpen className="w-5 h-5 text-asu-gold-dark" />
-            <span>إدارة الموديولات والشرائح والمساعدة والدعامات</span>
+            <span>إدارة الموديولات والشرائح والدعامات التعليمية الإلكترونية</span>
           </h3>
           <p className="text-xs text-slate-500 mt-0.5">
             إضافة وتعديل شرائح الموديول والبطاقات الأربع (تلميح، معلومة إضافية، مثال، اسأل نفسك)
@@ -435,7 +435,7 @@ export function ModuleAdminManager({ initialModules }: ModuleAdminManagerProps) 
 
                   <span className="bg-rose-50 text-rose-700 border border-rose-200/60 px-2.5 py-1 rounded-lg font-bold flex items-center gap-1">
                     <Compass className="w-3 h-3" />
-                    <span>المساعدة والدعامات (4 بطاقات)</span>
+                    <span>الدعامات التعليمية الإلكترونية (4 بطاقات)</span>
                   </span>
 
                   {m.activity && (
@@ -550,7 +550,7 @@ export function ModuleAdminManager({ initialModules }: ModuleAdminManagerProps) 
                   <div>
                     <label className="text-sm font-black text-asu-navy flex items-center gap-2">
                       <ImageIcon className="w-4 h-4 text-asu-gold-dark" />
-                      <span>شرائح المحتوى المصور والمساعدة والدعامات</span>
+                      <span>شرائح المحتوى المصور والدعامات التعليمية الإلكترونية</span>
                     </label>
                     <p className="text-[11px] text-slate-500 mt-0.5">
                       ضع رابط الصورة لكل شريحة، واكتب محتوى البطاقات الأربع (تلميح، معلومة إضافية، مثال، اسأل نفسك)
@@ -622,11 +622,11 @@ export function ModuleAdminManager({ initialModules }: ModuleAdminManagerProps) 
                         </div>
                       </div>
 
-                      {/* بطاقات المساعدة والدعامات الأربع الخاصة بهذه الشريحة */}
+                      {/* بطاقات الدعامات التعليمية الإلكترونية الأربع الخاصة بهذه الشريحة */}
                       <div className="space-y-2 pt-2 border-t border-slate-200/60">
                         <span className="text-xs font-black text-rose-700 flex items-center gap-1.5">
                           <Compass className="w-3.5 h-3.5" />
-                          <span>المساعدة والدعامات لهذه الشريحة (تظهر بالبطاقات الأربع):</span>
+                          <span>الدعامات التعليمية الإلكترونية لهذه الشريحة (تظهر بالبطاقات الأربع):</span>
                         </span>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">

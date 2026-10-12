@@ -29,7 +29,7 @@ interface ModuleScaffoldingBoxProps {
 export function ModuleScaffoldingBox({
   scaffolding,
   className = '',
-  title = 'المساعدة والدعامات',
+  title = 'الدعامات التعليمية الإلكترونية',
 }: ModuleScaffoldingBoxProps) {
   if (!scaffolding) {
     return null;

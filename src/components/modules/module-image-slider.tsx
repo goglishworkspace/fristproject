@@ -278,14 +278,14 @@ export function ModuleImageSlider({
       </div>
 
       {/* ========================================================================= */}
-      {/* 3. صندوق المساعدة والدعامات (يظهر تحت الصورة فقط من الشريحة ١ وما بعدها)      */}
+      {/* 3. صندوق الدعامات التعليمية الإلكترونية (يظهر تحت الصورة فقط من الشريحة ١ وما بعدها) */}
       {/* ========================================================================= */}
       {hasScaffolding && (
         <div className="w-full transition-all duration-300 animate-in fade-in">
           <ModuleScaffoldingBox
             scaffolding={currentScaffolding}
             className="w-full"
-            title={`المساعدة والدعامات – ${slideDisplayName}`}
+            title={`الدعامات التعليمية الإلكترونية – ${slideDisplayName}`}
           />
         </div>
       )}
