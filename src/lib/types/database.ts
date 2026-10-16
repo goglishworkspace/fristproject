@@ -19,6 +19,19 @@ export interface UserProfile {
   created_at?: string;
 }
 
+export interface AdminAccount {
+  id: string;
+  username: string;
+  password: string;
+  fullName: string;
+  phone?: string;
+  role: 'admin';
+  isProfileCompleted?: boolean;
+  isBanned?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 export interface StudentActivitySubmission {
   answerText: string;
   fileUrl?: string;

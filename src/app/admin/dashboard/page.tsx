@@ -6,6 +6,7 @@ import { getLibraryVideos } from '@/lib/actions/library.actions';
 import { getStudentsListAction } from '@/lib/actions/student.actions';
 import { getModulesListAction } from '@/lib/actions/module.actions';
 import { getAllQuestionsAction } from '@/lib/actions/exam.actions';
+import { getAdminAccountsAction } from '@/lib/actions/admin-accounts.actions';
 import { AdminDashboardTabs } from '@/components/admin/admin-dashboard-tabs';
 import { ASU_LOGO_URL } from '@/lib/constants/branding';
 
@@ -15,11 +16,12 @@ export const metadata = {
 };
 
 export default async function AdminDashboardPage() {
-  const [students, videos, modules, questions] = await Promise.all([
+  const [students, videos, modules, questions, admins] = await Promise.all([
     getStudentsListAction(),
     getLibraryVideos(),
     getModulesListAction(),
     getAllQuestionsAction(),
+    getAdminAccountsAction(),
   ]);
 
   return (
@@ -75,6 +77,7 @@ export default async function AdminDashboardPage() {
         modules={modules}
         questions={questions}
         videos={videos}
+        admins={admins}
       />
     </div>
   );

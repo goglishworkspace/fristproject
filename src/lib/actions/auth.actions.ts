@@ -107,8 +107,10 @@ export async function loginAction(
     redirect('/admin/dashboard');
   }
 
-  // 2. فحص حسابات المشرفين المعتمدة (10 حسابات مسجلة)
-  const matchedAdmin = (adminsData as AdminAccountData[]).find((adm) => {
+  // 2. فحص حسابات المشرفين المعتمدة (الحسابات المسجلة)
+  const { getAdminAccountsAction: fetchAdmins } = await import('@/lib/actions/admin-accounts.actions');
+  const adminAccounts = await fetchAdmins();
+  const matchedAdmin = adminAccounts.find((adm) => {
     const u = adm.username.toLowerCase();
     // دعم الأشكال المتنوعة مثل: admin1, admin01, admin1@asu.edu.eg
     const padded = u.replace('admin', 'admin0');
