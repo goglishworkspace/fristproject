@@ -10,6 +10,9 @@ import { isLiveSupabaseConfigured } from '@/lib/supabase/config';
 import { assertAdmin } from '@/lib/auth/session';
 
 const STUDENTS_FILE_PATH = path.join(process.cwd(), 'src', 'data', 'students.json');
+let cachedStudentsList: StudentAccount[] | null = null;
+let cachedStudentsTimestamp = 0;
+const STUDENTS_CACHE_TTL_MS = 30000;
 
 // دالة مساعدة لتوليد كلمة مرور عشوائية سهلة القراءة
 function generateRandomPassword(length = 6): string {
@@ -22,6 +25,7 @@ function generateRandomPassword(length = 6): string {
 }
 
 // دالة مساعدة لتحويل سجل Supabase إلى StudentAccount
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function mapDbAccountToStudent(row: any): StudentAccount {
   const activitySubmissions = row.activity_submissions || {};
   const metaSpatial = activitySubmissions._spatialMeta || {};
@@ -76,6 +80,7 @@ function mapDbAccountToStudent(row: any): StudentAccount {
 }
 
 // دالة مساعدة لتحويل StudentAccount إلى سجل Supabase مع تضمين البيانات في activity_submissions كطبقة أمان
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function mapStudentToDbAccount(s: StudentAccount): any {
   const safeActivitySubmissions = {
     ...(s.activitySubmissions || {}),
@@ -108,8 +113,38 @@ function mapStudentToDbAccount(s: StudentAccount): any {
   };
 }
 
-// دالة قراءة سجل الطلاب
+// جلب بيانات طالب واحد فقط بشكل موجه ومباشر لمنع فحص كامل الجدول
+export async function getSingleStudentAction(identifier: string): Promise<StudentAccount | null> {
+  if (!identifier) return null;
+  const cleanId = identifier.trim().toLowerCase();
+
+  if (isLiveSupabaseConfigured()) {
+    try {
+      const supabase = await createClient();
+      const { data, error } = await supabase
+        .from('accounts')
+        .select('*')
+        .or(`id.eq.${cleanId},username.eq.${cleanId}`)
+        .maybeSingle();
+
+      if (!error && data) {
+        return mapDbAccountToStudent(data);
+      }
+    } catch (err) {
+      console.warn('Supabase getSingleStudentAction failed, falling back to cached students:', err);
+    }
+  }
+
+  const all = await getStudentsListAction();
+  return all.find((s) => s.id.toLowerCase() === cleanId || s.username.toLowerCase() === cleanId) || null;
+}
+
+// دالة قراءة سجل الطلاب مع كاش ذكي بالذاكرة
 export async function getStudentsListAction(): Promise<StudentAccount[]> {
+  const now = Date.now();
+  if (cachedStudentsList && now - cachedStudentsTimestamp < STUDENTS_CACHE_TTL_MS) {
+    return cachedStudentsList;
+  }
   if (isLiveSupabaseConfigured()) {
     try {
       const supabase = await createClient();
@@ -120,7 +155,9 @@ export async function getStudentsListAction(): Promise<StudentAccount[]> {
         .order('created_at', { ascending: false });
 
       if (!error && data) {
-        return data.map(mapDbAccountToStudent);
+        cachedStudentsList = data.map(mapDbAccountToStudent);
+        cachedStudentsTimestamp = now;
+        return cachedStudentsList;
       }
     } catch (err) {
       console.warn('Supabase getStudentsListAction failed, falling back to JSON:', err);
@@ -129,7 +166,9 @@ export async function getStudentsListAction(): Promise<StudentAccount[]> {
 
   try {
     const data = await fs.readFile(STUDENTS_FILE_PATH, 'utf-8');
-    return JSON.parse(data) as StudentAccount[];
+    cachedStudentsList = JSON.parse(data) as StudentAccount[];
+    cachedStudentsTimestamp = now;
+    return cachedStudentsList;
   } catch (err) {
     console.error('Error reading students.json:', err);
     return [];
@@ -139,6 +178,8 @@ export async function getStudentsListAction(): Promise<StudentAccount[]> {
 // دالة حفظ ملف الطلاب (Fallback محلي)
 async function saveStudentsList(students: StudentAccount[]): Promise<boolean> {
   try {
+    cachedStudentsList = students;
+    cachedStudentsTimestamp = Date.now();
     await fs.writeFile(STUDENTS_FILE_PATH, JSON.stringify(students, null, 2), 'utf-8');
     return true;
   } catch (err) {
@@ -766,6 +807,7 @@ export async function recordExamResultAction(
         if (updateErr) {
           console.warn('Initial Supabase accounts update warning, trying fallback without spatial columns:', updateErr);
           // إذا كان جدول accounts في Supabase لا يحتوي على أعمدة التفكير المكاني، نحدث الأعمدة الأساسية مع activity_submissions الحاوية للـ _spatialMeta
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const fallbackPayload: any = {
             pre_score: students[studentIdx].preScore,
             post_score: students[studentIdx].postScore,
@@ -1068,12 +1110,8 @@ export async function getStudentProgressAction(): Promise<StudentProgressData> {
     return defaultState;
   }
 
-  // 1. البحث في سجل الطلاب المعتمد أولاً
-  const students = await getStudentsListAction();
-  const cleanId = currentUserId.trim().toLowerCase();
-  const student = students.find(
-    (s) => s.id.toLowerCase() === cleanId || s.username.toLowerCase() === cleanId
-  );
+  // 1. البحث عن الطالب الحالي بشكل موجه ومباشر (Single-Row Query)
+  const student = await getSingleStudentAction(currentUserId);
 
   let cookieSpatialPre = false;
   let cookieSpatialScore: number | null = null;
@@ -1167,11 +1205,11 @@ export async function getStudentProgressAction(): Promise<StudentProgressData> {
           phone: '',
           preTestCompleted: !!progress.pre_test_completed,
           preScore: null,
-          spatialPreTestCompleted: !!(progress as any).spatial_pre_test_completed,
+          spatialPreTestCompleted: !!(progress as Record<string, unknown>).spatial_pre_test_completed,
           spatialPreScore: null,
           postTestCompleted: !!progress.post_test_completed,
           postScore: null,
-          spatialPostTestCompleted: !!(progress as any).spatial_post_test_completed,
+          spatialPostTestCompleted: !!(progress as Record<string, unknown>).spatial_post_test_completed,
           spatialPostScore: null,
           currentModuleIndex: completedModules,
           completedModulesCount: completedModules,

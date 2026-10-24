@@ -11,14 +11,17 @@ import { isLiveSupabaseConfigured } from '@/lib/supabase/config';
 import { assertAdmin } from '@/lib/auth/session';
 
 const MODULES_FILE_PATH = path.join(process.cwd(), 'src', 'data', 'modules.json');
+let cachedModules: ModuleData[] | null = null;
 
 // 1. قراءة قائمة الموديولات من ملف JSON الدائم
 export async function getModulesListAction(): Promise<ModuleData[]> {
+  if (cachedModules) return cachedModules;
   try {
     const data = await fs.readFile(MODULES_FILE_PATH, 'utf-8');
     const modules: ModuleData[] = JSON.parse(data);
     // ترتيب الموديولات حسب order
-    return modules.sort((a, b) => a.order - b.order);
+    cachedModules = modules.sort((a, b) => a.order - b.order);
+    return cachedModules;
   } catch (err) {
     console.error('Error reading modules.json:', err);
     return [];
@@ -29,6 +32,7 @@ export async function getModulesListAction(): Promise<ModuleData[]> {
 async function saveModulesList(modules: ModuleData[]): Promise<boolean> {
   try {
     await fs.writeFile(MODULES_FILE_PATH, JSON.stringify(modules, null, 2), 'utf-8');
+    cachedModules = modules.sort((a, b) => a.order - b.order);
     return true;
   } catch (err) {
     console.error('Error writing modules.json:', err);

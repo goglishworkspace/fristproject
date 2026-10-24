@@ -86,7 +86,7 @@ export function Navbar({ user }: NavbarProps) {
             const isActive = pathname === item.href;
             return (
               <Link
-                key={item.href}
+                key={item.href} prefetch={false}
                 href={item.href}
                 className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 select-none ${
                   isActive
@@ -171,7 +171,7 @@ export function Navbar({ user }: NavbarProps) {
               </form>
             </>
           ) : (
-            <Link href="/login">
+            <Link href="/login" prefetch={false}>
               <Button
                 variant="primary"
                 size="sm"
@@ -203,7 +203,7 @@ export function Navbar({ user }: NavbarProps) {
             const isActive = pathname === item.href;
             return (
               <Link
-                key={item.href}
+                key={item.href} prefetch={false}
                 href={item.href}
                 onClick={() => setMobileMenuOpen(false)}
                 className={`p-3 rounded-xl text-xs font-bold transition-all flex items-center justify-between cursor-pointer select-none ${
@@ -257,7 +257,7 @@ export function Navbar({ user }: NavbarProps) {
             const isActive = pathname === item.href;
             return (
               <Link
-                key={item.href}
+                key={item.href} prefetch={false}
                 href={item.href}
                 className={`px-3 py-1.5 rounded-full whitespace-nowrap text-xs font-bold transition-all flex items-center gap-1.5 shadow-2xs select-none cursor-pointer ${
                   isActive

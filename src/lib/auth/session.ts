@@ -3,7 +3,18 @@ import { cookies } from 'next/headers';
 import type { UserRole } from '@/lib/types/database';
 
 const SESSION_COOKIE_NAME = 'dev_demo_user';
-const SESSION_SECRET = process.env.SESSION_SECRET || 'asu_faculty_edu_secret_key_2026_secure';
+function getSessionSecret(): string {
+  const secret = process.env.SESSION_SECRET;
+  if (!secret) {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error(
+        'CRITICAL SECURITY ERROR: The SESSION_SECRET environment variable is not defined in production.'
+      );
+    }
+    return 'dev_insecure_local_development_secret_only';
+  }
+  return secret;
+}
 
 export interface UserSessionPayload {
   id: string;
@@ -21,7 +32,7 @@ export interface UserSessionPayload {
  */
 export function signSessionPayload(payload: Omit<UserSessionPayload, 'signature'>): string {
   const dataToSign = `${payload.id}:${payload.student_id}:${payload.role}:${payload.is_banned}:${payload.is_profile_completed}`;
-  return crypto.createHmac('sha256', SESSION_SECRET).update(dataToSign).digest('hex');
+  return crypto.createHmac('sha256', getSessionSecret()).update(dataToSign).digest('hex');
 }
 
 /**

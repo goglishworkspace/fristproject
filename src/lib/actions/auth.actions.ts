@@ -62,15 +62,26 @@ export async function loginAction(
 
   const cleanId = identifier.toLowerCase();
 
+  // منع أي محارف خطيرة تمنع ثغرات PostgREST / Injection
+  if (!/^[a-zA-Z0-9_.@-]+$/.test(cleanId)) {
+    return { error: 'اسم المستخدم أو الكود يحتوي على رموز غير صالحة' };
+  }
+
   // 1. فحص الحساب الرئيسي الافتراضي للمشرف العام
   const isRootAdmin =
     cleanId === 'admin@asu.edu.eg' ||
     cleanId === 'admin.env@asu.edu.eg' ||
     cleanId === 'admin';
 
-  const expectedAdminPassword = process.env.ADMIN_PASSWORD || 'Asu@Edu2026#Admin';
+  const expectedAdminPassword = process.env.ADMIN_PASSWORD;
 
   if (isRootAdmin) {
+    if (!expectedAdminPassword) {
+      if (process.env.NODE_ENV === 'production') {
+        throw new Error('CRITICAL SECURITY ERROR: ADMIN_PASSWORD environment variable is not defined in production.');
+      }
+      return { error: 'متغير بيئة كلمة مرور المشرف العام ADMIN_PASSWORD غير مهيأ في السيرفر' };
+    }
     if (password !== expectedAdminPassword) {
       return { error: 'كلمة مرور المشرف الأكاديمي غير صحيحة، يرجى إعادة المحاولة' };
     }
@@ -221,7 +232,7 @@ export async function loginAction(
       const { data: dbAccount } = await supabase
         .from('accounts')
         .select('*')
-        .or(`username.eq.${cleanId},username.eq.${identifier}`)
+        .eq('username', cleanId)
         .maybeSingle();
 
       if (dbAccount) {

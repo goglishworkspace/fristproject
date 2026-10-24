@@ -29,8 +29,9 @@ export default async function PlatformLayout({
     redirect('/complete-profile');
   }
 
-  // إذا لم يكن مستخدم تجريبي، نفحص مستخدم سوبابيز الحقيقي فقط إذا كان الربط مفعلاً
-  if (!userProfile && isLiveSupabaseConfigured()) {
+  // تحسين الأداء: فحص مستخدم Supabase فقط إذا لم تكن هناك جلسة ديمو وكانت هناك كوكيز sb-*
+  const hasSupabaseCookie = cookieStore.getAll().some((c) => c.name.startsWith('sb-'));
+  if (!userProfile && isLiveSupabaseConfigured() && hasSupabaseCookie) {
     try {
       const supabase = await createClient();
       const {
@@ -40,7 +41,7 @@ export default async function PlatformLayout({
       if (authUser) {
         const { data: profile } = await supabase
           .from('profiles')
-          .select('*')
+          .select('id, student_id, full_name, role')
           .eq('id', authUser.id)
           .single();
 

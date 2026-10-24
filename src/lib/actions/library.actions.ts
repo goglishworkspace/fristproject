@@ -18,6 +18,7 @@ export interface LibraryVideo {
 }
 
 const DATA_FILE_PATH = path.join(process.cwd(), 'src', 'data', 'library-videos.json');
+let cachedVideos: LibraryVideo[] | null = null;
 
 // استخراج معرّف فيديو اليوتيوب من أي رابط (Standard, Shortened, Embed, etc.)
 export async function extractYouTubeId(url: string): Promise<string | null> {
@@ -40,6 +41,8 @@ export async function extractYouTubeId(url: string): Promise<string | null> {
 
 // جلب قائمة الفيديوهات
 export async function getLibraryVideos(): Promise<LibraryVideo[]> {
+  if (cachedVideos) return cachedVideos;
+
   // قراءة الفيديوهات الافتراضية من ملف JSON دائماً كمرجع مضمون
   let fallbackVideos: LibraryVideo[] = [];
   try {
@@ -58,7 +61,7 @@ export async function getLibraryVideos(): Promise<LibraryVideo[]> {
         .order('added_at', { ascending: false });
 
       if (!error && data && data.length > 0) {
-        return data.map((item) => ({
+        cachedVideos = data.map((item) => ({
           id: item.id,
           title: item.title,
           description: item.description,
@@ -68,10 +71,10 @@ export async function getLibraryVideos(): Promise<LibraryVideo[]> {
           duration: item.duration,
           addedAt: item.added_at,
         }));
+        return cachedVideos;
       }
 
-      // إذا كانت قاعدة بيانات Supabase متصلة ولكن جدول library_videos فارغ،
-      // نقوم تلقائياً بتغذية الجدول بالـ 16 فيديو لضمان ظهورها وتزامنها فوراً!
+      // إذا كانت قاعدة بيانات Supabase متصلة ولكن جدول library_videos فارغ
       if (!error && data && data.length === 0 && fallbackVideos.length > 0) {
         try {
           const insertRows = fallbackVideos.map((v) => ({
@@ -88,13 +91,15 @@ export async function getLibraryVideos(): Promise<LibraryVideo[]> {
         } catch (seedErr) {
           console.warn('Auto-seed to Supabase library_videos warning:', seedErr);
         }
-        return fallbackVideos;
+        cachedVideos = fallbackVideos;
+        return cachedVideos;
       }
     } catch (err) {
       console.warn('Supabase getLibraryVideos failed, falling back to JSON:', err);
     }
   }
 
+  cachedVideos = fallbackVideos;
   return fallbackVideos;
 }
 
@@ -146,7 +151,8 @@ export async function addLibraryVideoAction(
       if (error) {
         console.error('Supabase add video error:', error);
       } else {
-        revalidatePath('/library');
+        cachedVideos = null;
+    revalidatePath('/library');
         revalidatePath('/admin/dashboard');
         return { success: true };
       }
@@ -160,6 +166,7 @@ export async function addLibraryVideoAction(
     const updatedVideos = [newVideo, ...currentVideos.filter((v) => v.id !== newVideo.id)];
     await fs.writeFile(DATA_FILE_PATH, JSON.stringify(updatedVideos, null, 2), 'utf-8');
 
+    cachedVideos = null;
     revalidatePath('/library');
     revalidatePath('/admin/dashboard');
 
@@ -185,7 +192,8 @@ export async function deleteLibraryVideoAction(videoId: string): Promise<{ succe
         return { success: false, error: error.message };
       }
 
-      revalidatePath('/library');
+      cachedVideos = null;
+    revalidatePath('/library');
       revalidatePath('/admin/dashboard');
       return { success: true };
     } catch (err: unknown) {
@@ -200,6 +208,7 @@ export async function deleteLibraryVideoAction(videoId: string): Promise<{ succe
     const updated = currentVideos.filter((v) => v.id !== videoId);
     await fs.writeFile(DATA_FILE_PATH, JSON.stringify(updated, null, 2), 'utf-8');
 
+    cachedVideos = null;
     revalidatePath('/library');
     revalidatePath('/admin/dashboard');
     return { success: true };

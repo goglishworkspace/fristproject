@@ -120,7 +120,7 @@ export async function updateAdminAccountAction(
     if (isLiveSupabaseConfigured()) {
       try {
         const supabase = await createClient();
-        const payload: Record<string, any> = {
+        const payload: Record<string, unknown> = {
           full_name: cleanFullName,
           phone: cleanPhone,
           updated_at: new Date().toISOString(),

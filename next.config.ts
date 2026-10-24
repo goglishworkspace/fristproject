@@ -1,6 +1,27 @@
 import type { NextConfig } from "next";
 
+const cspHeader = `
+  default-src 'self';
+  script-src 'self' 'unsafe-inline' 'unsafe-eval';
+  style-src 'self' 'unsafe-inline';
+  img-src 'self' blob: data: https://res.cloudinary.com https://img.youtube.com;
+  font-src 'self' data:;
+  frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com;
+  connect-src 'self' https://*.supabase.co wss://*.supabase.co;
+  media-src 'self' https://res.cloudinary.com blob: data:;
+  object-src 'none';
+  base-uri 'self';
+  form-action 'self';
+  frame-ancestors 'none';
+  upgrade-insecure-requests;
+`.replace(/\s{2,}/g, ' ').trim();
+
 const securityHeaders = [
+  // جدار حماية المحتوى والسكربتات والاتصالات (Content Security Policy)
+  {
+    key: "Content-Security-Policy",
+    value: cspHeader,
+  },
   // حماية من clickjacking ومنع تضمين الموقع داخل iframe خبيث
   {
     key: "X-Frame-Options",
@@ -19,7 +40,7 @@ const securityHeaders = [
   // تفعيل حماية ضد هجمات XSS
   {
     key: "X-XSS-Protection",
-    value: "1; mode=block",
+    value: "0",
   },
   // تقييد صلاحيات الكاميرا والمايكروفون والموقع الجغرافي للمتصفح
   {

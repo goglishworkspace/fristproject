@@ -8,13 +8,18 @@ const ADMIN_PREFIX = '/admin';
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // 1. فحص الجلسة أولاً
-  const sessionResponse = await updateSession(request);
-
-  // 2. التحقق من المستخدم الحالي وحالته الأكاديمية
+  // التحقق من جلسة الطالب التجريبية الموثقة dev_demo_user
   const demoCookie = request.cookies.get('dev_demo_user');
   const hasDemoAuth = !!demoCookie?.value;
 
+  // تحسين فائق للأداء: لا نستدعي سوبابيز عبر الشبكة إلا إذا كان الزائر يملك كوكيز سوبابيز فعلية (sb-*)
+  const hasSupabaseCookie = request.cookies.getAll().some((c) => c.name.startsWith('sb-'));
+  let sessionResponse = NextResponse.next({ request });
+  if (!hasDemoAuth && hasSupabaseCookie) {
+    sessionResponse = await updateSession(request);
+  }
+
+  // 2. التحقق من المستخدم الحالي وحالته الأكاديمية
   if (hasDemoAuth) {
     try {
       const parsed = JSON.parse(demoCookie.value);

@@ -1,6 +1,6 @@
 import { notFound, redirect } from 'next/navigation';
 import { getModulesListAction, completeModuleAction } from '@/lib/actions/module.actions';
-import { getStudentProgressAction, getStudentsListAction } from '@/lib/actions/student.actions';
+import { getStudentProgressAction, getSingleStudentAction } from '@/lib/actions/student.actions';
 import { ModuleFlowManager } from '@/components/modules/module-flow-manager';
 import { getExamQuestionsAction } from '@/lib/actions/exam.actions';
 import type { Question } from '@/lib/types/database';
@@ -13,14 +13,18 @@ interface ModulePageProps {
 
 export default async function SingleModulePage({ params }: ModulePageProps) {
   const { moduleId } = await params;
-  const modules = await getModulesListAction();
-  const moduleData = modules.find((m) => m.id === moduleId);
 
+  // دمج كافة استدعاءات الصفحة في Promise.all واحد متزامن لمنع الـ Waterfall
+  const [modules, progress, allModuleQuestionsWithAnswers] = await Promise.all([
+    getModulesListAction(),
+    getStudentProgressAction(),
+    getExamQuestionsAction(`module_${moduleId}`),
+  ]);
+
+  const moduleData = modules.find((m) => m.id === moduleId);
   if (!moduleData) {
     notFound();
   }
-
-  const progress = await getStudentProgressAction();
 
   if (!progress.isLoggedIn) {
     redirect('/login');
@@ -47,18 +51,14 @@ export default async function SingleModulePage({ params }: ModulePageProps) {
   const prevModule = moduleIndex > 0 ? modules[moduleIndex - 1] : null;
   const nextModule = !isLastModule ? modules[moduleIndex + 1] : null;
 
-  // جلب تسليم الطالب لهذا النشاط إن وُجد
-  const students = await getStudentsListAction();
-  const currentStudent = students.find(
-    (s) =>
-      s.id.toLowerCase() === progress.studentId?.toLowerCase() ||
-      s.username.toLowerCase() === progress.username?.toLowerCase()
-  );
+  // جلب تسليم الطالب لهذا النشاط إن وُجد بشكل موجه دون فحص كامل الجدول
+  const currentStudent = progress.studentId
+    ? await getSingleStudentAction(progress.studentId)
+    : null;
   const existingSubmission = currentStudent?.activitySubmissions?.[moduleId] || null;
   const handleComplete = completeModuleAction.bind(null, moduleData.id);
 
   // جلب أسئلة اختبار هذه الوحدة إن وُجدت من بنك الأسئلة
-  const allModuleQuestionsWithAnswers = await getExamQuestionsAction(`module_${moduleId}`);
   const safeModuleQuestions: Question[] = allModuleQuestionsWithAnswers.map((q) => ({
     id: q.id,
     exam_type: q.exam_type,

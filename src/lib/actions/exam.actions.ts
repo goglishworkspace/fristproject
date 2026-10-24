@@ -11,9 +11,12 @@ import { isLiveSupabaseConfigured } from '@/lib/supabase/config';
 import { assertAdmin } from '@/lib/auth/session';
 
 const QUESTIONS_FILE_PATH = path.join(process.cwd(), 'src', 'data', 'exam-questions.json');
+let cachedAllQuestions: QuestionWithAnswer[] | null = null;
+let cachedSpatialQuestions: QuestionWithAnswer[] | null = null;
 
 // 1. قراءة جميع الأسئلة من بنك الأسئلة الدائم (بما فيها أسئلة التفكير المكاني)
 export async function getAllQuestionsAction(): Promise<QuestionWithAnswer[]> {
+  if (cachedAllQuestions) return cachedAllQuestions;
   try {
     const [generalData, spatialData] = await Promise.all([
       fs.readFile(QUESTIONS_FILE_PATH, 'utf-8').catch(() => '[]'),
@@ -22,7 +25,8 @@ export async function getAllQuestionsAction(): Promise<QuestionWithAnswer[]> {
     const generalQuestions: QuestionWithAnswer[] = JSON.parse(generalData);
     const spatialQuestions: QuestionWithAnswer[] = JSON.parse(spatialData);
     const combined = [...generalQuestions, ...spatialQuestions];
-    return combined.sort((a, b) => a.order_index - b.order_index);
+    cachedAllQuestions = combined.sort((a, b) => a.order_index - b.order_index);
+    return cachedAllQuestions;
   } catch (err) {
     console.error('Error reading questions:', err);
     return [];
@@ -32,6 +36,7 @@ export async function getAllQuestionsAction(): Promise<QuestionWithAnswer[]> {
 // دالة مساعدة لحفظ بنك الأسئلة
 async function saveQuestionsList(questions: QuestionWithAnswer[]): Promise<boolean> {
   try {
+    cachedAllQuestions = null;
     await fs.writeFile(QUESTIONS_FILE_PATH, JSON.stringify(questions, null, 2), 'utf-8');
     return true;
   } catch (err) {
@@ -44,10 +49,12 @@ const SPATIAL_QUESTIONS_FILE_PATH = path.join(process.cwd(), 'src', 'data', 'spa
 
 // قراءة أسئلة اختبار التفكير المكاني
 export async function getSpatialQuestionsAction(): Promise<QuestionWithAnswer[]> {
+  if (cachedSpatialQuestions) return cachedSpatialQuestions;
   try {
     const data = await fs.readFile(SPATIAL_QUESTIONS_FILE_PATH, 'utf-8');
     const questions: QuestionWithAnswer[] = JSON.parse(data);
-    return questions.sort((a, b) => a.order_index - b.order_index);
+    cachedSpatialQuestions = questions.sort((a, b) => a.order_index - b.order_index);
+    return cachedSpatialQuestions;
   } catch (err) {
     console.error('Error reading spatial-questions.json:', err);
     return [];

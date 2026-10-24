@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { submitExamAction } from '@/lib/actions/exam.actions';
 import { Button } from '@/components/ui/button';
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import {
   CheckCircle2,
@@ -157,7 +157,20 @@ export function ExamRunner({
   const [hasStarted, setHasStarted] = useState<boolean>(!activeInstructions);
   const [showInstructionsModal, setShowInstructionsModal] = useState<boolean>(false);
   const [pageIndex, setPageIndex] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, number>>({});
+  const [answers, setAnswers] = useState<Record<string, number>>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const savedDraft = localStorage.getItem(`faculty_exam_draft_${examType}`);
+        if (savedDraft) {
+          const parsed = JSON.parse(savedDraft);
+          if (parsed && typeof parsed === 'object') {
+            return parsed;
+          }
+        }
+      } catch {}
+    }
+    return {};
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [result, setResult] = useState<{ score: number; total: number } | null>(null);
@@ -200,10 +213,18 @@ export function ExamRunner({
   // اختيار خيار السؤال
   const handleSelectOption = (questionId: string, optionIndex: number) => {
     setErrorMessage(null);
-    setAnswers((prev) => ({
-      ...prev,
-      [questionId]: optionIndex,
-    }));
+    setAnswers((prev) => {
+      const updated = {
+        ...prev,
+        [questionId]: optionIndex,
+      };
+      if (typeof window !== 'undefined') {
+        try {
+          localStorage.setItem(`faculty_exam_draft_${examType}`, JSON.stringify(updated));
+        } catch {}
+      }
+      return updated;
+    });
   };
 
   // دالة القفز التلقائي إلى أول سؤال لم تتم الإجابة عليه في الاختبار
@@ -292,6 +313,11 @@ export function ExamRunner({
     try {
       const res = await submitExamAction(examType, answers);
       if (res.success && res.score !== undefined && res.total !== undefined) {
+        if (typeof window !== 'undefined') {
+          try {
+            localStorage.removeItem(`faculty_exam_draft_${examType}`);
+          } catch {}
+        }
         setResult({ score: res.score, total: res.total });
       } else {
         setErrorMessage(res.error || 'فشل تسليم الاختبار، يرجى المحاولة ثانية');

@@ -1,11 +1,13 @@
+import Image from 'next/image';
+
 export const metadata = {
   title: 'الإعداد والإشراف | منصة الوعي بقضايا البيئة للمرحلة الثانوية • جامعة عين شمس',
   description: 'فريق الإعداد والإشراف العلمي - كلية الدراسات العليا والبحوث البيئية جامعة عين شمس',
 };
 
-// رابط الصورة المعتمدة للإعداد والإشراف من Cloudinary
+// رابط الصورة المعتمدة للإعداد والإشراف من Cloudinary مع تفعيل التحسين التلقائي للصيغة والجودة (WebP/AVIF)
 const SUPERVISION_IMAGE_SRC =
-  'https://res.cloudinary.com/makcnu5x/image/upload/v1790595778/1790595743141-01a0e7d2-02c9-7016-b5ad-fdbd0addfde5.png';
+  'https://res.cloudinary.com/makcnu5x/image/upload/f_auto,q_auto/v1790595778/1790595743141-01a0e7d2-02c9-7016-b5ad-fdbd0addfde5.png';
 
 export default function SupervisionPage() {
   return (
@@ -28,14 +30,16 @@ export default function SupervisionPage() {
           <div className="absolute bottom-2 right-2 w-7 h-7 sm:w-9 sm:h-9 border-b-2 border-r-2 border-asu-gold rounded-br-xl pointer-events-none" />
           <div className="absolute bottom-2 left-2 w-7 h-7 sm:w-9 sm:h-9 border-b-2 border-l-2 border-asu-gold rounded-bl-xl pointer-events-none" />
 
-          {/* حاوية الصورة الملكية المجهزة بدقة فائقة - الصورة فقط بدون أي نصوص */}
+          {/* حاوية الصورة الملكية المجهزة بدقة فائقة عبر next/image لمنع CLS وتحسين LCP */}
           <div className="relative overflow-hidden rounded-xl bg-white shadow-2xl flex items-center justify-center border-2 border-asu-gold/40">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Image
               src={SUPERVISION_IMAGE_SRC}
               alt="الإعداد والإشراف - جامعة عين شمس • كلية الدراسات العليا والبحوث البيئية"
+              width={1433}
+              height={1098}
+              priority
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1024px"
               className="w-full h-auto max-h-[88vh] object-contain rounded-xl transition-transform duration-500 hover:scale-[1.006]"
-              loading="eager"
             />
           </div>
         </div>
